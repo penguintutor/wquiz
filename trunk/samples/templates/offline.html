@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<title>Quiz</title>
+</head>
+
+<body>
+
+<h1>Welcome to the Quiz</h1>
+<form method="get" action="offlinequestions.pl">
+<input type="hidden" name="style" value="%%style%%">
+
+<label for="quiz">Please select a quiz:</label><br />
+<select id="quiz" name="quiz">%%quiznames%%</select><br />
+<input type="submit" value=" Go " /></p><br />
+Show Images:<input type="checkbox" name="images" value="yes" checked /><br />
+</form>
+
+<p>
+<a href="help.pl?section=offline&amp;style=%%style%%" target="_blank"> Help</a>
+</p>
+
+<p>&nbsp;</p>
+<p>
+<a href="http://www.watkissonline.co.uk">Powered by WQuiz</a>.
+</p>
+</body>
+</html>
