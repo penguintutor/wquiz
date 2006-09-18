@@ -1,5 +1,0 @@
-AuthUserFile /var/www/secure/.htpasswd
-AuthGroupFile /dev/null
-AuthName "Authorised Users Only"
-AuthType Basic
-require valid-user
