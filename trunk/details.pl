@@ -17,7 +17,7 @@ my $page = "details.pl";
 # Number of digits in session key
 my $keylen = 20;
 
-our (%quiznames, @category, %numquestions, %quizintro, $dbname, $dbtable, $dbuser, $dbpass, @csscategories, %cssfile, %cssindex, $seccache, $seclogfile, $denyfile, $dbsessiontable, $dbactivetable, $headerfile, $footerfile);
+our (%quiznames, @category, %numquestions, %quizintro, $dbname, $dbtable, $dbuser, $dbpass, @csscategories, %cssfile, %cssindex, $seccache, $seclogfile, $denyfile, $dbsessiontable, $dbactivetable, $headerfile, $footerfile, $activsecstatus);
 # This is the one thing we don't error handle properly - if this fails then we can't find who to email etc.
 do "quiz.cfg" or die "Error loading quiz.cfg";
 
@@ -25,7 +25,7 @@ do "quiz.cfg" or die "Error loading quiz.cfg";
 # First check that user isn't disallowed
 my $ipaddr = $ENV{'REMOTE_ADDR'};
 # will not return if fails check
-Quizlib::ActiveSec::check_qal($denyfile, $seccache, $seclogfile, $ipaddr);
+if ($activesecstatus) {Quizlib::ActiveSec::check_qal($denyfile, $seccache, $seclogfile, $ipaddr);}
 # If we reach here we've passed the active security checking
 
 

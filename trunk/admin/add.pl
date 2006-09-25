@@ -49,22 +49,20 @@ my $editinfo = "<form action=\"save.pl\" method=\"post\">\n\n";
 #15 reviewed
 
 
-$editinfo .= "<h3>New Question</h3>\n<input type=\"hidden\" name=\"question\" value=\"0\">\n";
+$editinfo .= "<h3>New Question</h3>\n<input type=\"hidden\" name=\"question\" value=\"0\" />\n";
 # Quizlist
-#$editinfo .= "Quiz (comma seperated): <input type=\"text\" name=\"quiz\" value=\"$question_details{"quiz"}\"><br />\n";
 $editinfo .= "Quiz Categories:\n<ul>\n";
-#-- need to add support for including currently selected categories e.g. /^word,/ /^word$/ /,word$/ /,word,/ --#
 my $quizcategory;
 # Note a comma is added to the end of each option so that we can use a single field
 my $i;
 for ($i =0; $i < scalar @allowedcategory; $i++)
 	{
-	$editinfo.= "<li><input type=\"checkbox\" name=\"quiz_$i\" value=\"$allowedcategory[$i]\">$allowedcategory[$i]</li>\n";
+	$editinfo.= "<li><input type=\"checkbox\" name=\"quiz_$i\" value=\"$allowedcategory[$i]\" />$allowedcategory[$i]</li>\n";
 	}
 
 $editinfo .= "</ul>\n";
 # Section
-$editinfo .= "Section (e.g. chapter / subcategory): <input type=\"text\" name=\"section\" value=\"\"><br />\n";
+$editinfo .= "Section (e.g. chapter / subcategory): <input type=\"text\" name=\"section\" value=\"\" /><br />\n";
 # Question text
 $editinfo .= "Intro:<br /><textarea name=\"intro\" cols=\"40\" rows=\"10\"></textarea><br />\n";
 # Input
@@ -82,17 +80,17 @@ $editinfo .= "Answer (radio = number from 0; number = min,max; text = perl regex
 # Reason
 $editinfo .= "Reason (use &lt;b&gt; around the actual answer):<br />\n<textarea name=\"reason\" cols=\"40\" rows=\"5\"></textarea><br />\n";
 # Reference
-$editinfo .= "Reference: <input type=\"text\" name=\"reference\" value=\"\"><br />\n";
+$editinfo .= "Reference: <input type=\"text\" name=\"reference\" value=\"\" /><br />\n";
 # Hint
-$editinfo .= "Hint: <input type=\"text\" name=\"hint\" value=\"\"><br />\n";
+$editinfo .= "Hint: <input type=\"text\" name=\"hint\" value=\"\" /><br />\n";
 # Image
-$editinfo .= "Image (URL): <input type=\"text\" name=\"image\" value=\"\"><br />\n";
+$editinfo .= "Image (URL): <input type=\"text\" name=\"image\" value=\"\" /><br />\n";
 # Comment 
 $editinfo .= "Comment (not shown to the user):<br />\n<textarea name=\"comment\" cols=\"40\" rows=\"5\"></textarea><br />\n";
 # Contributer
-$editinfo .= "Contributer: <input type=\"text\" name=\"qfrom\" value=\"\"><br />\n";
+$editinfo .= "Contributer: <input type=\"text\" name=\"qfrom\" value=\"\" /><br />\n";
 # Email
-$editinfo .= "Contributer Email: <input type=\"text\" name=\"email\" value=\"\"><br />\n";
+$editinfo .= "Contributer Email: <input type=\"text\" name=\"email\" value=\"\" /><br />\n";
 
 # Created - handled automatically
 # Updated - handled automatically
