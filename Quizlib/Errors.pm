@@ -300,7 +300,7 @@ sub send_email
 {
 my ($severity, $msg) = @_;
 
-our ($adminemail, $emailerror);
+our ($smtpserver, $hellostring, $fromemail, $adminemail, $emailerror);
 do $cfgfile or return;
 
 # Is the error severe enough
@@ -308,9 +308,8 @@ if ($emailerror < $severity) {return;}
 # Get users IP address
 my $ipaddr = $ENV{'REMOTE_ADDR'};
 
-my $smtpserver = 'localhost';
-my $hellostring = 'watkissonline.co.uk';
-my $from = 'error_message@watkissonline.co.uk';
+
+my $from = $fromemail;
 my $to = $adminemail;
 
 # put header straight into body
