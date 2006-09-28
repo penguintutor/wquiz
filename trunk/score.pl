@@ -46,6 +46,7 @@ my ($status, $quiz, $name, @all_answers, @all_questions);
 #if ($status != 1) {Quizlib::Errors::sequence_error($page, $quiz, 2, "");}
 
 
+# Housekeeping
 # If not marked then we should run remove_expired to cleanup old sessions
 if ($status == 1) 
 {

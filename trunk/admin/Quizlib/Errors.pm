@@ -7,7 +7,7 @@ use Net::SMTP;
 
 use strict;
 
-our $cfgfile = "quiz.cfg";
+our $cfgfile = "../quiz.cfg";
 
 my $verbose = 1;
 
@@ -201,7 +201,7 @@ print "\n";
 # End HTTP
 print end_html();
 
-my $error_msg = "DB error :: $select :: $error";
+my $error_msg = "$page: DB error :: $select :: $error";
 
 # Error message: page, message, severity, die?
 error_email ($page, $error_msg, 1, 0);
@@ -300,7 +300,7 @@ sub send_email
 {
 my ($severity, $msg) = @_;
 
-our ($adminemail, $emailerror);
+our ($smtpserver, $hellostring, $fromemail, $adminemail, $emailerror);
 do $cfgfile or return;
 
 # Is the error severe enough
@@ -308,9 +308,8 @@ if ($emailerror < $severity) {return;}
 # Get users IP address
 my $ipaddr = $ENV{'REMOTE_ADDR'};
 
-my $smtpserver = 'localhost';
-my $hellostring = 'watkissonline.co.uk';
-my $from = 'error_message@watkissonline.co.uk';
+
+my $from = $fromemail;
 my $to = $adminemail;
 
 # put header straight into body
@@ -360,6 +359,31 @@ ERROR
 
 
 
+# Administrator error (e.g. invalid input)
+sub admin_error
+{
+my ($page, $errormsg) = @_;
+
+check_ignore_error();
+	
+# Error message
+print header();
+print start_html("Input Error");
+
+print "<h1>Input Error</h1>\n";
+print "<p>$errormsg</p>";
+print "<p>Please go back and correct the error</p>";
+print "\n";
+
+# End HTTP
+print end_html();
+
+# Set very low priority, don't normally email this error
+error_email ($page, "admin error ".$errormsg, 5, 0);
+}
+
+
+
 # Adds the errors to the log file
 sub log_errors
 {
@@ -391,7 +415,7 @@ sub error_email
 {
 my ($page, $message, $severity, $return) = @_;
 
-my $full_msg = "$severity_word[$severity] : $message";
+my $full_msg = "$page : $severity_word[$severity] : $message";
 
 log_errors ($full_msg);
 send_email ($severity, $full_msg);

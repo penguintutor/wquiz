@@ -37,7 +37,6 @@ my $questionnum = Quizlib::Security::chk_alpnum ($page, "question", $given_quest
 my $editinfo = "<form action=\"save.pl\" method=\"post\">\n\n";
 
 # Load question
-#my @question_details = Quizlib::Qdb::db_get_entry ($dbname, $dbuser, $dbpass, $page, $dbtable, "where question = \"$questionnum\"");
 my $question_details = Quizlib::Qdb::db_get_entry_hashref ($dbname, $dbuser, $dbpass, $page, $dbtable, "where question = \"$questionnum\"");
 if (! $question_details) {Quizlib::Errors::db_error($page, $dbname, "select * from $dbtable where question = $questionnum", "Array not defined");}
 
@@ -79,23 +78,11 @@ for ($i =0; $i < scalar @allowedcategory; $i++)
 	}
 	
 }
-# foreach $quizcategory(@allowedcategory)
-# {
-   # if ($question_details->{'quiz'} =~ /^$quizcategory,/ || $question_details->{'quiz'} =~ /^$quizcategory$/ || $question_details->{'quiz'} =~ /,$quizcategory$/ || $question_details->{'quiz'} =~ /,$quizcategory,/)
-   	# {
-	# $editinfo.= "<li><input type=\"checkbox\" name=\"quiz\" value=\"$quizcategory\" checked=\"checked\">$quizcategory</li>\n";
-	# }
-   # else
-	# {
-	# $editinfo.= "<li><input type=\"checkbox\" name=\"quiz\" value=\"$quizcategory\">$quizcategory</li>\n";
-	# }
-	# 
-# }
 $editinfo .= "</ul>\n";
 # Section
 $editinfo .= "Section (e.g. chapter / subcategory): <input type=\"text\" name=\"section\" value=\"".Quizlib::Misc::format_edit_html($question_details->{'section'})."\"><br />\n";
 # Question text
-$editinfo .= "Intro:<br /><textarea name=\"intro\" cols=\"40\" rows=\"10\">".$question_details->{'intro'}."</textarea><br />\n";
+$editinfo .= "Intro:<br /><textarea name=\"intro\" cols=\"40\" rows=\"10\">".Quizlib::Misc::format_edit_html($question_details->{'intro'})."</textarea><br />\n";
 # Input
 $editinfo .= "Input (pre,actual,post), or (comma seperated radio options): <br /><textarea name=\"input\" cols=\"40\" rows=\"10\">".Quizlib::Misc::format_edit_html($question_details->{'input'})."</textarea><br />\n";
 # Type

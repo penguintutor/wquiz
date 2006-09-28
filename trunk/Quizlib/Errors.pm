@@ -7,7 +7,7 @@ use Net::SMTP;
 
 use strict;
 
-our $cfgfile = "quiz.cfg";
+our $cfgfile = "../quiz.cfg";
 
 my $verbose = 1;
 
@@ -355,6 +355,31 @@ ERROR
 			exit;
 		}
 	}
+}
+
+
+
+# Administrator error (e.g. invalid input)
+sub admin_error
+{
+my ($page, $errormsg) = @_;
+
+check_ignore_error();
+	
+# Error message
+print header();
+print start_html("Input Error");
+
+print "<h1>Input Error</h1>\n";
+print "<p>$errormsg</p>";
+print "<p>Please go back and correct the error</p>";
+print "\n";
+
+# End HTTP
+print end_html();
+
+# Set very low priority, don't normally email this error
+error_email ($page, "admin error ".$errormsg, 5, 0);
 }
 
 

@@ -120,7 +120,7 @@ else
 # Still create form for output - but don't include activity or a submit button
 # To validate as html and to handle someone pressing enter on text form we just jump to score.pl on submit
 my $form_out = "\n\n<form action=\"score.pl\">\n";
-$form_out .= "<input type=\"hidden\" name=\"style\" value=\"$style\">\n";
+$form_out .= "<input type=\"hidden\" name=\"style\" value=\"$style\" />\n";
 my @entries;
 # different form types
 if ($question_details[5] eq "radio")

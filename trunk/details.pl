@@ -17,7 +17,7 @@ my $page = "details.pl";
 # Number of digits in session key
 my $keylen = 20;
 
-our (%quiznames, @category, %numquestions, %quizintro, $dbname, $dbtable, $dbuser, $dbpass, @csscategories, %cssfile, %cssindex, $seccache, $seclogfile, $denyfile, $dbsessiontable, $dbactivetable, $headerfile, $footerfile, $activsecstatus);
+our (%quiznames, @category, %numquestions, %quizintro, $dbname, $dbtable, $dbuser, $dbpass, @csscategories, %cssfile, %cssindex, $seccache, $seclogfile, $denyfile, $dbsessiontable, $dbactivetable, $headerfile, $footerfile, $activesecstatus);
 # This is the one thing we don't error handle properly - if this fails then we can't find who to email etc.
 do "quiz.cfg" or die "Error loading quiz.cfg";
 

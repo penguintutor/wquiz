@@ -77,3 +77,27 @@ $query->finish;
 $dbh->disconnect;
 }
 
+
+# Just logout, delete sql entry
+sub logout {
+my ($session, $dbname, $dbuser, $dbpass, $dbsessiontable) = @_;
+
+if (!defined $session || $session eq "") {return -1;}
+
+# First check a session exists (otherwise this could be used as DOS by running the housekeeping)
+my $dbh = DBI->connect("$dbname",$dbuser,$dbpass) or Quizlib::Errors::db_error("Admin", $dbname, "Connect", "- Failed");
+my $query = $dbh->prepare("select startsession, status from $dbsessiontable where session_id =\"$session\""); 
+$query -> execute or Quizlib::Errors::db_error("Admin" ,$dbname, "select startsession, status from $dbsessiontable where session_id =\"$session\"", $dbh->errstr);
+my ($startsession, $status) = $query->fetchrow_array();
+$query->finish;
+# If we don't get status then session has gone (possibly expired and deleted)
+if (!defined $status || $status eq "") {$dbh->disconnect; return -1;}
+
+
+$query = $dbh->prepare("delete from $dbsessiontable where session_id =\"$session\" limit 1"); 
+$query -> execute or Quizlib::Errors::db_error("Admin" ,$dbname, "delete from $dbsessiontable where session_id =\"$session\" limit 1", $dbh->errstr);
+$query->finish;
+
+$dbh->disconnect;
+}
+

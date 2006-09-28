@@ -1,36 +1,48 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
 <head>
-	<title>Quiz</title>
+	<title>wQuiz</title>
+	<link href="/wquiz/wquiz.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
 function noprevquestions()
 		{
 		alert("Already on question 1. No previous questions");
 		}
 </script>
-
-	
 </head>
 
 <body>
-<h1>%%quizname%%</h1>
+<div id="wquizheader">
+</div>
 
-<div>
+<div id="wquiztitle">
+<h1>%%quizname%%</h1>
+</div>
+
+<div id="wquizmain">
+
+<div id="wquizsummary">
 <p>Name: %%username%%  Question: %%question_num%% / %%numquestions%%</p>
 </div>
 
-<div>%%image%% %%questiontext%%</div>
+<div id="wquizquestion">
+%%image%% %%questiontext%%
+</div>
 
 <br class="clearboth" />
 
 <p>
 <a href='%%urlback%%'>Previous Question</a> <a href='%%urlnext%%'> Next Question </a> <a href='%%urlcheck%%'> Finish</a> 
 <a href="help.pl?section=question%%urlextra%%" target="_blank"> Help </a>
+</div>
 
-</p><p>&nbsp;</p>
-<p>
-<a href="http://www.watkissonline.co.uk">Powered by Web Quiz</a>.
+<div id="wquizfooter">
+<a href="http://www.penguintutor.com"><img src="/wquiz/createdby.png" style="float:left; border:0px; margin-top:0px; margin-right:10px;" alt="PenguinTutor.com" /></a>
+<p class="wquizcreatedby">
+<a href="http://www.penguintutor.com/">Web Perl Quiz created by Stewart Watkiss<br />Available from PenguinTutor.com</a>.
 </p>
+</div>
 
 </body>
 </html>
