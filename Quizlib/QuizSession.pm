@@ -224,15 +224,23 @@ sub remove_expired
 {
 my ($dbname, $dbuser, $dbpass, $dbsessiontable, $dbactivetable, $dbsettingstable, $sessionexpiry, $sessionsbeforecleanup) = @_;
 
-# Read in sessionendcount
 my $dbh = DBI->connect("$dbname",$dbuser,$dbpass) or Quizlib::Errors::db_error("Admin", $dbname, "Connect", "- Failed");
-my $query = $dbh->prepare("select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\""); 
-$query -> execute or Quizlib::Errors::db_error("remove_expired" ,$dbname, "select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\"", $dbh->errstr);
-my $currentvalue = $query->fetchrow_array();
-$query->finish;
+my $query;
+my $currentvalue = 0;
+
+# If sessionsbeforecleanup is 0 then we run the remove_expired regardless (admin logout)
+if ($sessionsbeforecleanup != 0)
+{
+	# Read in sessionendcount
+	$query = $dbh->prepare("select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\""); 
+	$query -> execute or Quizlib::Errors::db_error("remove_expired" ,$dbname, "select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\"", $dbh->errstr);
+	$currentvalue = $query->fetchrow_array();
+	$query->finish;
+}
+
 
 # If not time to run then we increment save and exit
-if ($currentvalue <= $sessionsbeforecleanup)
+if ($sessionsbeforecleanup != 0 && $currentvalue <= $sessionsbeforecleanup)
 	{
 	$currentvalue ++;
 	$query = $dbh->prepare("update $dbsettingstable set settingvalue=\"$currentvalue\" where settingkey=\"sessionendcount\"");
@@ -247,12 +255,17 @@ if ($currentvalue <= $sessionsbeforecleanup)
 $dbh->do("lock tables $dbsettingstable write");
 
 # Read in the value again - to make sure a run hasn't started since we locked the table
-$query = $dbh->prepare("select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\""); 
-$query -> execute or Quizlib::Errors::db_error("remove_expired" ,$dbname, "select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\"", $dbh->errstr);
-$currentvalue = $query->fetchrow_array();
-$query->finish;
+# We always run for a sessionsbeforecleanup = 0 (don't have many admin logouts)
+if ($sessionsbeforecleanup != 0)
+{
+	$query = $dbh->prepare("select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\""); 
+	$query -> execute or Quizlib::Errors::db_error("remove_expired" ,$dbname, "select settingvalue from $dbsettingstable where settingkey=\"sessionendcount\"", $dbh->errstr);
+	$currentvalue = $query->fetchrow_array();
+	$query->finish;
+}
 
-if ($currentvalue <= $sessionsbeforecleanup) {$dbh->do("unlock tables"); return;}
+# If it's been updated since we first looked, then it will have been run by another process
+if ($sessionsbeforecleanup != 0 && $currentvalue <= $sessionsbeforecleanup) {$dbh->do("unlock tables"); return;}
 
 # We have successfully locked the table, so write back a 0
 $query = $dbh->prepare("update $dbsettingstable set settingvalue=\"0\" where settingkey=\"sessionendcount\"");
@@ -262,6 +275,8 @@ $query->finish;
 $dbh->do("unlock tables");
 
 # Now we should be the only thread attempting to perform a cleanup so we are free to procede
+# admin/logout.pl will have bypassed the checks, but the chance of happening at same time as a run is negligable
+# If it did then it would only give an error to an administrator, not impact the users of the system
 $query = $dbh->prepare("SELECT session_id, startsession FROM $dbsessiontable");
 $query -> execute or Quizlib::Errors::db_error("QuizSession.pm" ,$dbname, "SELECT session_id, startsession FROM $dbsessiontable",$dbh->errstr);
 my @expiredsessions;

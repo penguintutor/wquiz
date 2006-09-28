@@ -19,7 +19,7 @@ my ($page, $parm, $value) = @_;
 if ($value =~ /^[\w ]*$/) {return $value;}
 
 $value =~ s/\&/\&amp;/g;
-$value =~ s/\'/\&quot;/g;
+$value =~ s/\'/\&apos;/g;
 $value =~ s/\"/\&quot;/g;
 $value =~ s/\,/\&#184;/g;
 

@@ -88,24 +88,7 @@ for ($i =0; $i < scalar @allowedcategory; $i++)
 	}
 # Strip off last ,
 $allcategories =~ s/,$//;
-# #my $given_category = param ("quiz");
-# my $allcategories = "";
-# my @tempfields;
-# # If not defined then we have a blank category - ie. temporary disabled
-# if (!defined $given_category) {$dbfields[0] = "";}
-# else
-	# {
-	# $given_category = Quizlib::Security::chk_alpnum ($page, "quiz", $given_category);
-	# @tempfields = split /\+/, $given_category;
-	# my $thiscategory;
-	# foreach $thiscategory(@tempfields)
-		# {
-		# Quizlib::Security::chk_from_list ($page, "quiz", $thiscategory, @allowedcategory);
-		# $allcategories .= $thiscategory.",";
-		# }
-	# # Strip off last ,
-	# $allcategories =~ s/,$//;
-	#}
+
 $dbfields[1] = $allcategories;
 $saveddetails .= "<b>Quiz Categories:</b> $dbfields[1]<br />\n";
 
@@ -123,6 +106,8 @@ my $given_intro = param ("intro");
 # Only reason for having null entry would be a picture quiz etc.
 if (!defined $given_intro) {$given_intro = "";}
 $dbfields[3] = Quizlib::Security::chk_alpnum ($page, "intro", $given_intro);
+# Remove ' characters which will break the sql save
+$dbfields[3] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Intro:</b> $dbfields[3]<br />\n";
 
 
@@ -130,14 +115,12 @@ $saveddetails .= "<b>Intro:</b> $dbfields[3]<br />\n";
 my $given_input = param ("input");
 # We do allow a null entry, but this is interpretted as ""
 if (!defined $given_input) {$given_input = "";}
-#$dbfields[4] = Quizlib::Security::chk_alpnum ($page, "input", $given_input);
 # Remove any \n chars
 $given_input =~ s/\n//g;
 # convert any risky characters into html format
-#$dbfields[4] = Quizlib::Security::text_2_html ($page, "input", $given_input);
 # Leave formatting as is
 $dbfields[4] = Quizlib::Security::chk_alpnum ($page, "input", $given_input);
-#-- In future add additional checks here that it is formatted correctly
+$dbfields[4] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Input:</b> $dbfields[4]<br />\n";
 
 # [5] type (e.g. radio / number / text)
@@ -146,6 +129,7 @@ my $given_type = param ("type");
 if (!defined $given_type || $given_type eq "") {Quizlib::Security::missing_parm_error ($page, "type");}
 #- add checking for notselected here, and give a more user friendly error
 $dbfields[5] = Quizlib::Security::chk_from_list ($page, "type", $given_type, @allowed_types);
+$dbfields[5] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Type:</b> $dbfields[5]<br />\n";
 
 # [6] answer (what answer should actually be)
@@ -153,8 +137,20 @@ my $given_answer = param ("answer");
 # We do not allow a null entry
 if (!defined $given_answer || $given_answer eq "") {Quizlib::Security::missing_parm_error ($page, "type");}
 $dbfields[6] = Quizlib::Security::chk_alpnum ($page, "answer", $given_answer);
-#$dbfields[6] = Quizlib::Security::text_2_html ($page, "answer", $given_answer);
-#-- We could add some additional checking based upon whether answer matches type
+$dbfields[6] =~ s/'/&apos;/g;
+# Can check question formats are inline with the question type
+# If number - need number,number if only one number then use same for both
+if ($dbfields[5] eq "number")
+{
+	# split numbers into $1, $2
+	$dbfields[6] =~ /(\d+),?(\d*)/;
+	# Error and exit if we don't have a number
+	if (!defined $1 || $1 eq "") {Quizlib::Errors::admin_error ($page, "Number selected, but no number given");}
+	# If we have $1, but no $2 then make $2 = $1
+	if (!defined $2 || $2 eq "") {$dbfields[6] = "$1,$1";}
+	# We still re-do if we had two numbers as this will strip any non digit characters
+	else {$dbfields[6] = "$1,$2";}
+}
 $saveddetails .= "<b>Answer:</b> $dbfields[6]<br />\n";
 
 # [7] reason (free text)
@@ -163,6 +159,7 @@ my $given_reason = param ("reason");
 # Can still have "correct / incorrect" without explanation, although shouldn't do this
 if (!defined $given_reason) {$given_reason = "";}
 $dbfields[7] = Quizlib::Security::chk_alpnum ($page, "reason", $given_reason);
+$dbfields[7] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Reason:</b> $dbfields[7]<br />\n";
 
 # [8] reference
@@ -171,6 +168,7 @@ my $given_reference = param ("reference");
 # We do allow a null entry, but this is interpretted as ""
 if (!defined $given_reference) {$given_reference = "";}
 $dbfields[8] = Quizlib::Security::chk_alpnum ($page, "reference", $given_reference);
+$dbfields[8] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Reference:</b> $dbfields[8]<br />\n";
 
 # [9] hint
@@ -179,6 +177,7 @@ my $given_hint = param ("hint");
 # We do allow a null entry, but this is interpretted as ""
 if (!defined $given_hint) {$given_hint = "";}
 $dbfields[9] = Quizlib::Security::chk_alpnum ($page, "hint", $given_hint);
+$dbfields[9] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Hint:</b> $dbfields[9]<br />\n";
 
 # [10] image
@@ -186,6 +185,8 @@ my $given_image = param ("image");
 # We do allow a null entry
 if (!defined $given_image) {$given_image = "";}
 $dbfields[10] = Quizlib::Security::chk_alpnum ($page, "image", $given_image);
+$dbfields[10] =~ s/'/&apos;/g;
+#-- Could check that this is a url here
 $saveddetails .= "<b>Image:</b> $dbfields[10]<br />\n";
 
 # [11] comments
@@ -194,7 +195,7 @@ my $given_comments = param ("comment");
 # We do allow a null entry
 if (!defined $given_comments) {$given_comments = "";}
 $dbfields[11] = Quizlib::Security::chk_alpnum ($page, "comments", $given_comments);
-#-- Could check that this is a url here
+$dbfields[11] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Comments:</b> $dbfields[11]<br />\n";
 
 # [12] contributer (qfrom)
@@ -203,6 +204,7 @@ my $given_contributer = param ("qfrom");
 # We do allow a null entry
 if (!defined $given_contributer) {$given_contributer = "";}
 $dbfields[12] = Quizlib::Security::chk_alpnum ($page, "qfrom", $given_contributer);
+$dbfields[12] =~ s/'/&apos;/g;
 $saveddetails .= "<b>Contributer:</b> $dbfields[12]<br />\n";
 
 # [13] email (email address of the contributer)
@@ -211,6 +213,7 @@ my $given_email = param ("email");
 # We do allow a null entry
 if (!defined $given_email) {$given_email = "";}
 $dbfields[13] = Quizlib::Security::chk_alpnum ($page, "email", $given_email);
+$dbfields[13] =~ s/'/&apos;/g;
 #-- Could check that this is an email address here
 $saveddetails .= "<b>Email:</b> $dbfields[13]<br />\n";
 

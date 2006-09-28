@@ -135,11 +135,13 @@ print LOGFILE "$time : $quizname : $ipaddr : $session : $score : $numquestions\n
 close LOGFILE;
 }
 
-# Converts & to &amp; etc.
+# Converts & to %26 etc.
+# This is specifically to allow us to edit and resave data
+# e.g. designed for handling &amp; stored in db, will ignore commas (used for other purposes)
 sub format_edit_html
 {
 my ($convtext) = @_;
-$convtext =~ s/\&/\&amp\;/g;
+$convtext =~ s/&/&amp;/g;
 return $convtext;
 }
 

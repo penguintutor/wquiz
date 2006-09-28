@@ -22,7 +22,7 @@ my $given_password = param("password");
 my $message = "";
 
 # If reason is anything other than 0 then it means we've been redirected either from here or another page
-# 1 = failed login, 2 = from another page  
+# 1 = failed login, 2 = from another page, 3 = invalid session, 4 = logout  
 my $reason = param("status");
 if (!defined $reason || $reason eq "") {$reason = 0;}
 $reason = Quizlib::Security::chk_num_range ($page, "reason", $reason, 0, 2);
@@ -70,6 +70,7 @@ if ($reason == 0 && defined $given_name && $given_name ne "" && defined $given_p
 	
 if ($reason == 1) {$message = "<h3>Failed Login Please Contact the System Adminstrator</h3>";}
 if ($reason == 2) {$message = "<h3>Session not logged in<br />Please Login.</h3>";}
+if ($reason == 4) {$message = "<h3>User Logged Out</h3>";}
 
 # If we get here then we are not logged (as we would have redirected) in so show login page
 my $form = << "FORM";

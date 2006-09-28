@@ -117,10 +117,10 @@ print "<h1>A Security Violation has Occurred</h1>\n";
 print "A potential security violoation has occured.<br>\n";
 print "$errormsg<p>\n";
 print "The administrator has been notified of this event<p>\n";
-print "If the alert is DOS attack, then please wait 10 minutes before trying again<br />\n";
+print "If the alert states this is a suspected DOS attack, then please wait 10 minutes before trying again.<br />\n";
 print 'If you believe that this alert is an error please email <a href="mailto:quizsecurity@watkissonline.co.uk">quizsecurity@watkissonline.co.uk</a>';
 print "<p>&nbsp;</p>\n";
-print "<a href=\"http://www.firstaidquiz.com\">Return to www.FirstAidQuiz.com</a></p>";
+print "<a href=\"index.pl\">Return to the Quiz Index page.</a></p>";
 print "\n";
 
 # End HTTP
