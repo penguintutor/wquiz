@@ -71,6 +71,7 @@ $editinfo .= "Input (pre,actual,post), or (comma seperated radio options): <br /
 $editinfo .= "Question Type: <select name=\"type\">\n";
 $editinfo .= "<option value=\"notselected\">Please Select</option>\n";
 $editinfo .= "<option value=\"text\">text</option>\n";
+$editinfo .= "<option value=\"TEXT\">TEXT</option>\n";
 $editinfo .= "<option value=\"number\">number</option>\n";
 $editinfo .= "<option value=\"radio\">radio</option>\n";
 $editinfo .= "<option value=\"checkbox\">checkbox</option>\n";

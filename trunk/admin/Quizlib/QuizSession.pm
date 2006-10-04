@@ -237,10 +237,18 @@ if ($sessionsbeforecleanup != 0)
 	$currentvalue = $query->fetchrow_array();
 	$query->finish;
 }
-
-
+# If we don't have a currentvalue set then we create with 0
+if (!defined $currentvalue) 
+	{
+		$currentvalue = 0;
+		$query = $dbh->prepare("insert into $dbsettingstable values (\"sessionendcount\", \"$currentvalue\")");
+		# If unsuccessful then we will log, but continue 
+		$query -> execute or Quizlib::error_email ("QuizSession.pm", "Set sessionscount", 5, 1);
+		$query->finish;
+		$dbh->disconnect;
+	}
 # If not time to run then we increment save and exit
-if ($sessionsbeforecleanup != 0 && $currentvalue <= $sessionsbeforecleanup)
+elsif ($sessionsbeforecleanup != 0 && $currentvalue <= $sessionsbeforecleanup)
 	{
 	$currentvalue ++;
 	$query = $dbh->prepare("update $dbsettingstable set settingvalue=\"$currentvalue\" where settingkey=\"sessionendcount\"");

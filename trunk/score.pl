@@ -109,6 +109,15 @@ for ($i = 0; $i < $numquestions{$quiz}; $i++)
 			}
 		else {$this_answer = -1;}
 		}
+	elsif ($question_details[5] eq "TEXT")
+		{
+		if ($all_answers[$i] =~ /$question_details[6]/)
+			{
+			$this_answer = 1;
+			$num_correct ++;
+			}
+		else {$this_answer = -1;}
+		}
 	else
 		{
 		Quizlib::Errors::question_corrupt ($page, $dbname, $question_details[0], "invalid question type")
