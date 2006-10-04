@@ -88,6 +88,7 @@ $editinfo .= "Input (pre,actual,post), or (comma seperated radio options): <br /
 # Type
 $editinfo .= "Question Type: <select name=\"type\">\n";
 if ($question_details->{'type'} eq "text") {$editinfo .= "<option value=\"text\" selected=\"selected\">text</option>\n";} else {$editinfo .= "<option value=\"text\">text</option>\n";}
+if ($question_details->{'type'} eq "TEXT") {$editinfo .= "<option value=\"TEXT\" selected=\"selected\">TEXT</option>\n";} else {$editinfo .= "<option value=\"TEXT\">TEXT</option>\n";}
 if ($question_details->{'type'} eq "number") {$editinfo .= "<option value=\"number\" selected=\"selected\">number</option>\n";} else {$editinfo .= "<option value=\"number\">number</option>\n";}
 if ($question_details->{'type'} eq "radio") {$editinfo .= "<option value=\"radio\" selected=\"selected\">radio</option>\n";} else {$editinfo .= "<option value=\"radio\">radio</option>\n";}
 if ($question_details->{'type'} eq "checkbox") {$editinfo .= "<option value=\"checkbox\" selected=\"selected\">checkbox</option>\n";} else {$editinfo .= "<option value=\"checkbox\">checkbox</option>\n";}

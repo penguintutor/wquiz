@@ -15,7 +15,7 @@ my $template = "templates/save.html";
 my $page = "admin/save.pl";
 
 # These are the type of questions allowed
-my @allowed_types = ("text", "number", "radio", "checkbox");
+my @allowed_types = ("text", "TEXT", "number", "radio", "checkbox");
 
 # Default Values - can be overridden in quiz.cfg
 our $adminsessiontimeout = 240;

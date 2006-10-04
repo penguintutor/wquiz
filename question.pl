@@ -111,7 +111,7 @@ elsif ($question_details[5] eq "checkbox")
 		}
 	$form_out .= "\n";
 	}
-elsif ($question_details[5] eq "text" || $question_details[5] eq "number")
+elsif ($question_details[5] eq "text" || $question_details[5] eq "TEXT" || $question_details[5] eq "number")
 	{
 	@entries = split /,/, $question_details[4];
 	if (!defined $entries[0]) {$entries[0] = ""};

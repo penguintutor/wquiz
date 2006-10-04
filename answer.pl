@@ -92,7 +92,7 @@ elsif ($question_details[5] eq "checkbox")
 		}
 	}
 # For text (allow aphanum)
-elsif ($question_details[5] eq "text")
+elsif ($question_details[5] eq "text" || $question_details[5] eq "TEXT")
 	{
 	$given_answer = param ("answer");
 	if (!defined $given_answer || $given_answer eq "") { $answer = -1; }
@@ -101,6 +101,8 @@ elsif ($question_details[5] eq "text")
 	$answer =~ s/\\/\\\\/g;
 	# Trim any \n etc.
 	chomp $answer;
+	# Trim any \s at the end
+	$answer =~ s/\s*$//;
 	}
 # For number take first set of digits
 elsif ($question_details[5] eq "number")

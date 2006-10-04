@@ -76,7 +76,7 @@ elsif ($question_details[5] eq "checkbox")
 		}
 	}
 # For text (allow aphanum)
-elsif ($question_details[5] eq "text")
+elsif ($question_details[5] eq "text" || $question_details[5] eq "TEXT")
 	{
 	$given_answer = param ("answer");
 	if (!defined $given_answer || $given_answer eq "") { $answer = -1; }
@@ -150,6 +150,17 @@ elsif ($question_details[5] eq "text")
 	{
 	chomp $answer;
 	if ($answer =~ /$question_details[6]/i) {$status_out = "<font class=\"reviewcorrect\">Correct</font>"; }
+	else {$status_out = "<font class=\"reviewwrong\">Incorrect</font>"; }
+	my @entries = split /,/, $question_details[4];
+	if (!defined $entries[0]) {$entries[0] = ""};
+	#value 1 is the default so we don't show
+	if (!defined $entries[2]) {$entries[2] = ""};
+	$user_out = "$entries[0] $answer $entries[2]";
+	}
+elsif ($question_details[5] eq "TEXT")
+	{
+	chomp $answer;
+	if ($answer =~ /$question_details[6]/) {$status_out = "<font class=\"reviewcorrect\">Correct</font>"; }
 	else {$status_out = "<font class=\"reviewwrong\">Incorrect</font>"; }
 	my @entries = split /,/, $question_details[4];
 	if (!defined $entries[0]) {$entries[0] = ""};

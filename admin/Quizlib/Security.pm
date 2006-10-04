@@ -161,11 +161,11 @@ else {exit_parm_error ($page, $parm, $value);}
 sub chk_from_list
 {
 my ($page, $parm, $value, @options) = @_;
-
 my $i;
-foreach (@options)
+my $option;
+foreach $option (@options)
  {
- if ($value =~ /$_/i) {return $_;}
+ if ($value =~ /^$option$/) {return $option;}
  }
 
 exit_parm_error ($page, $parm, $value);
