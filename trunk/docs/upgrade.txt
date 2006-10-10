@@ -7,4 +7,5 @@ these will be overwritten so please make sure you have a backup before
 performing an upgrade.
 
 This software is under development and comes with no guarantee. I do not 
-recommend you use this on a production environment.
+recommend you use this on a production environment, without first 
+rigorously testing your setup.

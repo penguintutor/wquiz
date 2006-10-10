@@ -96,15 +96,16 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 print header();
 while (<TEMPLATE>)
 	{
-	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
-	s/\%\%username\%\%/$name/g;
 	s/\%\%checks\%\%/$view_out/g;
-	s/\%\%urlstring\%\%/$urlstring/g;
 	s/\%\%css\%\%/$css/g;
-	s/\%\%urlextra\%\%/$urlextra/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;	
-	s/\%\%header\%\%/$headertext/g;
 	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
+	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
+	s/\%\%urlextra\%\%/$urlextra/g;
+	s/\%\%urlstring\%\%/$urlstring/g;
+	s/\%\%username\%\%/$name/g;
+	
 	print;
 	}
 	

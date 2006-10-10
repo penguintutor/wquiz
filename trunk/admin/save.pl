@@ -205,7 +205,7 @@ my $given_contributer = param ("qfrom");
 if (!defined $given_contributer) {$given_contributer = "";}
 $dbfields[12] = Quizlib::Security::chk_alpnum ($page, "qfrom", $given_contributer);
 $dbfields[12] =~ s/'/&apos;/g;
-$saveddetails .= "<b>Contributer:</b> $dbfields[12]<br />\n";
+$saveddetails .= "<b>Contributor:</b> $dbfields[12]<br />\n";
 
 # [13] email (email address of the contributer)
 # For the administrator only - should not show, but could provide an option to contact the contributer as long as this could be enabled / disabled by the user
@@ -215,7 +215,7 @@ if (!defined $given_email) {$given_email = "";}
 $dbfields[13] = Quizlib::Security::chk_alpnum ($page, "email", $given_email);
 $dbfields[13] =~ s/'/&apos;/g;
 #-- Could check that this is an email address here
-$saveddetails .= "<b>Email:</b> $dbfields[13]<br />\n";
+$saveddetails .= "<b>Contributor Email:</b> $dbfields[13]<br />\n";
 
 # Get the current date ready for updating created and/or update time
 # We use localtime, so it's the date of the server

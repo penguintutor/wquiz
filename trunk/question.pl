@@ -44,6 +44,9 @@ my $session = $cgiQuery->cookie (-name=>'quizsession', -expires=>'+4h');
 if (!defined $session || $session eq "") {Quizlib::Errors::cache_error($page, $session);}
 # Now get details about this session - which checks the session is valid as well
 my @question_info = Quizlib::QuizSession::get_question ($session, $dbname, $dbuser, $dbpass, $dbsessiontable, $dbactivetable, $questionnum);
+# $shortsession - contains a 6 digit number (first digits of session), used to prevent browser autoform feature
+my $shortsession = substr $session, 1, 6;
+
 
 # If we don't have values in the question_info then session doesn't exist - so back to start - we will lose style information
 # Get back : quizname, username, question, answer
@@ -118,7 +121,7 @@ elsif ($question_details[5] eq "text" || $question_details[5] eq "TEXT" || $ques
 	if (!defined $entries[1]) {$entries[1] = ""};
 	if (!defined $entries[2]) {$entries[2] = ""};
 	if ($answer ne "") {$entries[1] = $answer;}
-	$form_out .= "$entries[0]<input type=\"text\" name=\"answer\" value=\"$entries[1]\" />$entries[2]<br />\n";
+	$form_out .= "$entries[0]<input type=\"text\" name=\"answer$shortsession\" value=\"$entries[1]\" />$entries[2]<br />\n";
 	}
 $form_out .= "<input id=\"answerbutton\" type=\"submit\" value=\"Answer\" />\n</form>\n";
 
@@ -150,20 +153,21 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 print header();
 while (<TEMPLATE>) 
 	{
-	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
-	s/\%\%username\%\%/$name/g;
-	s/\%\%question_num\%\%/$questionnum/g;
+	s/\%\%css\%\%/$css/g;
+	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%image\%\%/$image/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
 	s/\%\%numquestions\%\%/$numquestions{$quiz}/g;
 	s/\%\%questiontext\%\%/$question_text/g;
-	s/\%\%image\%\%/$image/g;
+	s/\%\%question_num\%\%/$questionnum/g;
+	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
 	s/\%\%urlback\%\%/$urlback/g;
-	s/\%\%urlnext\%\%/$urlnext/g;
 	s/\%\%urlcheck\%\%/$urlcheck/g;
-	s/\%\%css\%\%/$css/g;
 	s/\%\%urlextra\%\%/$urlextra/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;
-	s/\%\%header\%\%/$headertext/g;
-	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%urlnext\%\%/$urlnext/g;
+	s/\%\%username\%\%/$name/g;
+	
 	print;
 	}
 	

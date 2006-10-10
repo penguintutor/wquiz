@@ -116,16 +116,17 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 print header(-cookie=>$cookie1);
 while (<TEMPLATE>)
 	{
-	s/\%\%quizname\%\%/$quiznames{$quiz}/;
-	s/\%\%username\%\%/$name/;
-	s/\%\%numquestions\%\%/$numquestions{$quiz}/;
-	s/\%\%urlstring\%\%/$urlstring/;
-	s/\%\%info\%\%/$info/;
 	s/\%\%css\%\%/$css/g;
-	s/\%\%urlextra\%\%/$urlextra/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;
-	s/\%\%header\%\%/$headertext/g;
 	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
+	s/\%\%info\%\%/$info/;
+	s/\%\%numquestions\%\%/$numquestions{$quiz}/;
+	s/\%\%quizname\%\%/$quiznames{$quiz}/;
+	s/\%\%urlextra\%\%/$urlextra/g;
+	s/\%\%urlstring\%\%/$urlstring/;
+	s/\%\%username\%\%/$name/;
+	
 	print;
 	}
 	

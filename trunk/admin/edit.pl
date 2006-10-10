@@ -106,9 +106,9 @@ $editinfo .= "Image (URL): <input type=\"text\" name=\"image\" value=\"".Quizlib
 # Comment 
 $editinfo .= "Comment (not shown to the user):<br />\n<textarea name=\"comment\" cols=\"40\" rows=\"5\">".Quizlib::Misc::format_edit_html($question_details->{'comments'})."</textarea><br />\n";
 # Contributer
-$editinfo .= "Contributer: <input type=\"text\" name=\"qfrom\" value=\"".Quizlib::Misc::format_edit_html($question_details->{'qfrom'})."\"><br />\n";
+$editinfo .= "Contributor: <input type=\"text\" name=\"qfrom\" value=\"".Quizlib::Misc::format_edit_html($question_details->{'qfrom'})."\"><br />\n";
 # Email
-$editinfo .= "Contributer Email: <input type=\"text\" name=\"email\" value=\"".Quizlib::Misc::format_edit_html($question_details->{'email'})."\"><br />\n";
+$editinfo .= "Contributor Email: <input type=\"text\" name=\"email\" value=\"".Quizlib::Misc::format_edit_html($question_details->{'email'})."\"><br />\n";
 # Created - not changed, we need to pass through to retain
 $editinfo .= "<input type=\"hidden\" name=\"created\" value=\"".$question_details->{'created'}."\"><br />\n";
 # Updated - handled automatically

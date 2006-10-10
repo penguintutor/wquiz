@@ -19,8 +19,9 @@ of questions which can be completed offline or shared with friends.
 
 IMPORTANT
 ---------
-This software is under development and comes with no guarentee. I recommend
-that you do NOT use this in a production environment.
+This software is under development and comes with no warranty. I recommend
+that you do NOT use this in a production environment with first fully testing 
+your setup.
 
 
 Documentation

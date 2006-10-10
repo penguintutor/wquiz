@@ -212,15 +212,16 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 if (!$existingsession) {print header(-cookie=>$cookie1);}
 else {print header();}
 while (<TEMPLATE>)
-	{ 
-	s/\%\%serial\%\%/$session/;
-	s/\%\%quizname\%\%/$quiznames{$quiz}/;
-	s/\%\%urlstring\%\%/$urlstring/;
-	s/\%\%questions\%\%/$formattedquestions/;
-	s/\%\%style\%\%/$style/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;
-	s/\%\%header\%\%/$headertext/g;
+	{
 	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
+	s/\%\%questions\%\%/$formattedquestions/;
+	s/\%\%quizname\%\%/$quiznames{$quiz}/;
+	s/\%\%serial\%\%/$session/;
+	s/\%\%style\%\%/$style/g;
+	s/\%\%urlstring\%\%/$urlstring/;
+	
 	print;
 	}
 	

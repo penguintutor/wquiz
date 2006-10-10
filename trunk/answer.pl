@@ -37,6 +37,8 @@ if (!defined $session || $session eq "") {cache_error($page, $session);}
 # Don't make any updates at this stage
 my @question_info = Quizlib::QuizSession::get_question ($session, $dbname, $dbuser, $dbpass, $dbsessiontable, $dbactivetable, $questionnum);
 # We will load details about the specific question later
+# $shortsession - contains a 6 digit number (first digits of session), used to prevent browser autoform feature
+my $shortsession = substr $session, 1, 6;
 
 # Extra parameter allowed - index (if 1 - then upon updating answer will return to index - if not defined or any other number doesn't)
 # No need for security check as value ie either 1, or we don't care - we update the variable regardless to stop any risks.
@@ -94,7 +96,7 @@ elsif ($question_details[5] eq "checkbox")
 # For text (allow aphanum)
 elsif ($question_details[5] eq "text" || $question_details[5] eq "TEXT")
 	{
-	$given_answer = param ("answer");
+	$given_answer = param ("answer$shortsession");
 	if (!defined $given_answer || $given_answer eq "") { $answer = -1; }
 	$answer = Quizlib::Security::chk_alpnum ($page, "text entry", $given_answer);
 	# If includes a \ then replace with \\ (so it doesn't break the sql)
@@ -107,7 +109,7 @@ elsif ($question_details[5] eq "text" || $question_details[5] eq "TEXT")
 # For number take first set of digits
 elsif ($question_details[5] eq "number")
 	{
-	$given_answer = param ("answer");
+	$given_answer = param ("answer$shortsession");
 	if (!defined $given_answer || $given_answer eq "") { $answer = -1; }
 	# First check it's alpha num to stop anyone putting anything nasty in
 	$answer = Quizlib::Security::chk_alpnum ($page, "text entry", $given_answer);
