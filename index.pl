@@ -53,14 +53,17 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 print header();
 while (<TEMPLATE>)
 	{
-	s/\%\%quiznames\%\%/$optionmenu/;
 	s/\%\%css\%\%/$css/g;
 	s/\%\%cssextra\%\%/$cssextraentry/g;
 	s/\%\%cssurl\%\%/$style/g;
-	s/\%\%urlextra\%\%/$urlextra/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;
-	s/\%\%header\%\%/$headertext/g;
 	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
+	s/\%\%quiznames\%\%/$optionmenu/;
+	s/\%\%urlextra\%\%/$urlextra/g;
+	
+	
+	
 	print;
 	}
 	

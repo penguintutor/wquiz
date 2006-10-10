@@ -173,18 +173,19 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 print header();
 while (<TEMPLATE>)
 	{
-	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
-	s/\%\%username\%\%/$name/g;
-	s/\%\%score\%\%/$num_correct/g;
-	s/\%\%numquestions\%\%/$numquestions{$quiz}/g;
-	s/\%\%percentage\%\%/$percent/g;
 	s/\%\%answers\%\%/$view_out/g;
 	s/\%\%css\%\%/$css/g;
-	s/\%\%urlstring\%\%/$urlstring/g;
-	s/\%\%urlextra\%\%/$urlextra/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;
-	s/\%\%header\%\%/$headertext/g;
 	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
+	s/\%\%numquestions\%\%/$numquestions{$quiz}/g;
+	s/\%\%percentage\%\%/$percent/g;
+	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
+	s/\%\%score\%\%/$num_correct/g;
+	s/\%\%urlextra\%\%/$urlextra/g;
+	s/\%\%urlstring\%\%/$urlstring/g;
+	s/\%\%username\%\%/$name/g;
+	
 	print;
 	}
 	

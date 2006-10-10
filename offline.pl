@@ -51,11 +51,12 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 print header();
 while (<TEMPLATE>)
 	{
+	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
 	s/\%\%quiznames\%\%/$optionmenu/;
 	s/\%\%style\%\%/$style/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;
-	s/\%\%header\%\%/$headertext/g;
-	s/\%\%footer\%\%/$footertext/g;
+	
 	print;
 	}
 	

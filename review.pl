@@ -192,24 +192,25 @@ open(TEMPLATE, $template) or Quizlib::Errors::fileopen_error($page, "$template",
 print header();
 while (<TEMPLATE>)
 	{
-	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
-	s/\%\%username\%\%/$name/g;
-	s/\%\%numquestions\%\%/$numquestions{$quiz}/g;
-	s/\%\%question_num\%\%/$questionnum/g;
-	s/\%\%questiontext\%\%/$question_text/g;
-	s/\%\%image\%\%/$image/g;
-	s/\%\%status\%\%/$status_out/g;
-	s/\%\%givenanswer\%\%/$user_out/g;
 	s/\%\%correctanswer\%\%/$question_details[7]/g;
+	s/\%\%css\%\%/$css/g;
+	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%givenanswer\%\%/$user_out/g;
+	s/\%\%header\%\%/$headertext/g;
+	s/\%\%image\%\%/$image/g;
+	s/\%\%index\%\%/$cssindex{$style}/g;
+	s/\%\%numquestions\%\%/$numquestions{$quiz}/g;
+	s/\%\%questiontext\%\%/$question_text/g;
+	s/\%\%question_num\%\%/$questionnum/g;
+	s/\%\%quizname\%\%/$quiznames{$quiz}/g;
+	s/\%\%ref\%\%/$qref/g;
+	s/\%\%status\%\%/$status_out/g;
 	s/\%\%urlback\%\%/$urlback/g;
+	s/\%\%urlextra\%\%/$urlextra/g;
 	s/\%\%urlnext\%\%/$urlnext/g;
 	s/\%\%urlscore\%\%/$urlscore/g;
-	s/\%\%ref\%\%/$qref/g;
-	s/\%\%css\%\%/$css/g;
-	s/\%\%urlextra\%\%/$urlextra/g;
-	s/\%\%index\%\%/$cssindex{$style}/g;
-	s/\%\%header\%\%/$headertext/g;
-	s/\%\%footer\%\%/$footertext/g;
+	s/\%\%username\%\%/$name/g;
+	
 	print;
 	}
 	

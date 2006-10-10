@@ -89,9 +89,9 @@ $editinfo .= "Image (URL): <input type=\"text\" name=\"image\" value=\"\" /><br 
 # Comment 
 $editinfo .= "Comment (not shown to the user):<br />\n<textarea name=\"comment\" cols=\"40\" rows=\"5\"></textarea><br />\n";
 # Contributer
-$editinfo .= "Contributer: <input type=\"text\" name=\"qfrom\" value=\"\" /><br />\n";
+$editinfo .= "Contributor: <input type=\"text\" name=\"qfrom\" value=\"\" /><br />\n";
 # Email
-$editinfo .= "Contributer Email: <input type=\"text\" name=\"email\" value=\"\" /><br />\n";
+$editinfo .= "Contributor Email: <input type=\"text\" name=\"email\" value=\"\" /><br />\n";
 
 # Created - handled automatically
 # Updated - handled automatically

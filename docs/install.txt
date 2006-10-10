@@ -1,15 +1,16 @@
 The following steps are required to install the wquiz.cfg program.
 
-These are the installation instructions for the development version of the software..
-These provide a temporary method for installing the program until a fully featured 
-installation script / process can be written.
+These are the installation instructions for the development version of the 
+software.. These provide a temporary method for installing the program until a 
+fully featured installation script / process can be written.
 
 
 Pre-Requisites
 --------------
-The software is designed and tested for use on a Linux Apache web server.
+The software is designed and tested for use on a Linux Apache web server with
+a MySQL database for the questions.
 It may work on other operating systems and servers, but I am unable to give
-any advice on problems experienced other than on Linux / Apache.
+any advice on problems experienced other than on Linux, Apache and MySQL.
 
 
 
@@ -38,24 +39,26 @@ The zip file will create the directory quiz.
 WARNING: you should make sure that there is no other program 
 using the quiz directory, otherwise you may end up with conflicting files.
 
-You can untar the file to a different directory first, and then rename the directory
-to any suitable name.
+You can untar the file to a different directory first, and then rename the 
+directory to any suitable name.
 
 To untar in the current directory (creating the quiz subdirectory) then use
 tar -xvzf wquiz-0.3.2.tgz
 
 
-If you are using a hosted web site then you can extract the files to your local machine
-(the .zip version is made available for windows users), and extract the files into folders
-on you local machine ready to ftp them to the web server. If you are transfering them from 
-a different system then you need to pay particular attention to the file permissions (see later)
+If you are using a hosted web site then you can extract the files to your local 
+machine (the .zip version is made available for windows users), and extract the 
+files into folders on you local machine ready to ftp them to the web server. If 
+you are transfering them from a different system then you need to pay particular
+attention to the file permissions (see later)
 
 
 Step 2 - Copy the sample files
 ------------------------------
 The sample files are all contained in a seperate directory, so that
 if you are upgrading from an older version the customizations will not be lost.
-If installing this as a first install then you should copy the quiz.cfg and the template files 
+If installing this as a first install then you should copy the quiz.cfg and the
+template files 
 into the main directory.
 
 Note: If you have customized your admin templates then the customizations may be
@@ -70,15 +73,18 @@ cp -r samples/* .
 If you are preparing this on a local computer ready to transfer the files
 to a web server then copy the entire samples directory into the quiz directory.
 
+
 You should also create a directory in your normal web server html area 
-(not the ScriptAlias directory), which should hold the template images (these can 
-be customised later).
+(not the ScriptAlias directory), which should hold the template images (these 
+can be customised later).
 
 This should be created as /wquiz. If you use a different directory then you will
-need to manually update all the template files.
+need to manually update all the template html files.
 
 e.g. if your documentroot is /var/www/html
 cp -r wquiz /var/www/html
+
+or copy the directory to your wquiz /public_html directory when uploading 
 
 
 Step 3 - Customise the config file
@@ -88,25 +94,30 @@ Open the file quiz/quiz.cfg in your favourite text editor.
 The following entries need to be changed, other changes are optional
 depending upon your system and preferences. Be careful when editing the file
 to ensure that the syntax is kept the same. This is a perl format file
-so it needs a semi-colon ';' at the end of each line. All lines begining with a hash
-character are comments.
+so it needs a semi-colon ';' at the end of each line. All lines begining with a 
+hash character are comments.
 
 $dbname
 This should be correct for most systems using the mysql database. 
 If you want to use a different database name to "quiz" then change that
-part of the string. e.g. if you want your database to be "myquiz" change the entry
-to: $dbname="DBI:mysql:myquiz:localhost";
+part of the string. e.g. if you want your database to be "myquiz" change the 
+entry to: $dbname="DBI:mysql:myquiz:localhost";
+Or some hosting companies may include your username in the database name, so you
+may have to use username_quiz in that part of the dbname field.
+
 If you are using a different server name then change the localhost value to the
-IP address of the server (and if not using the default mysql port number append 
+IP address of the server (and if not using the default mysql port number append
 with :portnumber). You can change the database type by replacing mysql with an 
-alternative perl database engine type, but if so the install script may not work.
+alternative perl database engine type, but if so the install script may not 
+work.
 
 $dbuser
 Set this to the username with access to the database. If you want to let the
-install script create the database for you then this will need suffient permission
-to create a new database (which can be changed to a user with lower privilage later
-if required). If not then it will need update access to the tables.
-This needs to be created in the database before proceding with the install
+install script create the database for you then this will need sufficient 
+permission to create a new database (which can be changed to a user with lower 
+privilege later if required). If not then it will need update access to the 
+tables. This needs to be created in the database before proceeding with the 
+install.
 
 $dbpass
 The password to go with the above username
@@ -145,6 +156,11 @@ ActiveSecurity
 If you would like to enable the Anti-DOS (Denial of Service) protection
 then enable this by setting $activesecstatus to 1, and updating the files
 with a directory which it has read and write access to.
+
+Header and Footer files
+These can be set to files that you want embedding in the header and footer
+of each page. See the full adminstrator guide for details of how these should
+be used.
 
 Formatting Options
 There is no need to make any changes to the formatting options at this point.
@@ -197,17 +213,22 @@ mysql database then this will be created by the following step.
 
 Step 6 - Run the install script
 -------------------------------
-You should now run the script /cgi-bin/quiz/install.pl
-which will create the database with the basic information.
+You should now run the script /cgi-bin/quiz/install.pl ,which can be called
+from your web browser. The script which will create the database with the 
+basic information needed to get started.
 
 The script will first check to see if the database exists, and if it does not it
 will attempt to create it. If the tables already exist then it will not proceed 
 (unable to reinstall using the script), otherwise it will create empty tables for
 all of the required tables.
 
-If you are unable to run the script then you can extract the details of the tables
-from the script and run them manually (on the command line using mysql, or
-using phpmyadmin or similar).
+If you are unable to run the script, or the install fails then details of how to
+manually setup the database are included in the administrator guide.
+
+You can delete the index.pl script (or set it's permissions to non-executable), 
+although the script will fail if run again, it may give away some additional
+information.
+
 
 Step 7 - Enable Offline Mode if req'd
 -------------------------------------
@@ -227,15 +248,20 @@ offline.pl file.
 
 If you do not want to enable offline mode then set offlinequiz to 0
 
+You will also need to add links to the appropriate pages. There are two buttons
+already provided for this "onlinebutton.png" and "offlinebutton.png". These
+should be linked to index.pl (for the online quiz), and offline.pl (for the 
+offline quiz).
 
-Step 8 - Configure the questions
---------------------------------
+
+Step 8 - Add the questions
+---------------------------
 
 Add the questions by logging on with the admin user name at
 /cgi-bin/quiz/admin/index.pl
 
-The quiz will now be installed in 
-/cgi-bin/quiz/index.pl
+You must add at least one more question than the number of questions in the test
+
 
 
 Step 9 - Customise the template files
@@ -249,6 +275,8 @@ I would appreciate it if you would leave the link to penguintutor.com in the
 footer section, or include a link from elsewhere on your web site. This is 
 not a mandatory requirement, and can be removed.
 
+The quiz will now be installed and ready to use at: 
+/cgi-bin/quiz/index.pl
 
 Step 10 - Test your site
 ------------------------
