@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+	<title>wQuiz Login Page</title>
+	<link href="/wquiz/wquiz.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div id="wquizquickstart">
+<h2>Start Quiz</h2>
+<form method="post" action="details.pl" target="_top">
+<input type="hidden" name="style" value="%%cssurl%%">
+
+<p><label for="name">Please enter your name:</label>
+<input type="text" id="name" name="name" /></p>
+
+<p><label for="quiz">Please select a quiz:</label>
+<select id="quiz" name="quiz">%%quiznames%%</select> 
+<input type="submit" value=" Go " /></p>
+
+</form>
+</div>
+
+
+</body>
+</html>
