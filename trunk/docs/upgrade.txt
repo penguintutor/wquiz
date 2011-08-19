@@ -1,0 +1,11 @@
+To upgrade to the latest CVS just copy the files over your existing setup. 
+The quiz.cfg and template files will not be replaced by an upgrade
+so any customised pages should be OK.
+
+If you have made any further customisations e.g. to the admin templates then 
+these will be overwritten so please make sure you have a backup before 
+performing an upgrade.
+
+This software is under development and comes with no guarantee. I do not 
+recommend you use this on a production environment, without first 
+rigorously testing your setup.

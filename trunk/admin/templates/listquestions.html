@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+	<title>wQuiz - Quiz Administration</title>
+	<link href="/wquiz/admin/admin.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div id="adminheader">
+</div>
+
+<div id="buttons">
+<p>
+<a href="logout.pl"><img src="/wquiz/admin/adminlogout.png" style="border:0px;" alt="Logout" /></a>
+<a href="adminindex.pl"><img src="/wquiz/admin/adminindex.png" style="border:0px;" alt="Admin Index" /></a>
+</p>
+</div>
+
+<div id="admintitle">
+<h1 class="title">Quiz Administration</h1>
+</div>
+
+<div id="adminmain">
+<h3>Manage Questions</h3>
+
+<p>
+<a href="add.pl">Add a new question</a>
+</p>
+</div>
+
+<div>
+<table>
+<tr><th>Question<br />(Test)</th><th>Summary<br />(Edit)</th><th>Type</th><th>Quiz</th><th>Created</th><th>Last Reviewed</th></tr>
+%%questionlist%%
+</table>
+</div>
+
+
+<div id="adminfooter">
+<a href="http://www.penguintutor.com"><img src="/wquiz/admin/admincreatedby.png" style="float:left; border:0px; margin-top:0px; margin-right:10px;" alt="PenguinTutor.com" /></a>
+<p class="createdby">
+<a href="http://www.penguintutor.com/">Web Perl Quiz created by Stewart Watkiss<br />Available from PenguinTutor.com</a>.
+</p>
+</div>
+
+</body>
+</html>
