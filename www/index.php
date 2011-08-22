@@ -13,9 +13,7 @@ require_once ($include_dir."Quizzes.php");
 // get all the quizzes and add to object
 $all_quizzes = new Quizzes();
 $quiz_array = $qdb->getQuizzesAll();
-
-
-// add to allQuizzes
+// add this one to allQuizzes
 foreach ($quiz_array as $this_quiz_array)
 {
 	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
@@ -51,7 +49,15 @@ if (array_key_exists('quizname', $_POST))
 	//check that this is a valid quizname
 	// handle this as a warning using the errorEvent - we then provide a more user friendly error
 	// this is not a security event, but is still wrong
-	if ($all_quizzes->validateQuizname($quiz))
+	if (!$all_quizzes->validateQuizname($quiz))
+	{
+		// here we handle error in more user friendly way than if we suspect attempt to hack
+		$err =  Errors::getInstance();
+		$err->errorEvent(WARNING_PARAMETER, "Warning parameter incorrect - quizname is invalid");
+		//--here we don't give an error just show menu
+		printMenu($all_quizzes);
+	}
+	else
 	{
 		// Get quizobject for this particular quiz
 		$this_quiz = $all_quizzes->getQuiz($quiz);
@@ -76,32 +82,36 @@ if (array_key_exists('quizname', $_POST))
 			{
 				print "<h3>Insufficient questions in selected quiz</h3>\n";
 				$err =  Errors::getInstance();
-				$err->errorEvent(WARNING_QUIZQUESTIONS, "insufficient questions in $quiz, requires: $this"+$this_quiz->getNumQuestions($quiz_type)+" - has "+count($question_array));
+				$err->errorEvent(WARNING_QUIZQUESTIONS, "insufficient questions in $quiz, requires: "+$this_quiz->getNumQuestions($quiz_type)+" - has "+count($question_array));
 				printMenu($all_quizzes);
 			
 			}
 			else
 			{
 				$random_questions = array();
+				$answers = array();
 				for ($i = 0; $i < $this_quiz->getNumQuestions($quiz_type); $i++)
 				{
 					// get the question numbers from the array (we have already shuffled to random order
 					$random_questions[$i] = $question_array[$i]['questionid'];
-					print "<p>question "+$random_questions[$i]+"selected</p>\n"; 
-					
+					// set array with answers set to -1
+					$answers[$i] = -1;
+					//print "<p>question ".$random_questions[$i]." selected</p>\n"; 
 				}
+				/** We now have the questions - now create the session etc.**/
+				// store questions into session
+				$quiz_session->setQuestions ($random_questions);
+				$quiz_session->setAnswers ($answers);
+				// -here
+				print "Successful";
+				
+				$this_quiz
+
 			}
 		}
 		
 	}
-	else
-	{
-		// here we handle error in more user friendly way than if we suspect attempt to hack
-		$err =  Errors::getInstance();
-		$err->errorEvent(WARNING_PARAMETER, "Warning parameter incorrect - quizname is invalid");
-		//--here we don't give an error just show menu
-		printMenu($all_quizzes);
-	}
+
 	
 }
 else 
@@ -128,6 +138,10 @@ if (isset($debug) && $debug)
 	}
 }
 
+
+
+
+/*** Functions ***/
 
 // show here as we will do when we get a warning as well
 function printMenu ($quiz_object)

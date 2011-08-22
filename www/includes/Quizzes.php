@@ -31,9 +31,7 @@ class Quizzes
     	return (count($this->quiz_objects));	
     }
     
-    // returns an array
-    // $answer is the answer provided by the customer
-    // $answer = -1 means unanswered
+
     public function addQuiz ($quiz) 
     {
     	$this->quiz_objects[] = $quiz;
