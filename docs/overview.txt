@@ -1,0 +1,153 @@
+concepts
+
+Emphasis is on this being in PHP / Ajax
+Whilst it would be possible to push more to client side (Javascript handle questions etc)
+for simplicity 
+
+
+Main pages 
+
+index.php
+- provides start page (can be bypassed by post directly to page)
+- shows details of quiz (after post)
+- from details page the next button will be get for non javascript or ajax button if javascript enabled
+
+
+question.php 
+- shows question
+- with post saves current answer
+	- Note all buttons are now post (forward / backward etc.)
+- if in review mode then shows results instead of question
+
+endquiz.php
+- checks all questions answered
+- clicking on link will reload page with results 
+
+
+
+
+Templates
+----------
+
+Note templates used are header and footer
+These are loaded as a regular include
+If more need to be included (eg. menu) then these can be included in the header.php file (eg. use headercontainer)
+Form buttons are not templated - they should be handled using css if they need to be customised
+
+
+
+
+CSS files
+---------
+
+CSS files are not referenced in code.
+They need to be included by the site configuration if required
+CSS IDs / Classes are prefixed with wquiz-
+
+wquiz-questionintro
+wquiz-questionimage
+
+
+
+
+############ temp scratch area ############
+
+/**** Handling multiple buttons ****/
+<HTML>
+<BODY>
+
+<%
+  btnID = "?"
+
+  if Request.Form("bsubmit") = "Submit 1" then
+    btnID = "1"
+  elseif Request.Form("bsubmit") = "Submit 2" then
+    btnID = "2"
+  elseif Request.Form("bsubmit") = "Submit 3" then
+    btnID = "3"
+  end if
+%>
+Submit button ID: <%=btnID%><BR>
+
+<FORM action="mulsub.asp" method="post">
+First name: <INPUT type="TEXT" name="FNAME"><BR>
+<INPUT type="submit" name="bsubmit" value="Submit 1">
+<INPUT type="submit" name="bsubmit" value="Submit 2">
+<INPUT type="submit" name="bsubmit" value="Submit 3">
+</FORM>
+
+</BODY>
+</HTML>
+
+
+
+/*** Hiding buttons using css ***/
+#replacement-1 {
+  width: 100px;
+  height: 55px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent url(SearchGoogle.gif) no-repeat center top;
+  text-indent: -1000em;
+  cursor: pointer; /* hand-shaped cursor */
+  cursor: hand; /* for IE 5.x */
+}
+
+
+<form action="http://www.google.com/search" method="get">
+  <input name="q" size="45" type="Text">
+
+  &nbsp;
+  <button id="replacement-1" type="submit">Search with Google</button>
+  <!-- <div><button style="display:block" id="replacement-1" type="submit">Search with Google</button></div> -->
+</form>
+
+See:
+http://www.ampsoft.net/webdesign-l/image-button.html
+
+
+/***** SQL Join Examples ******/
+
+    	
+/*$selectString = "SELECT album_slug FROM ".$this->tableprefix.INDEXTABLE." JOIN ".$this->tableprefix.ALBUMTABLE." on ".$this->tableprefix.INDEXTABLE.".album_id=".$this->tableprefix.ALBUMTABLE.".album_id  where category_id=$category order by ".$this->tableprefix.INDEXTABLE.".priority, ".$this->tableprefix.INDEXTABLE.".gallery_index_id desc";*/
+		//--here
+		//$select_string = ("Select questionid,  
+    	
+/*		SELECT Persons.LastName, Persons.FirstName, Orders.OrderNo
+FROM Persons
+INNER JOIN Orders
+ON Persons.P_Id=Orders.P_Id
+ORDER BY Persons.LastName*/
+		
+
+
+/*
+// Note this will only work where only one question row per select 
+// This is the case where we only use one quiz (including quiz='all')
+ $sql = "SELECT * FROM tablename
+          WHERE somefield='something'
+          ORDER BY RAND() LIMIT 5";
+
+  //  or, something like this
+  $sql = "SELECT * FROM tablename
+          ORDER BY RAND()";
+          */
+
+
+
+
+
+
+
+/**** Locking the table ****/
+
+# Can we do this using PHP Sessions instead?
+
+// note this is perl - need to change to PHP
+$dbh->do("lock tables $dbsettingstable write");
+$dbh->do("unlock tables");
+
+Note just lock whilst we update the count - then unlock. Once we've updated
+the count we have blocked others from starting a housekeeping
+

@@ -1,0 +1,85 @@
+
+TABLE - unique table per quiz
+
+question
+--------
+(auto incremented number)
+
+quiz
+----
+select from the available quiz options.
+To add more edit quiz.cfg
+
+section Section number/label
+----------------------------
+Currently this is freeform text, but is not yet used.
+You should set a list of standard categories that
+can be used.
+(in future you will be able to define what the allowed options are)
+
+intro
+-----
+This is the question, use html tags if formatting is required.
+It's recommended this is done using css spans.
+
+
+input
+-----
+Formatting to be on the question line,
+e.g.:
+radio / checkbox = option1,option2,option3,etc..
+number / text = prefix,default,suffix (e.g. up to,,seconds or ,,%)
+
+type
+----
+Select from list:
+number
+radio
+text
+TEXT (case senstive text)
+checkbox
+
+answer
+------
+Correct answer
+radio = number of answer (starting at 0)
+number = min,max (set to same to only allow that answer eg. 10,10)
+text = perl regexp (without any /). eg. d[iae]+b[iae]+t[iea] - a way of showing diabetes even if spelt incorrectly
+checkbox = (digit of each correct answer, starting at 0) e.g. 13 (for 2nd and 4th answer)
+
+reason
+------
+Explanation of answer (include actual answer)
+e.g. Answer is <b>answer</b>
+
+
+reference
+----------
+Where question came from
+(not currently available to user, but maybe in future)
+
+hint
+----
+Not used in current version
+(will allow html tags if req'd)
+
+
+image
+-----
+Picture to show (if used in quiz)
+URL (can be on different server if desired)
+
+
+comments
+--------
+Not shown in quiz - for admin use
+
+qfrom
+-----
+Name of question contributer
+
+email
+-----
+email of question owner
+
+
