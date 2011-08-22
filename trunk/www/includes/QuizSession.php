@@ -67,7 +67,7 @@ class QuizSession extends PHPSession
     // serialise then store in the array
     public function setAnswers ($answer_array)
     {
-		$this->setValue('answer', serialize($anser_array));
+		$this->setValue('answer', serialize($answer_array));
     }
     
     

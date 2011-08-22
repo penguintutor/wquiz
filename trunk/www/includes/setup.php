@@ -17,7 +17,7 @@ $include_dir = $app_dir."/";
 // we now drop the include from the app_dir
 $app_dir = substr ($app_dir, 0, strrpos ($app_dir, '/') );
 
-include ($include_dir."css.php");			// constants for css tags
+include ($include_dir."css.php");		// constants for css tags
 include ($include_dir."Errors.php");		// Error handling
 include ($include_dir."Database.php");		// Direct access to DB
 include ($include_dir."QuizDB.php");		// Use DB as quiz parameters
@@ -25,7 +25,7 @@ include ($include_dir."Settings.php");		// Load config file
 include ($include_dir."QuizSession.php");	// Session handling
 include ($include_dir."Question.php");		// Manage a question
 include ($include_dir."Quizzes.php");		// Manage the overall quiz - eg. display menu
-require_once ($include_dir."Quiz.php");			// Manage an individual quiz
+require_once ($include_dir."Quiz.php");		// Manage an individual quiz
 include ($include_dir."Templates.php");		// Templates for html header / footer
 
 

@@ -1,9 +1,9 @@
 <?php
 
 /*** 
-Handles the overall quiz setup for 1 quiz
-// used by Quizzes class for menu / admin / overview, but can be called 
-// directly by individual php files where in active quiz
+Handles the overall quiz setup for a single quiz
+used by Quizzes class for menu / admin / overview, but can be called 
+directly by individual php files where in active quiz
 ***/
 
 class Quiz
@@ -13,7 +13,7 @@ class Quiz
 	// quizid, quizname, title, numquestions, numquestionsoffline, quizintro, enableonline, enableoffline
 	private $quiz_info;
 
-    // question_num is our position in quiz - irrelevant (0) if not actually doing quiz
+	// question_num is our position in quiz - irrelevant (0) if not actually doing quiz
 	// normally create instance with details, but set to null in case 
 	// creating a new one (eg. new question)
 	// defaults are set to empty strings above    
