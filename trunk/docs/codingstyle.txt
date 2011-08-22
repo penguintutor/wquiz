@@ -1,0 +1,16 @@
+Classnames start with Capital and use Camelcase - eg. Database / ThisClass
+methodnames start with lower case and use Camelcase eg. getResult
+variables in customer config files are all lowercase eg. $dbsettings
+variablenames (including instances) are all lowercase with underscore eg. $this_value
+
+css tags are prefixed with wquiz- (to avoid conflict with other css rules)
+then follow customer variable standard (eg. wquiz-questionintro)
+
+constants (eg. Error msg numbers) are in capitals with underscore eg. ERROR_CONFIG
+
+All classes are contained within includes directory (recognisable by Initial capital - as per classname)
+Other PHP includes are included within includes directory, starting with lowercase
+config files are within www directory ending with .cfg - PHP syntax (eg. default.cfg) - username information linked externally
+
+Any setting values that can be stored in database are
+

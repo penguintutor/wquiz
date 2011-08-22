@@ -1,0 +1,318 @@
+How the quiz works
+
+Sessions
+--------
+Users do not need to login, but Facebook logins will be added in future version (for social network features) 
+
+
+Sessions are tracked using PHP sessions (see later)
+
+
+Admin
+-----
+
+login is required for admin functionality (uses local login rather than facebook)
+
+
+Quiz setup
+----------
+Questions are chosen as a random selection from those in that quiz category.
+The list is stored in faquiz_active, so that they can be referred
+to during the quiz and at the review. 
+
+As a housekeeping feature every 100 (or configured) completed quizzes the mark function will
+clear out entries over 4 hours old (or configured).
+
+Images are not stored in the DB. Instead are served up as URL's.
+
+Offline Quiz
+------------
+The offline quiz needs to create a unique code. To do this we increment the value of offline.qcl whenever a new session
+is started. It has to exist when first run with a value of 1.
+
+When move this over to DB we need to use locking on the DB as there could be simultaneous updates
+
+Constraints
+-----------
+Answer cannot be -1 (means not answered)
+Max 10 options in a radio/checkbox
+
+number allows for user to enter value if they enter more than that only first set of digits are taken
+(e.g. 34m = 34)
+(decimal places are not allowed)
+
+The value must be between min and max, which can be set to the same if only allow specific value
+If they enter the word (e.g. ten) then it will fail
+
+regexp in answer does not include / chars - it will be matched with -i
+
+Answer is to be included in the reason - preferably surrounded by <b> tags or similar.
+
+
+PHP Session
+-----------
+
+Instead of using Session cache in the database this is moved into a PHP session.
+This is stored and retrieved using a QuizSession class (which uses PHPSession).
+[quizname] - quiz being used
+[status] - 
+Store following variables as serialised arrays for the ones below
+array position is the question number (eg. 1 to 25)
+[question] - question number in quiz table
+[answer] - (-1 for no answer) - text / int of the answer
+
+Status values are:
+(0 = not setup yet, not normally used - potential future use)
+(1 = active in quiz, ie answering questions)
+(2 = completed - answers marked in review mode) // blocks user from changing completed quiz
+(5 = offline mode)
+(10 = admin - adding / deleting questions)
+
+
+
+
+
+Quiz Table
+----------
+
+Holds information about each quiz
+can be used to enable / disable quiz etc.
+
+quizid int pri autoincrement
+quizname varchar 255 unique	- shortname, needs to be post friendly (no spaces)				// this could have been used as primary key, but would have made changing shortname very difficult
+title varchar 255 - Long title (user friendly)
+numquestions int		// Note this is the number of questions to be provided for the quiz (not total number of questions)	default 0
+numquestionsoffline int	// default 0
+quizintro text			// Overview of the quiz
+priority int			// used to sort menu etc. - highest first - default 1
+enableonline boolean	// - assuming online quiz is enabled - default false (0)
+enableoffline boolean	// - assuming offline quiz is enabled - default false (0)
+
+
+Question -> Quiz Table
+----------------------
+
+Table: quiz_questionrel
+
+relid int pri auto
+quizid	int
+questionid	int
+
+
+Question Table Layout
+----------------------
+
+Primarily for the need to remove the fixed entries in set the new format is:
+From 0.3.2
++-----------+-------------------------------------+------+-----+----------+-------+
+| Field     | Type                                | Null | Key | Default  | Extra |
++-----------+-------------------------------------+------+-----+----------+-------+
+| questionid (was question) | int                                 |      | PRI |          |       | 0
+*** delete ****| quiz      | varchar (254)                       |      |     |          |       | 1 (format :all:quiz1:quiz2:etc..: - must be prefixed and followed by a :)
+| section   | varchar(254)                        |      |     |          |       | 2
+| intro     | text                                |      |     |          |       | 3
+| input     | text                                |      |     |          |       | 4
+| type      | varchar(10)                         |      |     |          |       | 5
+| answer    | varchar(20)                         |      |     |          |       | 6
+| reason    | text                                |      |     |          |       | 7
+| reference | varchar(30)                         |      |     |          |       | 8
+| hint      | varchar(254)                        |      |     |          |       | 9 - not supported yet
+| image     | varchar(200)                        |      |     |          |       |10
+| comments  | varchar(200)                        |      |     |          |       |11
+| qfrom     | varchar(50)                         |      |     |          |       |12
+| email     | varchar(50)                         |      |     |          |       |13
+| created   | date                                |      |     |0000-00-00|       |14
+| reviewed  | date                                |      |     |0000-00-00|       |15
++-----------+-------------------------------------+------+-----+----------+-------+
+
+
+
+
+
+Upgrade Steps
+-------------
+
+
+
+copy faquiz to faidquiz_questions
+- remove field quiz
+- rename field question to questionid
+
+
+New tables 
+
+CREATE TABLE `faidquiz_quiz` (
+  `quizname` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `numquestions` int(11) NOT NULL default '0',
+  `numquestionsoffline` int(11) NOT NULL default '0',
+  `quizintro` text NOT NULL,
+  `priority` int(11) NOT NULL default '1',
+  `enableonline` tinyint(1) NOT NULL default '0',
+  `enableoffline` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`quizname`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `faquiz`.`faidquiz_questionrel` (
+`relid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`quizname` varchar(255) NOT NULL,
+`questionid` INT NOT NULL
+) ENGINE = MYISAM ;
+
+CREATE TABLE `faidquiz`.`faquiz_settings` (
+`settings_key` VARCHAR( 50 ) NOT NULL ,
+`settings_value` VARCHAR( 255 ) NOT NULL ,
+PRIMARY KEY ( `settings_key` )
+) ENGINE = MYISAM ;
+
+
+Templates need to be rewritten as php modules
+New config file needs to be created and settings added into database
+
+
+# After successful upgrade remove faquiz, faquiz_session, faquiz_active and faquiz_settings_num
+
+// create initial all category
+INSERT INTO `stew8994_faquiz`.`faidquiz_quiz` (`quizid`, `quizname`, `title`, `numquestions`, `numquestionsoffline`, `quizintro`, `priority`, `enableonline`, `enableoffline`) VALUES (NULL, 'all', 'All categories', '10', '10', 'A selection of questions picked from all the different quizzes. This may include some questions from a quiz that has not yet been fully implemented.', '0', '1', '1');
+
+
+Install
+-------
+
+TBC
+
+
+
+
+
+Administration
+--------------
+
+Adminsistration login works across all quizzes. There is no way in the current version to allow user to 
+only administer a single quiz. Potentially a possibility, though this would probably only appeal to a small
+number of people that would want that feature.
+
+
+Case Sensitive
+--------------
+Question type TEXT is case sensitive
+If we need to prompt user, then it should be done in the question, there is no
+specific code in the program to notify user
+
+
+Browser autoprompt
+------------------
+To prevent the autoprompt from the browser a short part of the session 
+is used in the name of the "answer" field. Eg. for text, number and TEXT 
+field name is answeruvwxyz - where uvwxyz is taken from the session 
+
+
+
+
+
+
+
+
+
+
+##########################################
+Old - no longer used
+##########################################
+
+
+Session cache - old method now defunct
+--------------
+
+The Cache is replaced with a session table in the DB.
+This has to be in the same DB as the questions 
+Adds a unique entry based on the session key as before, includes a date created field
+
+All session times are stored in gmtime regardless of the local timezone. That way if the clocks change
+it will not cause sessions to expire early / late
+
+Housekeeping is replaced with the score page which will first lock and increment a count field
+when this reaches a certain figure (set in quiz.cfg or default to 100), then goes through and
+cleans any over a certain time period (set in quiz.cfg or default to 4 hours).
+ 
+The info is held in two tables
+
+quiz_session = (session_id varchar(255), startsession datetime, quizname varchar(255), status int, name varchar(255));
+status is a number to identify the quiz status
+(0 = not setup yet, not normally used - potential future use)
+(1 = active in quiz, ie answering questions)
+(2 = completed - answers marked in review mode) // blocks user from changing completed quiz
+(5 = offline mode)
+(10 = admin - adding / deleting questions - does not use quiz_active)
+startsession date is used to clear old sessions. If session is longer than max age, then it can be deleted (this is not checked by 
+running quizes, only by the clean up, so we could have sessions running that are well over the max age).
+# Exception is with the admin sessions which update the startsession during activities and will expire if longer than $adminsessiontimeout (mins) or default 4 hours
+# If use shared computers need to set $adminsessiontimeout much lower, or always logout.
+time is always set by php using gmtime, to check we look for time - (number of seconds) converted to gmtime
+We don't ever update the time, an option for other programs, but not something you'd want to do in a quiz.
+We could use this field to put a time limit to the quiz in the future, but this is not supported at the moment
+(as we don't check the time when allowing the user to answer questions).
+
+SQL query: 
+CREATE TABLE `linuxquiz_session` (
+`session_id` VARCHAR( 254 ) NOT NULL ,
+`startsession` DATETIME NOT NULL ,
+`quizname` VARCHAR( 254 ) NOT NULL ,
+`status` INT NOT NULL ,
+`name` VARCHAR( 254 ) NOT NULL ,
+PRIMARY KEY ( `session_id` )
+) TYPE = MYISAM ;
+
+
+which will then link with the actual questions in a seperate table
+
+quiz_active = (session_id varchar(255), qnum int, question int, answer varchar(255))
+quizqnum is the number of the question as per the question DB
+answer is a text from the user (even text if the answer is a number so that it can be used for any type of question)
+SQL query: 
+CREATE TABLE `linuxquiz_active` (
+`session_id` VARCHAR( 254 ) NOT NULL ,
+`qnum` INT NOT NULL ,
+`question` INT NOT NULL ,
+`answer` VARCHAR( 254 ) NOT NULL ,
+PRIMARY KEY ( `session_id` , `qnum` )
+) TYPE = MYISAM ;
+
+
+
+Settings Table - not to be used by offline as risk of locking quiz out is too great - need another table
+for offline count etc.
+Table used for admin functions. This is edited at the end of each session - and locked during a cleanup
+of the expired sessions. 
+It can be used for any other settings, similar to how a registry works using key value pairs. 
+we use the _num as it leaves open for a text based table (would not want any other)
+quizname_settings_num
+key = char(25)
+value = int
+CREATE TABLE `linuxquiz_settings_num` (
+`settingkey` CHAR( 25 ) NOT NULL ,
+`settingvalue` INT NOT NULL ,
+PRIMARY KEY ( `key` )
+) TYPE = MYISAM ;
+
+Following entry in settings_num must include:
+# Tracks the number of sessions ended, so that housekeeping is not run every time a session ends
+settingkey=sessionendcount
+settingvalue=0
+
+INSERT INTO `##quizname##_settings_num` ( `settingkey` , `settingvalue` )
+VALUES (
+'sessionendcount', '0'
+);
+
+# When we determine if we are ready for update we 
+read in value of sessionendcount
+if value > $sessionsbeforecleanup then 
+lock table
+read in value again - check it's still > $sessionsbeforecleanup (if not already running so continue)
+write 0 to table
+unlock table
+perform cleanup
+
+If we fail on the lock table, then ignore - as we are already running
+
