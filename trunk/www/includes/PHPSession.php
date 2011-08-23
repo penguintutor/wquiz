@@ -13,6 +13,8 @@ class PHPSession
     {
     	// start session to get the session uid
     	session_start();
+    	//-- here debug in progress
+    	print "Session started";
     }
     
     // returns a variable

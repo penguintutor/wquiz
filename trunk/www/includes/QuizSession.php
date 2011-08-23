@@ -44,6 +44,13 @@ class QuizSession extends PHPSession
     	return ($session_info);
     }
     
+    // status - track where we are
+    public function setStatus ($new_status)
+    {
+		$this->setValue('status', $new_status);
+    }
+    
+    
     // returns array from serialized values
     public function getQuestions () 
     {

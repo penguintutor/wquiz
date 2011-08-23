@@ -3,7 +3,7 @@
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
-$GLOBALS['debug'] = 0;
+$GLOBALS['debug'] = 1;
 
 
 require_once("includes/setup.php");
@@ -17,7 +17,8 @@ if (!isset($quiz_info['status'])||!is_int($quiz_info['status']))
 	// kill session and send to index page
 	$quiz_session->destroySession();
 	//-here error handling, should provide a more user friendly - redirect to start
-	header("Location: ".INDEX_FILE);
+	print "Error - no session\n";
+	//header("Location: ".INDEX_FILE);
 }
 
 
