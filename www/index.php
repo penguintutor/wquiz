@@ -102,16 +102,32 @@ if (array_key_exists('quizname', $_POST))
 				// store questions into session
 				$quiz_session->setQuestions ($random_questions);
 				$quiz_session->setAnswers ($answers);
-				// -here
-				print "Successful";
+				$quiz_session->setStatus (SESSION_STATUS_ACTIVE);
 				
-				$this_quiz
+				// Form starts at the top as future pages use options within form
+				print "<form id=\"wquiz-form\" method=\"post\" action=\"question.php\">\n";
+				
 
+				print "<div id=\"".CSS_ID_QUIZ_INTRO."\">\n";
+				print "<h3 id=\"".CSS_ID_QUIZ_TITLE."\">".$this_quiz->getTitle()."</h3>\n\n";
+				// if this does not already include paragraphs then add
+				$this_intro = $this_quiz->getIntro();
+				if (!isParagraph($this_intro)) {print "<p>\n$this_intro\n</p>\n";}
+				else {print $this_intro;}
+				print "\n</div><!-- ".CSS_ID_QUIZ_INTRO." -->\n";
+
+				// Add start button
+				// Basic text button here - but replace with graphical buttons using CSS
+				print "<div id=\"".CSS_ID_BUTTONS."\">";
+				print "<input type=\"submit\" value=\"start\" name=\"start\" />\n";
+				print "</div><!-- ".CSS_ID_BUTTONS." -->\n";
+				
+				
+				print "</form>\n";
 			}
 		}
 		
 	}
-
 	
 }
 else 

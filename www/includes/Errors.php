@@ -8,16 +8,16 @@
 
 //note 100, 200 etc. are defined as the error levels
 
-define ('ERROR_CFG', 101);			// Error loading / reading config file
-define ('ERROR_QUESTION', 102);		// Error with question
-define ('ERROR_SETTINGS', 103);		// Error with settings table
-define ('ERROR_EXTERNAL', 104);		// Error loading external file (eg. template)
-define ('ERROR_SESSION', 105);		// Error with session (eg. no session where required)
-define ('ERROR_SECURITY', 106);		// Error with user date failing security check
-define ('ERROR_PARAMETER', 107);	// Error with parameter provided by the customer
-define ('ERROR_QUIZSTATUS', 108);	// Error with parameter provided by the customer
-define ('ERROR_QUIZQUESTIONS', 109); // insufficient questions etc.
-define ('ERROR_DATABASE', 110);		// Other database error
+define ('ERROR_CFG', 101);				// Error loading / reading config file
+define ('ERROR_QUESTION', 102);			// Error with question
+define ('ERROR_SETTINGS', 103);			// Error with settings table
+define ('ERROR_EXTERNAL', 104);			// Error loading external file (eg. template)
+define ('ERROR_SESSION', 105);			// Error with session (eg. no session where required)
+define ('ERROR_SECURITY', 106);			// Error with user date failing security check
+define ('ERROR_PARAMETER', 107);		// Error with parameter provided by the customer
+define ('ERROR_QUIZSTATUS', 108);		// Error with parameter provided by the customer
+define ('ERROR_QUIZQUESTIONS', 109);	// insufficient questions etc.
+define ('ERROR_DATABASE', 110);			// Other database error
 define ('ERROR_LEVEL', 200);
 define ('WARNING_CFG', 201);
 define ('WARNING_QUESTION', 202);

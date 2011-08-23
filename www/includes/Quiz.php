@@ -39,6 +39,11 @@ class Quiz
     	return $this->quiz_info['title'];
     }
 
+    public function getIntro ()
+    {
+    	return $this->quiz_info['quizintro'];
+    }
+
 	// quiztype 
 	public function getNumQuestions ($quiztype = 'online')
 	{

@@ -1,18 +1,4 @@
 
-div#wquizheader {
-	height: 180px;
-	width: 700px;
-	background-image: url(/wquiz/headerlogo.png);
-}
-
-#wquizmain a {
-	text-decoration: none;
-}
-
-#wquizmain a:hover {
-	text-decoration: underline;
-}
-
 #wquiz-quizmenu legend
 {
 	font-size: 14pt; 
@@ -27,8 +13,8 @@ div#wquizheader {
 
 #wquiz-quizmenu fieldset
 {
-border: 1px solid #781351;
-background-color: rgb(156, 199, 176);
+	border: 1px solid #781351;
+	background-color: rgb(156, 199, 176);
 }
 
 #wquiz-quizmenu p
@@ -37,11 +23,38 @@ background-color: rgb(156, 199, 176);
 
 }
 
+
+#wquiz-questionintro div
+{
+	margin-left: 30px;
+	margin-right: 20px;
+}
+
+
 img.wquiz-questionimage
 {
  		 float: right;
 		 padding: 10px;
 		 margin: 20px;
+}
+
+
+
+
+
+
+div#wquizheader {
+	height: 180px;
+	width: 700px;
+	background-image: url(/wquiz/headerlogo.png);
+}
+
+#wquizmain a {
+	text-decoration: none;
+}
+
+#wquizmain a:hover {
+	text-decoration: underline;
 }
 
 
