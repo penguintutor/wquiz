@@ -14,7 +14,7 @@ class Question
 	private $question_num = 0;
 	// question is not used in the form instead we use question_num as that is position in quiz
 	// question is used if we are editing the question
-    private $question = ''; // question number - named same as mysql field name
+    private $questionid = ''; // question number - named same as mysql field name
     private $intro = '';
     private $input = '';
     private $type = '';
@@ -31,11 +31,11 @@ class Question
 	// defaults are set to empty strings above    
     public function __construct ($question_num=null, $db_results=null) 
     {
-    	if ($question_num != null) {$this->question_num = $question_num;}
+    	if ($question_num != null) {$this->questionid = $question_num;}
     	// if provided with array use it to initialise variables
-    	if (is_array ($db_results))
+    	if (is_array ($db_results) && isset($db_results['questionid']))
     	{
-			$this->question = $db_results['question'];	
+			$this->questionid = $db_results['questionid'];	
 			$this->intro = $db_results['intro'];
 			$this->input = $db_results['input'];
 			$this->type = $db_results['type'];
@@ -62,7 +62,7 @@ class Question
     	print "</p>\n";
     	// hidden entry with this question number
     	print "<p id=\"".CSS_ID_QUESTION_INPUT."\">\n";
-    	print "<input type=\"hidden\" name=\"question\" value=\"".$this->question_num."\" />\n";
+    	print "<input type=\"hidden\" name=\"question\" value=\"".$this->questionid."\" />\n";
     	// handle appropriate format depending upon question
     	print $this->formatQuestion($answer);  
     	print "\n</p>\n</div>\n";
@@ -93,7 +93,7 @@ class Question
     						break;
 			default:	// unknown question - this is a warning level - don't break, but 
 							$err =  Errors::getInstance();
-    						$err->errorEvent(WARNING_QUESTION, "Warning, unknown question type for $this->question");
+    						$err->errorEvent(WARNING_QUESTION, "Warning, unknown question type for $this->questionid");
     	}
     	return $formatted;
     }
