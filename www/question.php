@@ -16,15 +16,18 @@ if (!isset($quiz_info['status'])||!is_int($quiz_info['status']))
 	$err->errorEvent(WARNING_SESSION, "Session status is invalid");
 	// kill session and send to index page
 	$quiz_session->destroySession();
-	//-here error handling, should provide a more user friendly - redirect to start
-	print "Error - no session\n";
-	//header("Location: ".INDEX_FILE);
+	// -here - return to main page on error - we need to provide a message to the user 
+	// most likely session timed out or gone direct to question.php?
+	header("Location: ".INDEX_FILE);
 }
+
+// get question number from the post
+//if (!isset($_POST['questionnum']) || !is_int($_POST['questionnum'])) {$questionnum = 1;}
+//-here
 
 
 // Pull in templates
 $templates->includeTemplate('header', 'normal');
-
 $question = new Question(0, $qdb->getQuestion(2));
 // first print status bar if req'd (eg. question 1 of 10)
 // answer is currently selected -1 = not answered

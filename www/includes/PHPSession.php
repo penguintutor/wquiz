@@ -13,14 +13,12 @@ class PHPSession
     {
     	// start session to get the session uid
     	session_start();
-    	//-- here debug in progress
-    	print "Session started";
     }
     
     // returns a variable
     public function getValue ($key) 
     {
-    	if(isset($_SESSION[$key])) {return $key;}
+    	if(isset($_SESSION[$key])) {return $_SESSION[$key];}
     	else {return "";}
     }
     

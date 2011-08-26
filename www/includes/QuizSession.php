@@ -37,7 +37,12 @@ class QuizSession extends PHPSession
     	$session_info = array();
     	$status = $this->getValue('status');
     	
-    	if (!isset($status) || !is_int ($status)) {return ($session_info);}
+    	if (!isset($status) || !is_int ($status)) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(INFO_SESSION, "No session found"); 
+    		return ($session_info);
+    	}
     	$session_info['status'] = $status;
     	$session_info['quizname'] = $this->getValue('quizname');
     	

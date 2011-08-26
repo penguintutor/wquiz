@@ -43,8 +43,40 @@ class QuizDB
     // returns an array
     public function getQuestion ($question_num) 
     {
+    	// join used to get the quiznames from the relationship table
+    	// may end up with multiple results with quizname being the unique part of each entry
+    	$question_result = array();
     	
-    	$question_result = $this->db_object->getRow ("Select question,intro,input,type,answer,reason,image from ".$this->table_prefix.$this->quiz_tables['questions']." where question=$question_num");
+    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].". questionid,intro,input,type,answer,reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname from ".$this->table_prefix.$this->quiz_tables['questions']." JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid where ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=$question_num";
+    	
+    	// get all results into a temp array then we can combine to a single array with the quizname entries joined
+    	$temp_array = $this->db_object->getRowsAll ($sql);
+    	
+    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	// copy first entry into place except for quizname
+    	foreach ($temp_array[0] as $key => $value)
+    	{
+    		// skip keyname
+    		if ($key != "quizname") 
+    		{
+    			$question_result[$key] = $value;
+    		}
+    	}
+    	
+    	$question_result['quizzes'] = array();
+    	
+    	// now iterate over the entire array (of hash arrays) adding question_result to an array
+    	foreach ($temp_array as $this_array)
+    	{
+    		$question_result['quizzes'][] = $this_array['quizname'];
+    	}
     	
     	return ($question_result);
     }
@@ -56,7 +88,7 @@ class QuizDB
     {
     	// if $quiz not specified get all questions in db (even those with no quiz)
     	// Initial sql without where - add where part later if required
-    	$sql = "SELECT questionid, section, intro, input, type, answer, reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
+    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, section, intro, input, type, answer, reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
     	
     	// if we limit to a quiz then handle here
     	if ($quiz!="")
@@ -71,20 +103,23 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		//-here userfriendly handling?
+    		//print "An error has occurred";
     		$err =  Errors::getInstance();
-    		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']); 
+    		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']);
+
     	}
     	
     	// New array that we return from the function
     	$return_array = array();
 
-    	print "DEBUG\n";
-    	print_r ($temp_array);
+    	//print "DEBUG\n";
+    	//print_r ($temp_array);
     	
     	// iterate over all arrays - set so we only have one question
     	foreach ($temp_array as $this_array)
     	{
-    		// pull this out of array as we will use a few tiems and makes easier to read
+    		// pull this out of array as we will use a few times and makes easier to read
     		$this_question_id = $this_array['questionid'];
     		// does this question already exist - if so just add this quiz to it's quiz array
     		if (isset($return_array[$this_question_id]))
