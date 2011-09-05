@@ -12,10 +12,12 @@ define ("CSS_ID_QUIZ_INTRO", "wquiz-quizintro");			// div
 define ("CSS_ID_QUIZ_TITLE", "wquiz-quiztitle");			// h3
 define ("CSS_CLASS_IMAGE", "wquiz-questionimage");
 define ("CSS_CLASS_QUESTION_P", "wquiz-questiontext");
+define ("CSS_ID_NAVIGATION", "wquiz-questionnavigation");	// div
 define ("CSS_ID_MENU", "wquiz-quizmenu");
 define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");				// div - for main direction buttons etc.
+
 
 
 
