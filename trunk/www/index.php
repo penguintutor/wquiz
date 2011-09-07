@@ -135,8 +135,6 @@ else
 
 	printMenu($all_quizzes);
 
-//<p><a href="".INDEX_FILE."" target="_top">Which quiz to choose?</a></p>
-
 }
 
 // footer template

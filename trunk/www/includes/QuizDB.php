@@ -40,6 +40,46 @@ class QuizDB
     	return $settings;
     }
     
+    
+    // returns true on success 
+    // due to error level chosen will exit application on error (but could change to warning)
+    public function updateSetting ($key, $value)
+    {
+    	$sql = "update ".$this->table_prefix.$this->quiz_tables['settings']." set settings_value=\'$value\' where settings_key=\'$key\'";
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    }
+    
+    // returns true on success 
+    // due to error level chosen will exit application on error (but could change to warning)
+    public function insertSetting ($key, $value)
+    {
+    	$sql = "insert into ".$this->table_prefix.$this->quiz_tables['settings']." (settings_value, settings_key) value(\'$value\', \'$key\')";
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    	
+    }
+
+    
+    
     // returns an array
     public function getQuestion ($question_num) 
     {

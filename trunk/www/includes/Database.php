@@ -25,6 +25,28 @@ class Database
    	    else {$this->db_status = 1;}
     }
     
+
+    // this can be either update or insert - depending upon select string
+    // returns array - so as consistant with other functions
+    // returns null array on success
+    public function updateRow ($select_string) 
+    {
+    	$return_array = array();
+        if (!$results = mysql_query ($select_string))
+        {
+    	    	$return_array['ERRORS'] = "Error writing to database";
+    	    	$this->db_status = -1;
+    	    	$this->db_error = 'Error writing to database '+mysql_error();
+    	 }	
+    	 return $return_array;
+    }     
+    
+    // not strictly needed, but maintains consistancy with names as per QuizDB
+    public function insertRow ($select_string)
+    {
+    	return $this->updateRow ($select_string);
+    }
+    
     
     public function getRow ($select_string) 
     {
