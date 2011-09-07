@@ -51,7 +51,28 @@ class Settings
     	if (isset ($this->settings[$key])) {return $this->settings[$key];}
     	else {return "";}
     }
-
+    
+    // either creates or updates setting depending upon whether it already exists
+    pubilc function setSetting($key, $value)
+    {
+    	// escape the value to make sure it is safe data for mysql
+    	$safe_value = mysql_real_escape_string($value);
+    	// insert vs update
+    	if (isset ($this->settings[$key]))
+    	{
+    		$this->qdb_object->updateSetting ($key, $safe_value);
+    	}
+    	else 
+    	{
+    		$this->qdb_object->insertSetting ($key, $safe_value);
+    	}
+    	// now set the new value in cache (ie within the instance)
+    	// alternate re-run loadSettings to confirm it's definately updated
+    	$this->settings[$key] = $value;
+    	
+    	// qdb function will not return if error so we always return true
+    	return true;
+    }
     
     
 }
