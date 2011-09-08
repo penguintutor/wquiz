@@ -6,7 +6,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-$debug = true;
+$debug = false;
 
 
 if ($debug) {print "Loading setup\n";}
@@ -15,7 +15,7 @@ require_once("../includes/setup.php");
 
 
 // input array - this is what we will insert into settings
-$test_value = array ('test_text');
+$test_value = 'test_text2 $ ; this funny % char 2089#';
 $test_key = 'test_key';
 
 if ($debug) {print "Getting settings\n";}
@@ -28,7 +28,7 @@ $settings->setSetting($test_key, $test_value);
 
 if ($debug) {print "Reading value back\n";}
 
-$updated_value = $settings->getSetting($test_value);
+$updated_value = $settings->getSetting($test_key);
 
 if ($debug) {print "Reloading values\n";}
 
@@ -37,7 +37,7 @@ $settings->reloadSettings();
 
 if ($debug) {print "Reading reloaded value\n";}
 
-$check_value = $settings->getSetting($test_value);
+$check_value = $settings->getSetting($test_key);
 
 if ($debug) {print "Testing result\n";}
 
@@ -56,10 +56,10 @@ else
 print ("test value:\n");
 print_r ($test_value);
 
-print ("set value:\n");
+print ("\nset value:\n");
 print_r ($updated_value);
 
-print ("reloaded value:\n");
+print ("\nreloaded value:\n");
 print_r ($check_value);
 
 	

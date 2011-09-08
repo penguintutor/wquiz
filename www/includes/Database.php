@@ -33,7 +33,7 @@ class Database
     {
     	
     	//debug
-    	print "Updating $select_string\n";
+    	//print "Updating $select_string\n";
     	
     	$return_array = array();
         if (!$results = mysql_query ($select_string))
