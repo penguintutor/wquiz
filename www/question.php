@@ -3,7 +3,7 @@
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
-$GLOBALS['debug'] = 1;
+$debug = true;
 
 
 require_once("includes/setup.php");
