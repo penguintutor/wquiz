@@ -46,6 +46,22 @@ class Settings
     	
     }
     
+    
+    // replaces the current settings with the latest in the database
+    public function reloadSettings () 
+    {
+    	// get the current settings from the database
+    	$this->settings = $this->qdb_object->getSettingsAll();
+    	// perform error checking
+    	if (isset ($this->settings['ERRORS']) && ($this->settings['ERRORS'] != ''))
+    	{
+    		// fatal error as we need these settings for everything else to work
+    		$err = Errors::getInstance();
+    		$err->errorEvent(ERROR_SETTINGS, "Error reloading settings ".$this->settings['ERRORS']);
+    	}
+    	
+    }    
+    
     public function getSetting($key)
     {
     	if (isset ($this->settings[$key])) {return $this->settings[$key];}
@@ -53,7 +69,7 @@ class Settings
     }
     
     // either creates or updates setting depending upon whether it already exists
-    pubilc function setSetting($key, $value)
+    public function setSetting($key, $value)
     {
     	// escape the value to make sure it is safe data for mysql
     	$safe_value = mysql_real_escape_string($value);

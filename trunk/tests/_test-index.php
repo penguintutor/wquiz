@@ -1,14 +1,15 @@
 <?php
+// test script - based on subversion revision 16
+
 
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-
 //$debug = true;
 
 
-require_once("includes/setup.php");
+require_once("../includes/setup.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 

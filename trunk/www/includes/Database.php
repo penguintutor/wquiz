@@ -31,6 +31,10 @@ class Database
     // returns null array on success
     public function updateRow ($select_string) 
     {
+    	
+    	//debug
+    	print "Updating $select_string\n";
+    	
     	$return_array = array();
         if (!$results = mysql_query ($select_string))
         {

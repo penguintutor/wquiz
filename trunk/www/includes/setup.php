@@ -3,7 +3,7 @@
 $default_cfg_file = 'default.cfg';
 
 // debug mode - set to true to enable debug messages
-$debug = false;
+if (!isset ($debug)) {$debug = false;}
 
 // Internal links to other pages
 define ("INDEX_FILE", "index.php");
@@ -17,16 +17,27 @@ $include_dir = $app_dir."/";
 // we now drop the include from the app_dir
 $app_dir = substr ($app_dir, 0, strrpos ($app_dir, '/') );
 
-include ($include_dir."css.php");		// constants for css tags
+if ($debug) {print "Loading css\n";}
+include ($include_dir."css.php");			// constants for css tags
+if ($debug) {print "Loading Errors\n";}
 include ($include_dir."Errors.php");		// Error handling
+if ($debug) {print "Loading Database\n";}
 include ($include_dir."Database.php");		// Direct access to DB
+if ($debug) {print "Loading Quizdb\n";}
 include ($include_dir."QuizDB.php");		// Use DB as quiz parameters
+if ($debug) {print "Loading Settings\n";}
 include ($include_dir."Settings.php");		// Load config file
+if ($debug) {print "Loading QuizSession\n";}
 include ($include_dir."QuizSession.php");	// Session handling
+if ($debug) {print "Loading Question\n";}
 include ($include_dir."Question.php");		// Manage a question
+if ($debug) {print "Loading Quizzes\n";}
 include ($include_dir."Quizzes.php");		// Manage the overall quiz - eg. display menu
+if ($debug) {print "Loading Quiz\n";}
 require_once ($include_dir."Quiz.php");		// Manage an individual quiz
+if ($debug) {print "Loading Templates\n";}
 include ($include_dir."Templates.php");		// Templates for html header / footer
+if ($debug) {print "Setup Includes / requires complete\n";}
 
 
 // Create Error Handler - as this is a singleton we don't need to do now - just call when required
@@ -61,11 +72,15 @@ else
 	if (!isset($dbsettings)) {$err->errorEvent(ERROR_CFG, "Error loading local config file ($cfgfile), or file is corrupt / incomplete");}
 }
 
+if ($debug) {print "config files loaded\n";}
+
 
 /*** Connect to database - $db can be used to access by other classes ***/
 /*** But prefrably use $qdb below ***/
 // null array for options - could add options if required
 $db_options = array();
+
+if ($debug) {print "connecting to database\n";}
 // create database handler
 $db = new Database($dbsettings);
 if ($db->getStatus() != 1) {die ("Unable to connect to the database");}
@@ -87,6 +102,6 @@ $templates = new Templates();
 $quiz_session = new QuizSession();
 
 //-debug
-//print "Setup complete";
+if ($debug) {print "Setup complete\n\n";}
 
 ?>
