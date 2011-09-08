@@ -45,7 +45,7 @@ class QuizDB
     // due to error level chosen will exit application on error (but could change to warning)
     public function updateSetting ($key, $value)
     {
-    	$sql = "update ".$this->table_prefix.$this->quiz_tables['settings']." set settings_value=\'$value\' where settings_key=\'$key\'";
+    	$sql = "update ".$this->table_prefix.$this->quiz_tables['settings']." set settings_value='$value' where settings_key='$key'";
     	
     	$temp_array = $this->db_object->updateRow($sql);
     	    	
@@ -63,7 +63,7 @@ class QuizDB
     // due to error level chosen will exit application on error (but could change to warning)
     public function insertSetting ($key, $value)
     {
-    	$sql = "insert into ".$this->table_prefix.$this->quiz_tables['settings']." (settings_value, settings_key) value(\'$value\', \'$key\')";
+    	$sql = "insert into ".$this->table_prefix.$this->quiz_tables['settings']." (settings_value, settings_key) value('$value', '$key')";
     	
     	$temp_array = $this->db_object->updateRow($sql);
     	    	

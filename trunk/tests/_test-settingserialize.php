@@ -6,7 +6,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-$debug = true;
+$debug = false;
 
 
 if ($debug) {print "Loading setup\n";}
@@ -55,15 +55,15 @@ else
 print ("test array:\n");
 print_r ($test_array);
 
-print ("set array:\n");
+print ("\nset array:\n");
 print_r ($updated_array);
 
-print ("reloaded array:\n");
+print ("\nreloaded array:\n");
 print_r ($check_array);
 
 if ($test_result != null) 
 {
-	print ("Diff\n");
+	print ("\n\nDiff\n");
 	print_r ($test_result);
 }
 	
