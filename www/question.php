@@ -34,6 +34,12 @@ else {$num_questions = count($questions_array);}
 $answers_array = $quiz_session->getAnswers();
 
 
+// Determine what action required based on submit
+// -here
+
+
+
+
 // get question number from the post
 // question number is from 1 upwards - not 0 as the session array does
 // Check that this is a number and that it is within the session questions - otherwise we default to 1st question
