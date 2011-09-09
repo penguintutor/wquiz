@@ -15,7 +15,7 @@ require_once("../includes/setup.php");
 
 
 // input array - this is what we will insert into settings
-$test_value = 'test_text2 $ ; this funny % char 2089#';
+$test_value = 'test_text2 $ ; this funny \' " % char 2089#';
 $test_key = 'test_key';
 
 if ($debug) {print "Getting settings\n";}
