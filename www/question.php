@@ -3,7 +3,7 @@
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
-$debug = true;
+$debug = false;
 
 
 require_once("includes/setup.php");
@@ -31,10 +31,17 @@ if (count($questions_array)<1)
 	$err->errorEvent(ERROR_SESSION, "Session does not have any questions defined");
 }
 else {$num_questions = count($questions_array);}
+
 $answers_array = $quiz_session->getAnswers();
 
 
+//submit buttons
 // Determine what action required based on submit
+// we are using default from settings - could override here if required - will also need to pass with showNavigation
+$navigation_enabled = unserialize ($settings->getSetting('buttons_navigation_enabled'));
+$labels = unserialize ($settings->getSetting('buttons_navigation_labels'));
+
+
 // -here
 
 
@@ -70,6 +77,7 @@ print ($question->getHtmlString(-1));
 
 // add navigation buttons
 print "<div id=\"".CSS_ID_NAVIGATION."\">\n";
+// we can override button labels, but if so then need to update "//submit buttons" earlier in this file
 showNavigation($questionnum, 1, $num_questions);
 print "\n</div><!-- ".CSS_ID_NAVIGATION." -->\n";
 
