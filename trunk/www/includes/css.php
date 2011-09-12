@@ -17,6 +17,7 @@ define ("CSS_ID_MENU", "wquiz-quizmenu");
 define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");				// div - for main direction buttons etc.
+define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit-");			// prefix for navigation buttons (followed by previous, next etc.	
 
 
 
