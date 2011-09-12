@@ -58,11 +58,9 @@ class QuestionNavigation
 		
     }
     
-	
-	// show the navigation buttons (form) 
+    // show the navigation buttons (form) 
 	// current is page we are currently on 
 	// Does not add a help button - add this seperately
-
 	public function showNavigation ($current)
 	{
 		
@@ -75,10 +73,32 @@ class QuestionNavigation
 				$err->errorEvent(WARNING_INTERNAL, "No label provided for button $this_button - ignoring");
 				continue;
 			}
-			print "<input type=\"submit\" name=\"nav\" value=\"".$this->labels[$this_button]."\">\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT.$this_button"\"  value=\"".$this->labels[$this_button]."\">\n";
 		}
 		
 	}
+	
+	
+	// check that the action requested is enabled
+	// value is the value from the submit button
+	// returns action string
+	// - first, previous, next, last, review (keys of enabled array)
+	// returns 'invalid' if option is not enabled / valid
+	public function getAction ($value)
+	{
+		// 
+		if (in_array($value, $this->labels))
+		{
+			$key = array_search ($value, $this->labels);
+			// check that the key is enabled
+			if (in_array($key, $this->enabled)) {return $key;}
+		}
+		return "invalid";
+	}
+	
+	
+	
+	
 }
 
 ?>

@@ -34,17 +34,24 @@ else {$num_questions = count($questions_array);}
 
 $answers_array = $quiz_session->getAnswers();
 
-
+// class for action
+// we are using default from settings - could override here if required - will also need to pass with showNavigation
 $navigation = new QuestionNavigation(1, $num_questions);
 
 //submit buttons
 // Determine what action required based on submit
-// we are using default from settings - could override here if required - will also need to pass with showNavigation
-$navigation_enabled = unserialize ($settings->getSetting('buttons_navigation_enabled'));
-$labels = unserialize ($settings->getSetting('buttons_navigation_labels'));
+if (isset($_POST['nav']))
+{
+	// see if this is a valid action - gets action back
+	$action = $navigation->getAction ($_POST['nav']);
+}
 
 
-// -here
+
+
+// -todo handle other parameters
+
+
 
 
 
@@ -57,10 +64,10 @@ elseif ($_POST['questionnum'] > $num_questions) {$questionnum = $num_questions;}
 else {$questionnum = $_POST['questionnum'];}
 
 
-// -here Save answer if changed
+// -todo Save answer if changed
 
 
-// -here Handle change in page (eg. Finish / trying to go past first) 
+// -todo Handle change in page (eg. Finish / trying to go past first) 
 
 
 // Pull in templates
@@ -79,11 +86,10 @@ print ($question->getHtmlString(-1));
 
 // add navigation buttons
 print "<div id=\"".CSS_ID_NAVIGATION."\">\n";
-// we can override button labels, but if so then need to update "//submit buttons" earlier in this file
-$navigation->showNavigation($questionnum, 1, $num_questions);
+$navigation->showNavigation($questionnum);
 print "\n</div><!-- ".CSS_ID_NAVIGATION." -->\n";
 
-//--here end form
+// end form
 print "</form>\n";
 
 
