@@ -7,7 +7,7 @@ $debug = false;
 
 
 require_once("includes/setup.php");
-require_once("includes/questionNavigation.php");	// used later for navigation buttons
+require_once("includes/QuestionNavigation.php");	// used later for navigation buttons
 
 // get the list of questions and current status
 $quiz_info = $quiz_session->getSessionInfo();
@@ -34,6 +34,8 @@ else {$num_questions = count($questions_array);}
 
 $answers_array = $quiz_session->getAnswers();
 
+
+$navigation = new QuestionNavigation(1, $num_questions);
 
 //submit buttons
 // Determine what action required based on submit
@@ -78,7 +80,7 @@ print ($question->getHtmlString(-1));
 // add navigation buttons
 print "<div id=\"".CSS_ID_NAVIGATION."\">\n";
 // we can override button labels, but if so then need to update "//submit buttons" earlier in this file
-showNavigation($questionnum, 1, $num_questions);
+$navigation->showNavigation($questionnum, 1, $num_questions);
 print "\n</div><!-- ".CSS_ID_NAVIGATION." -->\n";
 
 //--here end form
