@@ -45,7 +45,7 @@ Correct answer
 radio = number of answer (starting at 0)
 number = min,max (set to same to only allow that answer eg. 10,10)
 text = perl regexp (without any /). eg. d[iae]+b[iae]+t[iea] - a way of showing diabetes even if spelt incorrectly
-checkbox = (digit of each correct answer, starting at 0) e.g. 13 (for 2nd and 4th answer)
+checkbox = (digit of each correct answer, starting at 0) e.g. 13 (for 2nd and 4th answer) - max 10 options
 
 reason
 ------

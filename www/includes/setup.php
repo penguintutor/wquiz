@@ -101,7 +101,7 @@ $templates = new Templates();
 // just start session here
 $quiz_session = new QuizSession();
 
-//-debug
+//debug
 if ($debug) {print "Setup complete\n\n";}
 
 ?>
