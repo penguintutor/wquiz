@@ -52,9 +52,6 @@ class Question
     // $answer = -1 means unanswered
     public function getHtmlString ($answer) 
     {
-    	/* form part needs to be brought outside of the question */   	
-		// Generic form statement - this is before the division as the buttons are after the question div
-    	//print "<form action=\"question.php\">\n";
     	print "<div id=\"".CSS_ID_QUESTION."\">\n\t<p class=\"".CSS_CLASS_QUESTION_P."\">\n\t\t";
     	// Image is placed at the start of the text (can be moved using CSS)
     	print $this->formatImageString ();
@@ -66,8 +63,52 @@ class Question
     	// handle appropriate format depending upon question
     	print $this->formatQuestion($answer);  
     	print "\n</p>\n</div>\n";
-    	/* move form outside of the question */
-    	//print "</form>\n";
+
+    }
+    
+    public function getType ()
+    {
+    	return $this->type;
+    }
+    
+    
+    // validates the type against the type in the post
+    // note that the type in the post will be text even for number etc.
+    public function validateType ($post_type)
+    {
+    	// simplist - checkbox / radio / text will all match
+    	if ($post_type == $this->type) {return true;}
+    	// if type is number / TEXT 
+    	if ($post_type == 'text' && ($this->type == 'number' || $this->type == 'TEXT')) {return true;}
+    	// if not returned then invalid type
+    	return false;
+    }
+    
+    // check that the answer is valid 
+    // ie. for a number - must be a number, radio must be a valid character
+    public function validateAnswer ($answer)
+    {
+    	if ($this->type == 'number' && is_numeric($answer))
+    	{
+    		return true;
+    	}
+    	// note test for integer rather than numeric (more strict)
+    	else if ($this->type == 'radio' && is_int($answer)) 
+    	{
+    		$options = explode (",", $this->input);
+    		if ($answer <0 || $answer >= count($options)) {return true;}
+    		else {return false;}
+    	}
+    	else if ($this->type == 'text' || $this->type == 'TEXT')
+    	{
+    		// we don't do any further checking - we use mysql escape to save and use regexp to check valid answer
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    	
     }
     
     
@@ -83,13 +124,13 @@ class Question
     	//- also need to add number and checkbox
     	switch ($this->type)
     	{
-    		case 'radio':  	$formatted = $this->createFormRadio ($this->input);
+    		case 'radio':  	$formatted = $this->createFormRadio ($answer);
     						break;
-    		case 'checkbox':$formatted = $this->createFormCheckbox ($this->input);
+    		case 'checkbox':$formatted = $this->createFormCheckbox ($answer);
     						break;
     		case 'number':
     		case 'text':   	
-    		case 'TEXT':	$formatted = $this->createFormText ($this->input); // TEXT is text but case sensitive - same form formatting
+    		case 'TEXT':	$formatted = $this->createFormText ($answer); // TEXT is text but case sensitive - same form formatting
     						break;
 			default:	// unknown question - this is a warning level - don't break, but 
 							$err =  Errors::getInstance();
@@ -101,7 +142,7 @@ class Question
     
     private function createFormRadio ($answer)
     {
-    	$form_string = '';
+    	$form_string = "<input type=\"hidden\" name=\"type\" value=\"radio\">\n";
     	$options = explode (",", $this->input);
     	for ($i=0; $i<count($options); $i++)
     	{
@@ -115,7 +156,7 @@ class Question
     // note $labels must be ,, if empty
     private function createFormText ($answer)
     {
-    	$form_string = '';
+    	$form_string = "<input type=\"hidden\" name=\"type\" value=\"text\">\n";
     	$labels = explode (',', $this->input);
     	// use autocomplete option instead of random string used in earlier version
     	// this is html 5 only (but works in earlier versions even though incorrect)
@@ -123,8 +164,8 @@ class Question
     	$form_string = $labels[0];
     	$form_string .= "<input type=\"text\" name=\"answer\" autocomplete=\"off\" value=\"";
     	// if not answered show default, otherwise show current
-    	if ($answer != -1) {$form_string.=$answer;}
-    	else {$form_string.=$labels[1];}
+    	if ($answer != -1) {$form_string.= $answer;}
+    	else {$form_string .= $labels[1];}
     	$form_string .= "\" />";
     	// post-text
     	$form_string .= $labels[2];
@@ -133,18 +174,18 @@ class Question
     
     private function createFormCheckbox ($answer)
     {
-    	$form_string = '';
+    	$form_string = "<input type=\"hidden\" name=\"type\" value=\"checkbox\">\n";
     	$options = explode (",", $this->input);
     	for ($i=0; $i<count($options); $i++)
     	{
-    		$form_string .= "<input type=\"checkbox\" name=\"$i\" ";
+    		$form_string .= "<input type=\"checkbox\" name=\"answer-$i\" ";
     		// if number is in the answer already
     		if (strpos ($answer, $i)) {$form_string.= "checked=\"checked\" ";}
     		$form_string .= "/>".$options[$i]."<br />\n";
     	}
     	return $form_string;
     }
-    
+
     
     
 }

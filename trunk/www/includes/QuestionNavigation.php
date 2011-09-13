@@ -73,7 +73,7 @@ class QuestionNavigation
 				$err->errorEvent(WARNING_INTERNAL, "No label provided for button $this_button - ignoring");
 				continue;
 			}
-			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT.$this_button"\"  value=\"".$this->labels[$this_button]."\">\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT.$this_button."\"  value=\"".$this->labels[$this_button]."\">\n";
 		}
 		
 	}
