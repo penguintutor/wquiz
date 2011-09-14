@@ -39,7 +39,22 @@ img.wquiz-questionimage
 }
 
 
+p.wquiz-questionmessage
+{
+	color: red;
+}
 
+
+/* re-order the button positions to allow enter to see next button */
+#wquiz-navsubmit-first
+{
+	float:left;
+}
+
+#wquiz-navsubmit-previous
+{
+	float:left;
+}
 
 
 

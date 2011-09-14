@@ -50,12 +50,24 @@ wquiz-questionimage
 
 ** - see css-entities.txt for details
 
+** see special case below for details of laying out button positions
 
 
 Settings
 --------
 
 
+
+
+Special case - default next button
+------------
+
+By default if a user presses enter rather than clicking a button the first submit button (as ordered in the html) is used. As we normally want this to be a later position (eg. previous before next) then this needs to be modified.
+
+Options:
+* position next button first and use CSS to re-order buttons (this is preferred method) 
+* create a hidden button with value "default" and hide it
+* use javascript to capture and handle the enter press 
 
 
 
