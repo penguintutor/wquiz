@@ -63,7 +63,8 @@ class QuestionNavigation
 	// Does not add a help button - add this seperately
 	public function showNavigation ($current)
 	{
-		
+		// include the questionnum of current page (regardless of which page we redirect to afterwards)
+		print "<input type=\"hidden\" name=\"question\" value=\"$current\"/>\n";
 		foreach ($this->enabled as $this_button)
 		{
 			// check matching label is defined - if not add as a warning and move to next
@@ -73,7 +74,7 @@ class QuestionNavigation
 				$err->errorEvent(WARNING_INTERNAL, "No label provided for button $this_button - ignoring");
 				continue;
 			}
-			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT.$this_button."\"  value=\"".$this->labels[$this_button]."\">\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT.$this_button."\"  value=\"".$this->labels[$this_button]."\"/>\n";
 		}
 		
 	}
@@ -86,7 +87,10 @@ class QuestionNavigation
 	// returns 'invalid' if option is not enabled / valid
 	public function getAction ($value)
 	{
-		// 
+		// special case - if default then we return next
+		// this is to allow the hidden button method to deal with the user pressing enter
+		// we don't use this method by default preferring to use CSS to put the next button first in html, but later in display
+		if ($value == 'default') {return 'next';}
 		if (in_array($value, $this->labels))
 		{
 			$key = array_search ($value, $this->labels);

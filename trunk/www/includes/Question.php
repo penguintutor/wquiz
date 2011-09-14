@@ -18,7 +18,7 @@ class Question
     private $intro = '';
     private $input = '';
     private $type = '';
-    private $answer = '';
+    private $answer = '';	// this is answer formatting rather than current value
     private $reason = '';
     private $image = '';
     // This is an array of quizzes that question is included in (usuing quizname rather than id)
@@ -39,7 +39,7 @@ class Question
 			$this->intro = $db_results['intro'];
 			$this->input = $db_results['input'];
 			$this->type = $db_results['type'];
-			$this->answer = $db_results['answer'];
+			$this->answer = $db_results['answer'];		
 			$this->reason = $db_results['reason'];
 			$this->image = $db_results['image'];
 			$this->quizzes = $db_results['quizzes'];
@@ -59,7 +59,8 @@ class Question
     	print "</p>\n";
     	// hidden entry with this question number
     	print "<p id=\"".CSS_ID_QUESTION_INPUT."\">\n";
-    	print "<input type=\"hidden\" name=\"question\" value=\"".$this->questionid."\" />\n";
+    	// question number is added in navigation as it's navigation position - not the sql question id
+    	//print "<input type=\"hidden\" name=\"question\" value=\"".$this->questionid."\" />\n";
     	// handle appropriate format depending upon question
     	print $this->formatQuestion($answer);  
     	print "\n</p>\n</div>\n";
@@ -88,15 +89,16 @@ class Question
     // ie. for a number - must be a number, radio must be a valid character
     public function validateAnswer ($answer)
     {
+    	//print ("Answer is $answer \nType is ".$this->type." \n");
     	if ($this->type == 'number' && is_numeric($answer))
     	{
     		return true;
     	}
     	// note test for integer rather than numeric (more strict)
-    	else if ($this->type == 'radio' && is_int($answer)) 
+    	else if ($this->type == 'radio' && is_numeric($answer)) 
     	{
     		$options = explode (",", $this->input);
-    		if ($answer <0 || $answer >= count($options)) {return true;}
+    		if ($answer >0 && $answer < count($options)) {return true;}
     		else {return false;}
     	}
     	else if ($this->type == 'text' || $this->type == 'TEXT')
@@ -117,7 +119,7 @@ class Question
      	return ("<img src=\"$this->image\" class=\"".CSS_CLASS_IMAGE."\" alt=\"Question Image\"/>\n");
     }
     
-    //- answer is the current value - need to add this functionality
+    // answer is the current value
     private function formatQuestion ($answer)
     {
     	$formatted = '';
@@ -142,12 +144,13 @@ class Question
     
     private function createFormRadio ($answer)
     {
+    	//print "Form button answer is $answer \n";
     	$form_string = "<input type=\"hidden\" name=\"type\" value=\"radio\">\n";
     	$options = explode (",", $this->input);
     	for ($i=0; $i<count($options); $i++)
     	{
     		$form_string .= "<input type=\"radio\" name=\"answer\" value=\"$i\" ";
-    		if ($i == $answer) {$form_string.= "selected=\"selected\" ";}
+    		if ($i == $answer) {$form_string.= "checked=\"checked\" ";}
     		$form_string .= "/>".$options[$i]."<br />\n";
     	}
     	return $form_string;
@@ -161,7 +164,7 @@ class Question
     	// use autocomplete option instead of random string used in earlier version
     	// this is html 5 only (but works in earlier versions even though incorrect)
     	// pre-text
-    	$form_string = $labels[0];
+    	$form_string .= $labels[0];
     	$form_string .= "<input type=\"text\" name=\"answer\" autocomplete=\"off\" value=\"";
     	// if not answered show default, otherwise show current
     	if ($answer != -1) {$form_string.= $answer;}
@@ -174,13 +177,19 @@ class Question
     
     private function createFormCheckbox ($answer)
     {
+    	//print "Answer is $answer<br />\n";
+    	// if answer is -1 set to '' so does not match
+    	if ($answer == -1) {$answer = '';}
     	$form_string = "<input type=\"hidden\" name=\"type\" value=\"checkbox\">\n";
     	$options = explode (",", $this->input);
     	for ($i=0; $i<count($options); $i++)
     	{
     		$form_string .= "<input type=\"checkbox\" name=\"answer-$i\" ";
+    		// make int into a string so that it can be used in strpos search
+    		$i_string = ''.$i;
     		// if number is in the answer already
-    		if (strpos ($answer, $i)) {$form_string.= "checked=\"checked\" ";}
+    		// use === type comparison as 0 is the first character
+    		if (strpos ($answer, $i_string)!==false) {$form_string.= "checked=\"checked\" ";}
     		$form_string .= "/>".$options[$i]."<br />\n";
     	}
     	return $form_string;

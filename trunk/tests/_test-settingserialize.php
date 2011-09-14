@@ -15,8 +15,8 @@ require_once("../includes/setup.php");
 
 
 // input array - this is what we will insert into settings
-$test_array = array ('first'=>1, 'previous'=>1, 'next'=>1, 'last'=>1, 'review'=>1);
-$test_key = 'test_serialised';
+$test_array = array ('next', 'first', 'previous', 'last', 'review');
+$test_key = 'buttons_navigation_enabled';
 
 if ($debug) {print "Getting settings\n";}
 

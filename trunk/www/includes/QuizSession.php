@@ -69,6 +69,13 @@ class QuizSession extends PHPSession
     	return (unserialize ($this->getValue('answer')));
     }
     
+    // returns single entry answer
+    public function getAnswer ($question)
+    {
+    	$all_answers = unserialize ($this->getValue('answer'));
+    	return ($all_answers[$question]);
+    }
+    
     
     // serialise then store in the array
     public function setQuestions ($question_array)
