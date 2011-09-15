@@ -7,6 +7,9 @@ ini_set('display_errors', true);
 
 //$debug = true;
 
+// message is used to provide feedback to the user
+//eg. if we get here from an expired session
+$message = '';
 
 require_once("includes/setup.php");
 // add this here as not required for some pages (which use Quiz.php instead)
@@ -22,19 +25,27 @@ foreach ($quiz_array as $this_quiz_array)
 }
 
 // No quizzes found - most likely not setup
-if ($all_quizzes->count() < 1) {header("Location: ".FIRST_FILE);}
-
+if ($all_quizzes->count() < 1) {header("Location: ".FIRST_FILE); exit(0);}
 
 
 // header template
 $templates->includeTemplate('header', 'normal');
 
 
+// first look for url get as expired (indicates question.php send us here due to an expired entry)
+// we don't do anything differently other than tell the user that's why they were redirected there
+
+if (array_key_exists('status', $_GET) && if ($_GET['status'] == 'expired'))
+{
+	// todo - make customisable
+	$message = "Session expired";
+}
+
 // is this result of POST - if so setup page, otherwise display menu
 if (array_key_exists('quizname', $_POST))
 {
 	// Very important
-	// --here 
+	// todo 
 	// validate field input
 	$quiz = $_POST['quizname'];
 	//first check that this is just a string - no 
@@ -53,10 +64,10 @@ if (array_key_exists('quizname', $_POST))
 	// this is not a security event, but is still wrong
 	if (!$all_quizzes->validateQuizname($quiz))
 	{
-		// here we handle error in more user friendly way than if we suspect attempt to hack
+		// we handle error in more user friendly way than if we suspect attempt to hack
 		$err =  Errors::getInstance();
 		$err->errorEvent(WARNING_PARAMETER, "Warning parameter incorrect - quizname is invalid");
-		//--here we don't give an error just show menu
+		//--todo we don't give an error just show menu
 		printMenu($all_quizzes);
 	}
 	else
@@ -162,7 +173,11 @@ if (isset($debug) && $debug)
 // show here as we will do when we get a warning as well
 function printMenu ($quiz_object)
 {
-		// Display menu
+	
+	// show message if there is one
+	if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
+
+	// Display menu
 	print "<div id=\"".CSS_ID_MENU."\">\n";
 	print "<span class=\"".CSS_ID_MENU_TITLE."\">Start Quiz</span>\n";
 	print ("<form method=\"post\" action=\"".INDEX_FILE."\" target=\"_top\">");

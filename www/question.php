@@ -3,6 +3,7 @@
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
+//$debug = false;
 $debug = false;
 
 // Note that most of the error checking from form results just makes us switch to display
@@ -20,9 +21,6 @@ $action = 'display';
 // most cases we ignore errors, but for instance if a user does not enter a number in a number field we can notify the user of this when we go in display mode
 $message = '';
 
-
-print "Navigation option is ".$_POST['nav']." <br />";
-
 // get the list of questions and current status
 $quiz_info = $quiz_session->getSessionInfo();
 if (!isset($quiz_info['status'])||!is_int($quiz_info['status']))
@@ -33,7 +31,8 @@ if (!isset($quiz_info['status'])||!is_int($quiz_info['status']))
 	$quiz_session->destroySession();
 	// -here - return to main page on error - we need to provide a message to the user 
 	// most likely session timed out or gone direct to question.php?
-	header("Location: ".INDEX_FILE);
+	header("Location: ".INDEX_FILE."?status=expired");
+	exit (0);
 }
 
 // Get the list of question numbers and current answers from session
@@ -175,8 +174,8 @@ else if ($action == 'last') {$question_num = $num_questions;}
 if ($question_num < 1) {$question_num = 1;}
 if ($question_num > $num_questions || $action == 'review')
 {
-	// todo - go to review
-	exit (1);
+	header ("Location: ".REVIEW_FILE);
+	exit (0);
 }
 
 
