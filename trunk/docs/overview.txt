@@ -59,6 +59,7 @@ Settings
 
 
 
+
 Special case - default next button
 ------------
 
@@ -73,33 +74,6 @@ Options:
 
 
 ############ temp scratch area ############
-
-/**** Handling multiple buttons ****/
-<HTML>
-<BODY>
-
-<%
-  btnID = "?"
-
-  if Request.Form("bsubmit") = "Submit 1" then
-    btnID = "1"
-  elseif Request.Form("bsubmit") = "Submit 2" then
-    btnID = "2"
-  elseif Request.Form("bsubmit") = "Submit 3" then
-    btnID = "3"
-  end if
-%>
-Submit button ID: <%=btnID%><BR>
-
-<FORM action="mulsub.asp" method="post">
-First name: <INPUT type="TEXT" name="FNAME"><BR>
-<INPUT type="submit" name="bsubmit" value="Submit 1">
-<INPUT type="submit" name="bsubmit" value="Submit 2">
-<INPUT type="submit" name="bsubmit" value="Submit 3">
-</FORM>
-
-</BODY>
-</HTML>
 
 
 form input[type=submit] {
@@ -157,40 +131,9 @@ See:
 http://www.ampsoft.net/webdesign-l/image-button.html
 
 
-/***** SQL Join Examples ******/
-
-    	
-/*$selectString = "SELECT album_slug FROM ".$this->tableprefix.INDEXTABLE." JOIN ".$this->tableprefix.ALBUMTABLE." on ".$this->tableprefix.INDEXTABLE.".album_id=".$this->tableprefix.ALBUMTABLE.".album_id  where category_id=$category order by ".$this->tableprefix.INDEXTABLE.".priority, ".$this->tableprefix.INDEXTABLE.".gallery_index_id desc";*/
-		//--here
-		//$select_string = ("Select questionid,  
-    	
-/*		SELECT Persons.LastName, Persons.FirstName, Orders.OrderNo
-FROM Persons
-INNER JOIN Orders
-ON Persons.P_Id=Orders.P_Id
-ORDER BY Persons.LastName*/
-		
-
-
-/*
-// Note this will only work where only one question row per select 
-// This is the case where we only use one quiz (including quiz='all')
- $sql = "SELECT * FROM tablename
-          WHERE somefield='something'
-          ORDER BY RAND() LIMIT 5";
-
-  //  or, something like this
-  $sql = "SELECT * FROM tablename
-          ORDER BY RAND()";
-          */
-
-
-
-
-
-
 
 /**** Locking the table ****/
+// previously used for offline quiz
 
 # Can we do this using PHP Sessions instead?
 
@@ -201,3 +144,13 @@ $dbh->do("unlock tables");
 Note just lock whilst we update the count - then unlock. Once we've updated
 the count we have blocked others from starting a housekeeping
 
+
+// Not needed?
+/*	$url = $settings->getSetting('site_url_path');
+	if ($url == '')
+	{
+		$url = $_SERVER['REQUEST_URI'];
+		// strip out this page part (ie. everything from last /)
+		$url = substring (0, strrchr ($url, '/')+1);
+	}
+	$url .= 'review.php';*/

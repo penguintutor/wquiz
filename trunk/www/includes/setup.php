@@ -7,6 +7,7 @@ if (!isset ($debug)) {$debug = false;}
 
 // Internal links to other pages
 define ("INDEX_FILE", "index.php");
+define ("REVIEW_FILE", "review.php");
 define ("FIRST_FILE", "includes/first.php");	// If install not complete
 
 // get directory for includes
