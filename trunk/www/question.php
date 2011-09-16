@@ -3,7 +3,6 @@
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
-//$debug = false;
 $debug = false;
 
 // Note that most of the error checking from form results just makes us switch to display
@@ -29,11 +28,33 @@ if (!isset($quiz_info['status'])||!is_int($quiz_info['status']))
 	$err->errorEvent(WARNING_SESSION, "Session status is invalid");
 	// kill session and send to index page
 	$quiz_session->destroySession();
-	// -here - return to main page on error - we need to provide a message to the user 
 	// most likely session timed out or gone direct to question.php?
+	// provide expired status
 	header("Location: ".INDEX_FILE."?status=expired");
 	exit (0);
 }
+
+
+// Check we have valid status - if already complete we go to the end page 
+// otherwise if not active go back to start (no status message)
+if ($quiz_info['status'] == SESSION_STATUS_COMPLETE)
+{
+	$err = Errors::getInstance();
+	$err->errorEvent(WARNING_SESSION, "Session already complete");
+	// Go to end / review page (leave session intact)
+	header("Location: ".END_FILE);
+	exit (0);
+}
+else if ($quiz_info['status'] != SESSION_STATUS_ACTIVE)
+{
+	$err = Errors::getInstance();
+	$err->errorEvent(WARNING_SESSION, "Session is not active - status ".$quiz_info['status']);
+	// kill session and send to index page
+	$quiz_session->destroySession();
+	header("Location: ".INDEX_FILE);
+	exit (0);
+}
+
 
 // Get the list of question numbers and current answers from session
 $questions_array = $quiz_session->getQuestions();
@@ -90,7 +111,7 @@ elseif ($_POST['question'] > $num_questions)
 else {$question_num = $_POST['question'];}
 // load this question - note -1 used to select array position (ie. question 1 = array 0)
 // if we are just doing a display then we can use this same instance for the display later - otherwise we will need a new instance for the new question
-$question_from = new Question(0, $qdb->getQuestion($questions_array[$question_num-1]));
+$question_from = new Question($qdb->getQuestion($questions_array[$question_num-1]));
 
 
 
@@ -119,7 +140,7 @@ if ($action != 'display')
 	//  handle default where answer is not set at all (eg. radio with nothing ticked)
 	else if (!isset ($_POST['answer']) || $_POST['answer'] == '') 
 	{
-		$answer = '';
+		$answer = -1;
 	}
 	else // All others we just have one value from post which is $answers 
 	{
@@ -131,8 +152,8 @@ if ($action != 'display')
 		{
 		// set message as this may have been a genuine error (eg. seven instead of 7)
 		$err = Errors::getInstance();
-		$err->errorEvent(INFO_PARAMETER, "Answer was not a valid response for ". $question_from->getType());
-		$message = 'Answer provided was not valid';
+		$err->errorEvent(INFO_PARAMETER, "Answer provided is not a valid response for ". $question_from->getType());
+		$message = 'Answer provided is not a valid response';
 		$action = 'display';
 		}
 	}
@@ -174,7 +195,7 @@ else if ($action == 'last') {$question_num = $num_questions;}
 if ($question_num < 1) {$question_num = 1;}
 if ($question_num > $num_questions || $action == 'review')
 {
-	header ("Location: ".REVIEW_FILE);
+	header ("Location: ".END_FILE);
 	exit (0);
 }
 
@@ -185,7 +206,7 @@ $templates->includeTemplate('header', 'normal');
 
 // start form
 // Form starts at the top
-print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"question.php\">\n";
+print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
 
 // show message if there is one
 if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
@@ -197,7 +218,7 @@ print "<p class=\"".CSS_CLASS_STATUS."\">Question $question_num of $num_question
 
 
 // load this question - note -1 used to select array position (ie. question 1 = array 0)
-$question = new Question(0, $qdb->getQuestion($questions_array[$question_num-1]));
+$question = new Question($qdb->getQuestion($questions_array[$question_num-1]));
 // first print status bar if req'd (eg. question 1 of 10)
 // answer is currently selected -1 = not answered
 print ($question->getHtmlString($quiz_session->getAnswer($question_num-1)));

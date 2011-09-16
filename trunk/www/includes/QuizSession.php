@@ -21,12 +21,8 @@ include ($include_dir."PHPSession.php");
 class QuizSession extends PHPSession
 {
 	
-	// parent constructor is called automatically - will create the sesion
-	/*// establish session
-    public function __construct () 
-    {
-    	parent::__construct(); 
-    }*/ 
+	// parent constructor is used - creates the session
+
     
     
     // returns the session information as a hash array (quizname, status etc.)
