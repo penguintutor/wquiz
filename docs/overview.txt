@@ -56,8 +56,10 @@ wquiz-questionimage
 Settings
 --------
 
-
-
+review_enabled (optional - true)  
+if false then after last question provide results immediately
+review_text - text for do you want to review (html)
+review_show_unanswered (optional - true) - show "You have not answered ? questions".
 
 
 Special case - default next button

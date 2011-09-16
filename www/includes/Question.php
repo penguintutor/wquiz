@@ -10,8 +10,6 @@ including formatting / checking
 
 class Question
 {
-	// These are all named the same as the table fields
-	private $question_num = 0;
 	// question is not used in the form instead we use question_num as that is position in quiz
 	// question is used if we are editing the question
     private $questionid = ''; // question number - named same as mysql field name
@@ -25,13 +23,11 @@ class Question
     private $quizzes = array();
     
 
-    // question_num is our position in quiz - irrelevant (0) if not actually doing quiz
 	// normally create instance with details, but set to null in case 
 	// creating a new one (eg. new question)
 	// defaults are set to empty strings above    
-    public function __construct ($question_num=null, $db_results=null) 
+    public function __construct ($db_results=null) 
     {
-    	if ($question_num != null) {$this->questionid = $question_num;}
     	// if provided with array use it to initialise variables
     	if (is_array ($db_results) && isset($db_results['questionid']))
     	{
@@ -85,7 +81,7 @@ class Question
     	return false;
     }
     
-    // check that the answer is valid 
+    // check that the answer is valid - not that it is correct!
     // ie. for a number - must be a number, radio must be a valid character
     public function validateAnswer ($answer)
     {
@@ -94,11 +90,10 @@ class Question
     	{
     		return true;
     	}
-    	// note test for integer rather than numeric (more strict)
     	else if ($this->type == 'radio' && is_numeric($answer)) 
     	{
     		$options = explode (",", $this->input);
-    		if ($answer >0 && $answer < count($options)) {return true;}
+    		if ($answer >=0 && $answer < count($options)) {return true;}
     		else {return false;}
     	}
     	else if ($this->type == 'text' || $this->type == 'TEXT')
@@ -195,6 +190,45 @@ class Question
     	return $form_string;
     }
 
+    
+    // checks to see if an answer is correct or incorrect
+    // returns true (correct) or false
+    function markAnswer ($answer)
+    {
+    	// radio / checkbox - answer must be same as 
+    	if ($this->type == 'radio' || $this->type == 'checkbox')
+    	{
+    		if ($answer == $this->answer) {return true;}
+    		else {return false;}
+    	}
+    	elseif ($this->type == 'number')
+    	{
+    		// split answer into min max
+    		$min_max = explode (',', $this->answer);
+    		if ($answer >= $min_max[0] && $answer <= $min_max[1]) {return true;}
+    		else {return false;}
+    	}
+    	elseif ($this->type == 'text')
+    	{
+    		if (preg_match('/'.$this->answer.'/i', $answer)) {return true;}
+    		else {return false;}
+    	}
+    	// as text, but without ignore case
+    	elseif ($this->type == 'TEXT')
+    	{
+    		if (preg_match('/'.$this->answer.'/', $answer)) {return true;}
+    		else {return false;}
+    	}
+    	// invalid type
+    	else 
+    	{
+    		// error in question configuration
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(WARNING_QUESTION, "Warning, unknown question type for $this->questionid");
+    		return false;
+    	} 
+    	
+    }
     
     
 }

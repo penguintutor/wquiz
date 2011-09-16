@@ -34,14 +34,14 @@ $templates->includeTemplate('header', 'normal');
 
 // first look for url get as expired (indicates question.php send us here due to an expired entry)
 // we don't do anything differently other than tell the user that's why they were redirected there
-
-if (array_key_exists('status', $_GET) && if ($_GET['status'] == 'expired'))
+if (isset($_GET['status']) && ($_GET['status'] == 'expired'))
 {
 	// todo - make customisable
 	$message = "Session expired";
 }
 
 // is this result of POST - if so setup page, otherwise display menu
+// note going to this page outside of quiz can result in rerunning session creation - hence new quiz
 if (array_key_exists('quizname', $_POST))
 {
 	// Very important
@@ -146,6 +146,8 @@ if (array_key_exists('quizname', $_POST))
 else 
 {
 
+	// show message if there is one
+	if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
 	printMenu($all_quizzes);
 
 }
@@ -174,9 +176,6 @@ if (isset($debug) && $debug)
 function printMenu ($quiz_object)
 {
 	
-	// show message if there is one
-	if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
-
 	// Display menu
 	print "<div id=\"".CSS_ID_MENU."\">\n";
 	print "<span class=\"".CSS_ID_MENU_TITLE."\">Start Quiz</span>\n";
