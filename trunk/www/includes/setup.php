@@ -8,6 +8,8 @@ if (!isset ($debug)) {$debug = false;}
 // Internal links to other pages
 define ("INDEX_FILE", "index.php");
 define ("QUESTION_FILE", "question.php");
+define ("ANSWER_FILE", "answer.php");
+define ("SUMMARY_FILE", "summary.php");
 define ("END_FILE", "end.php");
 define ("FIRST_FILE", "includes/first.php");	// If install not complete
 

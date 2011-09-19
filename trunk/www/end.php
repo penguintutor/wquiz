@@ -38,7 +38,7 @@ else {$num_questions = count($questions_array);}
 $answers_array = $quiz_session->getAnswers();
 
 /*** Handle marking of the answers if review complete or review not allowed ***/
-if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enabled') == 'false')
+if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enabled') == 'false' || $quiz_info['status'] == SESSION_STATUS_COMPLETE)
 {
 	// change status to prevent from changing and resubmitting
 	$quiz_session->setStatus(SESSION_STATUS_COMPLETE);
@@ -54,6 +54,14 @@ if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enabled') 
 	$percentage = round($score * 100 / $num_questions);
 	$response_text .= "<p>$percentage %</p>";
 	// todo add some comments about score
+	
+	// Link to review answers if enabled
+	if ($settings->getSetting('answer_summary_enable') != 'false')
+	{
+		$response_text .= "<p><a href=\"".SUMMARY_FILE."\">Detailed results</a></p>";
+	}
+	
+	
 }
 else
 {

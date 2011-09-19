@@ -12,6 +12,9 @@ define ("CSS_ID_QUIZ_INTRO", "wquiz-quizintro");			// div
 define ("CSS_ID_QUIZ_TITLE", "wquiz-quiztitle");			// h3
 define ("CSS_CLASS_IMAGE", "wquiz-questionimage");
 define ("CSS_CLASS_QUESTION_P", "wquiz-questiontext");
+define ("CSS_CLASS_SUMMARY_CORRECT", "wquiz-summary-correct");
+define ("CSS_CLASS_SUMMARY_INCORRECT", "wquiz-summary-incorrect");
+define ("CSS_CLASS_SUMMARY_NOTANSWERED", "wquiz-summary-notanswered");
 define ("CSS_CLASS_MESSAGE", "wquiz-questionmessage"); 		// p - used for message to user eg. answer invalid
 define ("CSS_CLASS_STATUS", "wquiz-questionstatus");		// position in quiz (eg. 1 of 10)
 define ("CSS_ID_NAVIGATION", "wquiz-questionnavigation");	// div
@@ -20,6 +23,7 @@ define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
 define ("CSS_ID_FORM", "wquiz-form");
 define ("CSS_ID_REVIEW", "wquiz-review-yes");						// div - review = yes
+define ("CSS_ID_SUMMARY", "wquiz-summary");				// ul for summary restults
 define ("CSS_ID_MARK", "wquiz-review-mark");						// div - review = answer
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");				// div - for main direction buttons etc.
 define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit-");			// prefix for navigation buttons (followed by previous, next etc.	

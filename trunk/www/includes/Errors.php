@@ -18,6 +18,7 @@ define ('ERROR_PARAMETER', 107);		// Error with parameter provided by the custom
 define ('ERROR_QUIZSTATUS', 108);		// Error with parameter provided by the customer
 define ('ERROR_QUIZQUESTIONS', 109);	// insufficient questions etc.
 define ('ERROR_DATABASE', 110);			// Other database error
+define ('ERROR_NOTALLOWED', 111);		// Trying to use disabled feature 
 define ('ERROR_INTERNAL', 199);			// Internal error (eg. required variable not defined)
 define ('ERROR_LEVEL', 200);
 define ('WARNING_CFG', 201);
@@ -29,7 +30,8 @@ define ('WARNING_SECURITY', 206);
 define ('WARNING_PARAMETER', 207);
 define ('WARNING_QUIZSTATUS', 208);
 define ('WARNING_QUIZQUESTIONS', 209);
-define ('WARNING_DATABASE', 210);		
+define ('WARNING_DATABASE', 210);
+define ('WARNING_NOTALLOWED', 211);		
 define ('WARNING_INTERNAL', 299);
 define ('WARNING_LEVEL', 300);
 define ('DEBUG_CFG', 301);
@@ -42,6 +44,7 @@ define ('DEBUG_PARAMETER', 307);
 define ('DEBUG_QUIZSTATUS', 308);
 define ('DEBUG_QUIZQUESTIONS', 309);
 define ('DEBUG_DATABASE', 310);
+define ('DEBUG_NOTALLOWED', 311);
 define ('DEBUG_INTERNAL', 399);
 define ('DEBUG_LEVEL', 400);
 define ('INFO_CFG', 401);
@@ -54,6 +57,7 @@ define ('INFO_PARAMETER', 407);
 define ('INFO_QUIZSTATUS', 408);
 define ('INFO_QUIZQUESTIONS', 409);
 define ('INFO_DATABASE', 410);
+define ('INFO_NOTALLOWED', 411);
 define ('INFO_INTERNAL', 499);
 define ('INFO_LEVEL', 500);
 
