@@ -13,12 +13,20 @@ $debug = false;
 require_once("includes/setup.php");
 require_once("includes/QuestionNavigation.php");	// used later for navigation buttons
 
-// action is a string based on button pressed - determines how we handle the post
-// default action is to show question
+// action is used to see if we are moving between questions
+// we do not allow updating any questions
 $action = 'display';
-// message is used to provide feedback to the user
-// most cases we ignore errors, but for instance if a user does not enter a number in a number field we can notify the user of this when we go in display mode
-$message = '';
+
+// Are we allowed to view answers?
+// If not redirect to end page with no message
+if ($settings->getSetting('answer_summary_enable') == 'false')
+{
+	$err = Errors::getInstance();
+	$err->errorEvent(WARNING_NOTALLOWED, "Answer view is disabled");
+	header("Location: ".END_FILE);
+	exit (0);
+}
+
 
 // get the list of questions and current status
 $quiz_info = $quiz_session->getSessionInfo();
@@ -35,23 +43,14 @@ if (!isset($quiz_info['status'])||!is_int($quiz_info['status']))
 }
 
 
-// Check we have valid status - if already complete we go to the end page 
+// Check we have valid status  
 // otherwise if not active go back to start (no status message)
-if ($quiz_info['status'] == SESSION_STATUS_COMPLETE)
+if ($quiz_info['status'] != SESSION_STATUS_COMPLETE)
 {
 	$err = Errors::getInstance();
-	$err->errorEvent(WARNING_SESSION, "Session already complete");
+	$err->errorEvent(WARNING_SESSION, "Session not complete");
 	// Go to end / review page (leave session intact)
 	header("Location: ".END_FILE);
-	exit (0);
-}
-else if ($quiz_info['status'] != SESSION_STATUS_ACTIVE)
-{
-	$err = Errors::getInstance();
-	$err->errorEvent(WARNING_SESSION, "Session is not active - status ".$quiz_info['status']);
-	// kill session and send to index page
-	$quiz_session->destroySession();
-	header("Location: ".INDEX_FILE);
 	exit (0);
 }
 
@@ -68,7 +67,7 @@ else {$num_questions = count($questions_array);}
 
 $answers_array = $quiz_session->getAnswers();
 
-// class for action
+// class for action (use same navigation as question.php, but going between answer pages)
 // we are using default from settings - could override here if required - will also need to pass with showNavigation
 $navigation = new QuestionNavigation(1, $num_questions);
 
@@ -109,83 +108,8 @@ elseif ($_POST['question'] > $num_questions)
 		$action == 'display';
 	}
 else {$question_num = $_POST['question'];}
-// load this question - note -1 used to select array position (ie. question 1 = array 0)
-// if we are just doing a display then we can use this same instance for the display later - otherwise we will need a new instance for the new question
-$question_from = new Question($qdb->getQuestion($questions_array[$question_num-1]));
 
 
-
-// Save answer if changed
-$answer = '';
-// check for hidden field to show that this was from an existing question
-if ($action != 'display')
-{
-	// no type - we didn't come from a question display
-	if (!isset ($_POST['type']) || !$question_from->validateType($_POST['type'])) 
-	{
-		$err = Errors::getInstance();
-		$err->errorEvent(WARNING_PARAMETER, "Parameter type does not match question type");
-		$action = 'display';
-	}
-	// checkbox is handled differently for a checkbox as it can be multiple answers
-	else if ($_POST['type'] == 'checkbox')
-	{
-	for ($i=0; $i<10; $i++)
-		{
-			if (isset ($_POST['answer-'.$i])) {$answer .= $i;}
-		}
-		// if none selected set back to default (-1)
-		if ($answer == '') {$answer = -1;}
-	}
-	//  handle default where answer is not set at all (eg. radio with nothing ticked)
-	else if (!isset ($_POST['answer']) || $_POST['answer'] == '') 
-	{
-		$answer = -1;
-	}
-	else // All others we just have one value from post which is $answers 
-	{
-		if ($question_from->validateAnswer($_POST['answer']))
-		{
-			$answer = $_POST['answer'];
-		}
-		else
-		{
-		// set message as this may have been a genuine error (eg. seven instead of 7)
-		$err = Errors::getInstance();
-		$err->errorEvent(INFO_PARAMETER, "Answer provided is not a valid response for ". $question_from->getType());
-		$message = 'Answer provided is not a valid response';
-		$action = 'display';
-		}
-	}
-}
-
-
-
-
-// check that we haven't changed back to display due to invalid entry before we save
-if ($action != 'display')
-{
-	$all_answers = $quiz_session->getAnswers();
-	// debug Dump answers
-	//print "<h3>Prev answers</h3>";
-	//print_r ($all_answers);
-	// check for exact match (checkbox 01 == 1 which is wrong)
-	if ($all_answers[$question_num-1] !== $answer) 
-	{
-		$all_answers[$question_num-1] = $answer;
-		$quiz_session->setAnswers($all_answers);
-	}
-	// otherwise not changed so no need to save
-}
-
-// debug Dump answers
-//print "<h3>New answers</h3>";
-//print_r ($all_answers);
-
-
-	
-
-if ($debug) {print "Action is $action";}
 // Handle change in page (eg. Finish / trying to go past first) 
 if ($action == 'first') {$question_num = 1;}
 else if ($action == 'previous') {$question_num--;}
@@ -204,12 +128,12 @@ if ($question_num > $num_questions || $action == 'review')
 // Pull in templates
 $templates->includeTemplate('header', 'normal');
 
-// start form
+// start form - still use form to navigate, but not for sending the answer
 // Form starts at the top
-print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
+print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".ANSWER_FILE."\">\n";
 
-// show message if there is one
-if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
+// message is to show the review status
+print "<p class=\"".CSS_CLASS_MESSAGE."\">Review answered questions</p>\n";
 
 // show position in quiz
 // todo may want to allow this wording to be changed via a setting
