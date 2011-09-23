@@ -12,6 +12,8 @@ define ("ANSWER_FILE", "answer.php");
 define ("SUMMARY_FILE", "summary.php");
 define ("END_FILE", "end.php");
 define ("FIRST_FILE", "includes/first.php");	// If install not complete
+define ("ADMIN_FILE", "admin/adminindex.php");
+define ("ADMIN_Q_FILE", "admin/adminquestions.php");
 
 // get directory for includes
 if (defined('__DIR__')) {$app_dir = __DIR__;}
