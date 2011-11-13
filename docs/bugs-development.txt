@@ -7,6 +7,7 @@ release is made or before this is used on a production system.
 
 Add GPLv3 headers to source code
 remove test folder
+add logout button
 
 
 
@@ -15,8 +16,8 @@ remove test folder
 
 Maximum size for settings is 255 characters.
 This poses a limitation for storing arrays inside as these are serialised before storage
-The max size can be increased by changing the varchar size of the value, but 255 is the maximum
-value prior to MySQL 5.0.3 and will therefore increase the pre-req for mysql
+The max size can be increased by changing the varchar size, but 255 is the maximum
+size prior to MySQL 5.0.3 and will therefore increase the pre-req for mysql
 See: http://dev.mysql.com/doc/refman/5.0/en/char.html for mysql information
 
 
