@@ -11,9 +11,9 @@ ini_set('display_errors', true);
 //eg. if we get here from an expired session
 $message = '';
 
-require_once("../includes/setup.php");
+require_once("includes/setup.php");
 // Authentication class required for admin functions
-require_once("../includes/SimpleAuth.php");
+require_once("includes/SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 
@@ -27,7 +27,7 @@ $status = $auth->checkLogin();
 if ($status != 1) 
 	{
 	// no from as use default which goes back to this page
-	header("Location: ".ADMIN_FILE."?status=$status");
+	header("Location: ".ADMIN_LOGIN_FILE."?status=$status");
 	// header will redirect to a new page so we just close this script
 	exit (0);	//Important to stop script here
 	}
@@ -190,43 +190,6 @@ if (isset($debug) && $debug)
 		print $err->listEvents(INFO_LEVEL);
 	}
 }
-
-
-
-
-/*** Functions ***/
-
-// show here as we will do when we get a warning as well
-function printMenu ($quiz_object)
-{
-	
-	// Display menu
-	print "<div id=\"".CSS_ID_MENU."\">\n";
-	print "<span class=\"".CSS_ID_MENU_TITLE."\">Start Quiz</span>\n";
-	print ("<form method=\"post\" action=\"".INDEX_FILE."\" target=\"_top\">");
-
-	print <<<EOT
-<fieldset>
-<input name="style" value="default" type="hidden">
-
-
-<p><label for="name">Please enter your name:</label>
-<input id="name" name="name" type="text"></p>
-<p><label for="quiz">Please select a quiz:</label>
-EOT;
-	print $quiz_object->htmlSelect('online');
-
-	print <<<EOT
-
-<input value=" Go " type="submit"></p>
-</fieldset>
-</form>
-
-</div>
-
-EOT;
-}
-
 
 
 ?>

@@ -11,9 +11,9 @@ ini_set('display_errors', true);
 //eg. if we get here from an expired session
 $message = '';
 
-require_once("../includes/setup.php");
+require_once("includes/setup.php");
 // Authentication class required for admin functions
-require_once("../includes/SimpleAuth.php");
+require_once("includes/SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 
@@ -27,7 +27,7 @@ $status = $auth->checkLogin();
 if ($status != 1) 
 	{
 	// no from as use default which goes back to this page
-	header("Location: ".ADMIN_FILE."?status=$status");
+	header("Location: ".ADMIN_LOGIN_FILE."?status=$status");
 	// header will redirect to a new page so we just close this script
 	exit (0);	//Important to stop script here
 	}
@@ -40,7 +40,7 @@ $sessionUsername = $auth->getUser();
 // header template
 $templates->includeTemplate('header', 'admin');
 
-$questions = 
+$questions = ADMIN_LIST;
 print <<< EOT
 <h1>Administration</h1>
 <h2>Tasks</h2>
