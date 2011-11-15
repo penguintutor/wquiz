@@ -19,9 +19,13 @@ class Question
     private $answer = '';	// this is answer formatting rather than current value
     private $reason = '';
     private $image = '';
+    private $created = '0000-00-00';
+    private $reviewed = '0000-00-00';
     // This is an array of quizzes that question is included in (usuing quizname rather than id)
     private $quizzes = array();
     
+    // num of chars in summary
+    private $summary_length = 45;
 
 	// normally create instance with details, but set to null in case 
 	// creating a new one (eg. new question)
@@ -39,6 +43,8 @@ class Question
 			$this->reason = $db_results['reason'];
 			$this->image = $db_results['image'];
 			$this->quizzes = $db_results['quizzes'];
+			$this->created = $db_results['created'];
+			$this->reviewed = $db_results['reviewed'];
     	}
 
     }
@@ -63,9 +69,44 @@ class Question
 
     }
     
+    // gives a brief summary based on the introduction text (truncated)
+    // if > $summary_length chars then return trunc ...
+    public function getSummary()
+    {
+    	if (strlen($this->intro) > $this->summary_length) 
+    	{
+    		return (substr($this->intro, 0, $this->summary_length-4)." ...");
+    	}
+    	else {return $this->intro;}
+    }
+    
+    // return type of question (eg. radio / checkbox / text)
     public function getType ()
     {
     	return $this->type;
+    }
+    
+    // return a string listing quizzes
+    public function getQuizzes ()
+    {
+    	if (count($this->quizzes) < 1) {return "";}
+    	$return_string = $this->quizzes[0];
+    	for ($i = 1; $i < count($this->quizzes); $i++)
+    	{
+    		$return_string .= ",".$this->quizzes[$i];
+    	}
+    	return $return_string;
+    	
+    }
+    
+    public function getCreated()
+    {
+    	return $this->created;
+    }
+    
+    public function getReviewed()
+    {
+    	return $this->reviewed;
     }
     
     
