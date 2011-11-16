@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // must add this before we require the menu 
-$admin_menu = 'list';
+$admin_menu = 'edit';
 //$debug = true;
 
 // message is used to provide feedback to the user
@@ -16,7 +16,7 @@ require_once("includes/setup.php");
 // Authentication class required for admin functions
 require_once("includes/SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
-require_once ($include_dir."Quizzes.php");
+//require_once ($include_dir."Quizzes.php");
 
 /*** Authentication ***/
 // user must be logged in for any admin functions
@@ -35,20 +35,52 @@ if ($status != 1)
 $sessionUsername = $auth->getUser();
 
 
-/*** Setup some values ***/
-
-/** - not yet used - for managing quizzes **/
-/*// get all the quizzes and add to object
-$all_quizzes = new Quizzes();
-$quiz_array = $qdb->getQuizzesAll();
-// add this one to allQuizzes
-foreach ($quiz_array as $this_quiz_array)
-{
-	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
-}*/
-
 // header template
 $templates->includeTemplate('header', 'admin');
+
+
+/** Edit or Save ? **/
+if (isset($_POST['questionid']))
+{
+	// a post so save
+	//-- add save code here
+}
+// note get is deliberately different to post (question instead of questionid)
+// check it's a number
+elseif (isset($_GET['question']) && is_int($_GET['question']))
+{
+	$questionid =$_GET['question']; 
+	// Show edit
+	// load questionid 
+	$question = new Question($qdb->getQuestion($question));
+	// now check that we have loaded question correctly - check that the db read was valid
+	if ($question->getQuestionID != $questionid) 
+	{
+		$err = Errors::getInstance();
+		$err->errorEvent(WARNING_PARAMETER, "Question parameter missing on edit page");
+		// redirect to admin index page
+		header("Location: ".ADMIN_FILE."?status=error");
+		exit (0);
+	}
+	
+	/* At this point we have loaded the current question - display form */
+	
+	
+	
+	
+}
+// no questionid - error and back to index page
+else 
+{
+	$err = Errors::getInstance();
+	$err->errorEvent(WARNING_QUESTION, "Unable to load question $questionid");
+	// redirect to admin index page
+	header("Location: ".ADMIN_FILE."?status=questionerror");
+	exit (0);
+}
+
+
+
 
 // questions
 $questions_array = $qdb->getQuestionIDs();

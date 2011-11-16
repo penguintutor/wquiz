@@ -11,9 +11,12 @@ define ("QUESTION_FILE", "question.php");
 define ("ANSWER_FILE", "answer.php");
 define ("SUMMARY_FILE", "summary.php");
 define ("END_FILE", "end.php");
-define ("FIRST_FILE", "includes/first.php");	// If install not complete
-define ("ADMIN_FILE", "admin/adminindex.php");
-define ("ADMIN_Q_FILE", "admin/adminquestions.php");
+define ("FIRST_FILE", "includes/first.php");		// If install not complete
+define ("ADMIN_FILE", "adminindex.php");
+define ("ADMIN_LOGIN_FILE", "adminlogin.php");
+define ("ADMIN_LIST", "adminlist.php");				// List of questions
+define ("ADMIN_Q_FILE", "adminquestions.php"); 		// view / test question
+define ("ADMIN_EDIT_FILE", "adminedit.php"); 	// edit question
 
 // get directory for includes
 if (defined('__DIR__')) {$app_dir = __DIR__;}
