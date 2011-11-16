@@ -67,6 +67,7 @@ print <<< EOT
 	<th>Quiz</th>
 	<th>Created</th>
 	<th>Reviewed</th>
+	<th></th>
 </tr>
 EOT;
 
@@ -79,11 +80,12 @@ foreach ($questions_array as $this_question_entry)
 	$this_question = new Question($qdb->getQuestion($this_question_entry));
 	print "<td>$this_question_entry</td>";
 	//print "<td>-</td>";
-	print "<td>".$this_question->getSummary()."</td>";
+	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question->getQuestionID()."\">".$this_question->getSummary()."</a></td>";
 	print "<td>".$this_question->getType()."</td>";
 	print "<td>".$this_question->getQuizzes()."</td>";
 	print "<td>".$this_question->getCreated()."</td>";
 	print "<td>".$this_question->getReviewed()."</td>\n";
+	print "<td><a href=\"".ADMIN_Q_FILE."?question=".$this_question->getQuestionID()."\">Test</a></td>\n";
 	print "</tr>\n";
 }
 

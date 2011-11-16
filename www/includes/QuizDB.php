@@ -97,7 +97,9 @@ class QuizDB
     	if (isset ($temp_array['ERRORS'])) 
     	{
     		$err =  Errors::getInstance();
-    		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']); 
+    		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']);
+    		// not needed as we exit anyway, but removes risk of failure
+    		exit(0);
     	}
     	
     	// copy first entry into place except for quizname

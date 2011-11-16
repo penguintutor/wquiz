@@ -86,6 +86,12 @@ class Question
     	return $this->type;
     }
     
+    // return type of question (eg. radio / checkbox / text)
+    public function getQuestionID ()
+    {
+    	return $this->questionid;
+    }    
+    
     // return a string listing quizzes
     public function getQuizzes ()
     {
