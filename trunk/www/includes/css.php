@@ -2,6 +2,7 @@
 /****************************************
 * CSS IDs / Tags etc.
 * Used by multiple files (Question.php / QuizMenu.php)
+* Not used by admin pages
 *****************************************/
 
 // css tags that the customer should use in css file
@@ -26,7 +27,7 @@ define ("CSS_ID_REVIEW", "wquiz-review-yes");						// div - review = yes
 define ("CSS_ID_SUMMARY", "wquiz-summary");				// ul for summary restults
 define ("CSS_ID_MARK", "wquiz-review-mark");						// div - review = answer
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");				// div - for main direction buttons etc.
-define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit-");			// prefix for navigation buttons (followed by previous, next etc.	
+define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit");			// prefix for navigation buttons (followed by previous, next etc.	
 
 
 
