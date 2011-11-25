@@ -40,8 +40,8 @@ if ($debug) {print "Loading QuizSession\n";}
 include ($include_dir."QuizSession.php");	// Session handling
 if ($debug) {print "Loading Question\n";}
 include ($include_dir."Question.php");		// Manage a question
-if ($debug) {print "Loading Quizzes\n";}
-include ($include_dir."Quizzes.php");		// Manage the overall quiz - eg. display menu
+//if ($debug) {print "Loading Quizzes\n";}
+//include ($include_dir."Quizzes.php");		// Manage the overall quiz - eg. display menu
 if ($debug) {print "Loading Quiz\n";}
 require_once ($include_dir."Quiz.php");		// Manage an individual quiz
 if ($debug) {print "Loading Templates\n";}

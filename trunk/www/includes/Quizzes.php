@@ -16,15 +16,25 @@ class Quizzes
 	private static $quiz_objects;
     
 
-    //question_num is our position in quiz - irrelevant (0) if not actually doing quiz
-	// normally create instance with details, but set to null in case 
-	// creating a new one (eg. new question)
-	// defaults are set to empty strings above    
+	// empty constructor - we add objects afterwards
     public function __construct () 
     {
 
 
     }
+    
+    
+    // sort based on priority, secondary quizname
+    private function cmpObj($a, $b)
+    {
+    	if ($a->priority == $b->priority) 
+    	{
+    		return ($a->quizname < $b->quizname) ? -1 : 1;
+    	}
+    	return ($a->priority < $b->priority) ? -1 : 1;
+    }
+    
+    
     
     public function count ()
     {
@@ -51,6 +61,14 @@ class Quizzes
     	{
     		if ($this_object->getQuizname() == $quizname) {return $this_object;}
     	}
+	}
+	
+	// Returns has array
+	// key = quizname (db unique entry)
+	// value = title
+	public function getQuizNameArray()
+	{
+		
 	}
 
 

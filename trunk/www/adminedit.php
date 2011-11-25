@@ -19,6 +19,19 @@ require_once("includes/SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 //require_once ($include_dir."Quizzes.php");
 
+/*** Further setup ***/
+
+// get all the quizzes and add to object
+$all_quizzes = new Quizzes();
+$quiz_array = $qdb->getQuizzesAll();
+// add this one to allQuizzes
+foreach ($quiz_array as $this_quiz_array)
+{
+	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
+}
+
+
+
 /*** Authentication ***/
 // user must be logged in for any admin functions
 // this needs to be before we output anything as it uses sessions (cookies)
@@ -88,8 +101,10 @@ print "<p>Do NOT use apostrophes etc, instead use their html equivelant.<br />(e
 print "<form action=\"".ADMIN_EDIT_FILE."\" method=\"post\">\n";
 print "<h3>Question number: ".$question->getQuestionID()."</h3>\n";
 print "<input type=\"hidden\" name=\"questionid\" value=\"".$question->getQuestionID()."\" /></h3>\n";
-print "Quiz Categories\n";
+print "Quizzes\n";
 //-- add category list option
+$all_quizzes->getQuizNameArray();
+
 print "Section (eg. chapter / subcategory):";
 /*
 Quiz Categories:
