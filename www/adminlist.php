@@ -56,9 +56,12 @@ $questions_array = $qdb->getQuestionIDs();
 
 require_once ($include_dir."adminmenu.php");
 
+print "<h1>Questions</h1>";
+// question = 0 used for create new
+print "<a href=\"".ADMIN_EDIT_FILE."?question=0\">Add new question</a><br />\n";
+
 
 print <<< EOT
-<h1>Questions</h1>
 <table>
 <tr>
 	<th>Question</th>

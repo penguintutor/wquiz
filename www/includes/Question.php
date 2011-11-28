@@ -102,8 +102,21 @@ class Question
     		$return_string .= ",".$this->quizzes[$i];
     	}
     	return $return_string;
-    	
     }
+    
+    // return the quizzes as an array
+    public function getQuizArray ()
+    {
+    	return $this->quizzes;
+    }
+    
+    // returns true if this question is part of this quiz
+    public function isInQuiz ($check_quiz)
+    {
+    	if (in_array($check_quiz, $this->quizzes)) {return true;}
+    	else {return false;} 
+    }
+    
     
     public function getCreated()
     {

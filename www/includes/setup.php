@@ -16,7 +16,8 @@ define ("ADMIN_FILE", "adminindex.php");
 define ("ADMIN_LOGIN_FILE", "adminlogin.php");
 define ("ADMIN_LIST", "adminlist.php");				// List of questions
 define ("ADMIN_Q_FILE", "adminquestions.php"); 		// view / test question
-define ("ADMIN_EDIT_FILE", "adminedit.php"); 	// edit question
+define ("ADMIN_EDIT_FILE", "adminedit.php"); 		// edit question
+
 
 // get directory for includes
 if (defined('__DIR__')) {$app_dir = __DIR__;}

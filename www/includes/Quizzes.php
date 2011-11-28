@@ -68,7 +68,15 @@ class Quizzes
 	// value = title
 	public function getQuizNameArray()
 	{
+		// sort first
+		$this->_sort();
 		
+		$return_array = array();
+		foreach ($this->quiz_objects as $this_object)
+    	{
+    		$return_array[$this_object->getQuizname()] = $this_object->getTitle();
+    	}
+    	return $return_array;
 	}
 
 
