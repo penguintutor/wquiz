@@ -18,7 +18,12 @@ class Question
     private $type = '';
     private $answer = '';	// this is answer formatting rather than current value
     private $reason = '';
+    private $reference = '';
+    private $hint = '';
     private $image = '';
+    private $comments = '';
+    private $qfrom = '';
+    private $email = '';
     private $created = '0000-00-00';
     private $reviewed = '0000-00-00';
     // This is an array of quizzes that question is included in (usuing quizname rather than id)
@@ -41,7 +46,12 @@ class Question
 			$this->type = $db_results['type'];
 			$this->answer = $db_results['answer'];		
 			$this->reason = $db_results['reason'];
+			$this->reference = $db_results['reference'];
+			$this->hint = $db_results['hint'];
 			$this->image = $db_results['image'];
+			$this->comments = $db_results['comments'];
+			$this->qfrom = $db_results['qfrom'];
+			$this->email = $db_results['email'];
 			$this->quizzes = $db_results['quizzes'];
 			$this->created = $db_results['created'];
 			$this->reviewed = $db_results['reviewed'];
@@ -68,6 +78,8 @@ class Question
     	print "\n</p>\n</div>\n";
 
     }
+
+
     
     // gives a brief summary based on the introduction text (truncated)
     // if > $summary_length chars then return trunc ...
@@ -79,6 +91,13 @@ class Question
     	}
     	else {return $this->intro;}
     }
+
+
+    // return type of question (eg. radio / checkbox / text)
+    public function getQuestionID ()
+    {
+    	return $this->questionid;
+    }
     
     // return type of question (eg. radio / checkbox / text)
     public function getType ()
@@ -86,11 +105,13 @@ class Question
     	return $this->type;
     }
     
-    // return type of question (eg. radio / checkbox / text)
-    public function getQuestionID ()
+    
+    public function getReason()
     {
-    	return $this->questionid;
-    }    
+    	return $this->reason;
+    }
+    
+    
     
     // return a string listing quizzes
     public function getQuizzes ()
@@ -116,7 +137,12 @@ class Question
     	if (in_array($check_quiz, $this->quizzes)) {return true;}
     	else {return false;} 
     }
+
     
+    public function getAnswer()
+    {
+    	return $this->answer;
+    }    
     
     public function getCreated()
     {
@@ -127,10 +153,40 @@ class Question
     {
     	return $this->reviewed;
     }
+
+    public function getReference()
+    {
+    	return $this->reference;
+    }
     
     public function getIntro()
     {
     	return $this->intro;
+    }
+
+    public function getHint()
+    {
+    	return $this->hint;
+    }
+
+    public function getImage()
+    {
+    	return $this->image;
+    }
+
+    public function getComments()
+    {
+    	return $this->comments;
+    }
+
+    public function getQfrom()
+    {
+    	return $this->qfrom;
+    }
+    
+    public function getEmail()
+    {
+    	return $this->email;
     }
     
     

@@ -53,10 +53,18 @@ $templates->includeTemplate('header', 'admin');
 
 
 /** Edit or Save ? **/
+// if post it's a save
 if (isset($_POST['questionid']))
 {
-	// a post so save
+	// if questionid is 0 then this is a create instead of an update
 	//-- add save code here
+	// we validate all details before storing them into an array (we then use this to save to DB)
+	$post_details = array();
+	
+
+
+
+
 	// then set $questionid so that we go back to editing this entry 
 }
 // note get is deliberately different to post (question instead of questionid)
@@ -126,11 +134,17 @@ foreach ($quiz_array as $short_quizname=>$long_quizname)
 }
 print "</ul>\n\n";
 
+
+// Intro
+if ($questionid >0) {$value = $question->getIntro();}
+else {$value = "";}
 print "Intro:<br />\n";
 print "<textarea name=\"intro\" cols=\"60\" rows=\"20\">";
-if ($questionid >0) {print $question->getIntro();}
+print $value;
 print "</textarea><br />\n";
 
+
+// Type
 print "Question Type:";
 print "<select name=\"type\" id=\"type\">\n";
 foreach ($question_types as $qtype_key=>$qtype_value)
@@ -146,35 +160,66 @@ foreach ($question_types as $qtype_key=>$qtype_value)
 }
 print "</select><br />\n";
 
-
-print "Answer : <span id=\"".CSS_ID_EDIT_HINT_ANSWER."\"><br />\n";
+// Type
+if ($questionid >0) {$value = $question->getAnswer();}
+else {$value = "";}
+print "Answer (<span id=\"".CSS_ID_EDIT_HINT_ANSWER."\"></span>) : <br />\n";
 //(radio = number from 0; number = min,max; text = perl regexp no /; checkbox=digits of answer starting 0)
-print "<textarea name=\"answer\" cols=\"60\" rows=\"20\">";
+print "<textarea name=\"answer\" cols=\"60\" rows=\"5\">";
+print $value;
 print "</textarea><br />\n";
 
+// Reason
+if ($questionid >0) {$value = $question->getReason();}
+else {$value = "";}
 print "Reason (use &lt;b&gt; around the actual answer):<br />\n";
 print "<textarea name=\"reason\" cols=\"60\" rows=\"10\">";
+print $value;
 print "</textarea><br />\n";
 
+// Reference
+if ($questionid >0) {$value = $question->getReference();}
+else {$value = "";}
 print "Reference: "; 
-print "<input type=\"text\" name=\"reference\" value=\"\"><br />\n";
+print "<input type=\"text\" name=\"reference\" value=\"$value\"><br />\n";
 
+// Hint
+if ($questionid >0) {$value = $question->getHint();}
+else {$value = "";}
 print "Hint: ";
-print "<input type=\"text\" name=\"hint\" value=\"\"><br />\n";
+print "<input type=\"text\" name=\"hint\" value=\"$value\"><br />\n";
 
+// Image
+if ($questionid >0) {$value = $question->getImage();}
+else {$value = "";}
 print "Image (URL): ";
-print "<input type=\"text\" name=\"image\" value=\"\"><br />\n";
+print "<input type=\"text\" name=\"image\" value=\"$value\"><br />\n";
 
+// Comment
+if ($questionid >0) {$value = $question->getComments();}
+else {$value = "";}
 print "Comment (not shown to the user):<br />\n";
 print "<textarea name=\"comment\" cols=\"60\" rows=\"5\">";
+print $value;
 print "</textarea><br />\n";
 
+// Contributer
+if ($questionid >0) {$value = $question->getQfrom();}
+else {$value = "";}
 print "Contributor: "; 
-print "<input type=\"text\" name=\"qfrom\" value=\"\"><br />\n";
+print "<input type=\"text\" name=\"qfrom\" value=\"$value\"><br />\n";
 
+// Email
+if ($questionid >0) {$value = $question->getEmail();}
+else {$value = "";}
 print "Contributor Email: ";
-print "<input type=\"text\" name=\"email\" value=\"\"><br />\n";
-print "<input type=\"hidden\" name=\"created\" value=\"0000-00-00\"><br />\n";
+print "<input type=\"text\" name=\"email\" value=\"$value\"><br />\n";
+
+// Created date
+if ($questionid >0) {$value = $question->getIntro();}
+else {$value = "0000-00-00";}
+print "<input type=\"hidden\" name=\"created\" value=\"$value\"><br />\n";
+
 print "<input type=\"submit\" value=\"Save\" />\n";
 
 print "</form>\n";
