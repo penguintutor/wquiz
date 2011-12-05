@@ -1,25 +1,41 @@
 // Javascript file for admin functions
 
+
+
 //Answer hint
-var $answer_hints = array(
-	'radio'=>'Radio element number counting from 0', 
-	'number'=>'Number min,max',
-	'text' =>'Text Perl regexp without /;',
-	'TEXT' =>'TEXT Perl regexp without /;',
-	'checkbox' =>'Checkbox digits counting from 0'
-);
+// javascript does not support associative arrays, but this object works in a similar way
+var answer_hints = {
+	'radio':'Radio element number counting from 0', 
+	'number':'Number min,max',
+	'text':'Text Perl regexp without /;',
+	'TEXT':'TEXT Perl regexp without /;',
+	'checkbox':'Checkbox digits counting from 0'
+};
 
 
-// Handle type selector - with hint text
-var type_element = document.getElementByID("type");
-if (type_element != null)
+function changeTextHint()
 {
-	type_element.onchange = changeTextHint();	
+	var type_element = document.getElementById("type");
+	var selected_index = type_element.selectedIndex;
+	document.getElementById('wquiz-edit-hint-answer').innerHTML = answer_hints[type_element.options[selected_index].value];
 }
 
-function changeTextHint ()
+
+
+function setupAdmin()
 {
-	var hint_element = document.getElementbyID("wquiz-edit-hint-answer");
-	hint_element.text = $answer_hints[type_element.value];
+	// if we have a type option we display hints (eg. edit)
+	var type_element = document.getElementById("type");
+	if (type_element != null)
+	{
+		// set initial text
+		changeTextHint();
+		// register listener for changes
+		type_element.addEventListener("change", changeTextHint);
+	}
+	
 }
+
+window.onload = setupAdmin;
+
 
