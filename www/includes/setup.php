@@ -111,6 +111,17 @@ $templates = new Templates();
 // just start session here
 $quiz_session = new QuizSession();
 
+
+// array of supported question types
+// key is used in database - value could be more useful reference
+$question_types = array(
+	'text'=>'text',
+	'TEXT'=>'TEXT',
+	'number'=>'number',
+	'radio'=>'radio',
+	'checkbox'=>'checkbox');
+
+
 //debug
 if ($debug) {print "Setup complete\n\n";}
 

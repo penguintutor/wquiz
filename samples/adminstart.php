@@ -5,9 +5,11 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta name="description" content="WQuiz - quiz administration" />
+
 <title>WQuiz - quiz administration</title>
 
 <link href="/wquiz/wquiz.css" rel="stylesheet" type="text/css" />
+<script src="admin.js" type="text/javascript"></script>
 </head>
 
 <body>

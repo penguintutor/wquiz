@@ -128,6 +128,11 @@ class Question
     	return $this->reviewed;
     }
     
+    public function getIntro()
+    {
+    	return $this->intro;
+    }
+    
     
     // validates the type against the type in the post
     // note that the type in the post will be text even for number etc.
