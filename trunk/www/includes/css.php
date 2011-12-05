@@ -28,6 +28,7 @@ define ("CSS_ID_SUMMARY", "wquiz-summary");				// ul for summary restults
 define ("CSS_ID_MARK", "wquiz-review-mark");						// div - review = answer
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");				// div - for main direction buttons etc.
 define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit");			// prefix for navigation buttons (followed by previous, next etc.	
+define ("CSS_ID_EDIT_HINT_ANSWER", "wquiz-edit-hint-answer");			// hint in edit on answer field - admin.js uses this value
 
 
 

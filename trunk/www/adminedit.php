@@ -100,7 +100,7 @@ require_once ($include_dir."adminmenu.php");
 print "<h2>Edit Question</h2>\n";
 print "<p>Do NOT use apostrophes etc, instead use their html equivelant.<br />(e.g. &amp;quot; = &quot;  &amp;amp;=&amp;)</p>\n";
 print "<form action=\"".ADMIN_EDIT_FILE."\" method=\"post\">\n";
-if ($quesionid == 0) {print "<h3>New question</h3>\n";}
+if ($questionid == 0) {print "<h3>New question</h3>\n";}
 else {print "<h3>Question number: ".$questionid."</h3>\n";}
 print "<input type=\"hidden\" name=\"questionid\" value=\"".$questionid."\" /></h3>\n";
 print "Quizzes\n<ul>\n";
@@ -126,24 +126,29 @@ foreach ($quiz_array as $short_quizname=>$long_quizname)
 }
 print "</ul>\n\n";
 
-
-print "Section (eg. chapter / subcategory):";
-print "<input type=\"text\" name=\"section\" value=\"\"><br />\n";
-
 print "Intro:<br />\n";
-print "<textarea name=\"intro\" cols=\"60\" rows=\"20\"></textarea><br />\n";
+print "<textarea name=\"intro\" cols=\"60\" rows=\"20\">";
+if ($questionid >0) {print $question->getIntro();}
+print "</textarea><br />\n";
 
 print "Question Type:";
-print "<select name=\"type\">\n";
-print " <option value=\"text\">text</option>\n";
-print " <option value=\"TEXT\">TEXT</option>\n";
-print " <option value=\"number\">number</option>\n";
-print " <option value=\"radio\">radio</option>\n";
-print " <option value=\"checkbox\">checkbox</option>\n";
+print "<select name=\"type\" id=\"type\">\n";
+foreach ($question_types as $qtype_key=>$qtype_value)
+{
+	if ($questionid > 0 && $question->getType() == $qtype_key)
+	{
+		print " <option value=\"$qtype_key\" selected=\"selected\">$qtype_value</option>\n";
+	}
+	else
+	{
+		print " <option value=\"$qtype_key\">$qtype_value</option>\n";
+	}
+}
 print "</select><br />\n";
-// selected="selected"
 
-print "Answer (radio = number from 0; number = min,max; text = perl regexp no /; checkbox=digits of answer starting 0): <br />\n";
+
+print "Answer : <span id=\"".CSS_ID_EDIT_HINT_ANSWER."\"><br />\n";
+//(radio = number from 0; number = min,max; text = perl regexp no /; checkbox=digits of answer starting 0)
 print "<textarea name=\"answer\" cols=\"60\" rows=\"20\">";
 print "</textarea><br />\n";
 
