@@ -23,6 +23,26 @@ class QuizDB
     	'settings' => 'quiz_settings'
     );
     
+    // list of elements in question table - use to compile sql req
+    private $question_elements = array 
+    (
+    	'questionid',
+    	'section',			// not currently used
+    	'intro',
+    	'input',
+    	'type',
+    	'answer',
+    	'reason',
+    	'reference',
+    	'hint',
+    	'image',
+    	'comments',
+    	'qfrom',
+    	'email',
+    	'created',
+    	'reviewed'
+    );
+    
     /* needs to be passed the database object for class Database */
     public function __construct ($db_object) 
     {
@@ -78,7 +98,7 @@ class QuizDB
     	
     }
 
-    
+
     
     // returns an array
     public function getQuestion ($question_num) 
@@ -189,6 +209,85 @@ class QuizDB
     	return ($this->db_object->getRowsAll ("Select * from ".$this->table_prefix.$this->quiz_tables['quizzes']));
     }
     
+    
+    // create new question
+    public function addQuestion ($post_details) 
+    {
+    	// join used to get the quiznames from the relationship table
+    	// may end up with multiple results with quizname being the unique part of each entry
+    	$question_result = array();
+    	
+    	// set questionid to 0 for add (auto-increment)
+    	$post_details['questionid'] = '';
+    	
+    	// create two strings - one with field names - second with values
+    	$fields = '';
+    	$values = '';
+    	foreach ($question_elements as $this_element)
+    	{
+    		$comma = '';
+    		$fields .= $comma.$this_element;
+    		// if value is not set then we set to a default
+    		if (isset ($post_details[$this_element])) {$values .= $comma.$post_details[$this_element];}
+    		else {$values .= $comma.'';}
+    		$comma = ',';
+    	}
+    	
+    	$sql = "INSERT INTO ".$this->table_prefix.$this->quiz_tables['questions']."($fields) VALUES ($values)";
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	// return autoincremented questionid
+    	return mysql_insert_id();
+    }
+    
+
+    // change existing question
+    public function updateQuestion ($post_details) 
+    {
+    	/*// join used to get the quiznames from the relationship table
+    	// may end up with multiple results with quizname being the unique part of each entry
+    	$question_result = array();
+    	
+    	// set questionid to 0 for add (auto-increment)
+    	$post_details['questionid'] = '';
+    	
+    	// create two strings - one with field names - second with values
+    	$fields = '';
+    	$values = '';
+    	foreach ($question_elements as $this_element)
+    	{
+    		$comma = '';
+    		$fields .= $comma.$this_element;
+    		// if value is not set then we set to a default
+    		if (isset $post_details[$this_element]) {$values .= $comma.$post_details[$this_element];}
+    		else {$values .= $comma.'';}
+    		$comma = ',';
+    	}
+    	
+    	$sql = "INSERT INTO ".$this->table_prefix.$this->quiz_tables['questions']."($fields) VALUES ($values)";
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	*/
+    	return true;
+    }
+
+
+
     
 }
 ?>
