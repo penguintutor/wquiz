@@ -83,7 +83,7 @@ class Quizzes
    
     public function validateQuizname ($quizname)
     {
-    	// run through all questions and look for quizname matching
+    	// run through all quizzes and look for quizname matching
     	foreach ($this->quiz_objects as $this_object)
     	{
     		if ($this_object->getQuizname() == $quizname) {return true;}

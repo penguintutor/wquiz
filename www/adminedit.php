@@ -1,5 +1,10 @@
 <?php
 
+/* New / Edit / Save question */
+/* Note error checking is quite brutal - we rely on javascript to provide more
+user friendly error checking before we get to this page */
+
+
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
@@ -60,12 +65,153 @@ if (isset($_POST['questionid']))
 	//-- add save code here
 	// we validate all details before storing them into an array (we then use this to save to DB)
 	$post_details = array();
+	// store quizzes seperately as those are not saved in the question table in the DB
+	$post_quizzes = array();
+	
+	// Quizzes
+	// we need to check all possible quizzes
+	for ($i =0; $i < $all_quizzes->count(); $i++)
+	{
+		if (isset ($_POST["quiz_".$i])) 
+		{
+			// only add if is a valid quiz - if invalid we just ignore
+			if ($all_quizzes->validateQuizname($_POST["quiz_".$i]))
+			{
+				$post_quizzes[] = $_POST["quiz_".$i];
+			}
+		}
+	}
+
+	// Intro
+	if (isset ($_POST['intro'])) 
+	{
+		// Do not apply strict security validation as this can only be added by an administrator
+		// This means that they could inject javascript etc, the same as if you allowed them to edit
+		// a html template etc.
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['intro'] = stripslashes($_POST['intro']); }
+		else {$post_details['intro'] = $_POST['intro'];}
+	}
+	
+	
+	// Type
+	if (isset ($_POST['type']))
+	{
+		// check that it's a valid entry
+		// if not we fail
+		if (isset ($question_types[$_POST['type']]))
+		{
+			$post_details['type'] = $_POST['type'];
+		}
+		else
+		{
+			$err = Errors::getInstance();
+			$err->errorEvent(ERROR_PARAMETER, "Invalid question type");
+			exit (0);
+		}
+	}
+	
+	
+	// Answer
+	if (isset ($_POST['answer'])) 
+	{
+		// As per Intro only minimal security checks
+		//- perhaps in future add additional checking to ensure we don't have an invalid answer for the type
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['answer'] = stripslashes($_POST['answer']); }
+		else {$post_details['answer'] = $_POST['answer'];}
+	}
+	else {$post_details['answer'] == ''};
+	
+	
+	// Reason
+	if (isset ($_POST['reason'])) 
+	{
+		// As per Intro only minimal security checks - this is a block of text
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['reason'] = stripslashes($_POST['reason']); }
+		else {$post_details['reason'] = $_POST['reason'];}
+	}
+	else {$post_details['reason'] == ''};
+
+	
+	// Reference
+	if (isset ($_POST['reference'])) 
+	{
+		// As per Intro only minimal security checks
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['reference'] = stripslashes($_POST['reference']); }
+		else {$post_details['reference'] = $_POST['reference'];}
+	}	
+	else {$post_details['reference'] == ''};
+	
+	
+	// Hint
+	if (isset ($_POST['hint'])) 
+	{
+		// As per Intro only minimal security checks
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['hint'] = stripslashes($_POST['hint']); }
+		else {$post_details['hint'] = $_POST['hint'];}
+	}
+	else {$post_details['hint'] == ''};
+	
+	
+	// Image
+	if (isset ($_POST['image'])) 
+	{
+		// As per Intro only minimal security checks
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['image'] = stripslashes($_POST['image']); }
+		else {$post_details['image'] = $_POST['image'];}
+	}	
+	else {$post_details['image'] == ''};
 	
 
+	// Comment
+	if (isset ($_POST['comment'])) 
+	{
+		// As per Intro only minimal security checks
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['comment'] = stripslashes($_POST['comment']); }
+		else {$post_details['comment'] = $_POST['comment'];}
+	}	
+	else {$post_details['comment'] == ''};
 
 
+	// Contributer
+	if (isset ($_POST['qfrom'])) 
+	{
+		// As per Intro only minimal security checks
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['qfrom'] = stripslashes($_POST['qfrom']); }
+		else {$post_details['qfrom'] = $_POST['qfrom'];}
+	}	
+	else {$post_details['qfrom'] == ''};
 
+
+	// Email
+	if (isset ($_POST['email'])) 
+	{
+		// As per Intro only minimal security checks
+		//- may want to check for valid email format in future (or perhaps do that in Javascript)
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['email'] = stripslashes($_POST['email']); }
+		else {$post_details['email'] = $_POST['email'];}
+	}	
+	else {$post_details['email'] == ''};	
+	
 	// then set $questionid so that we go back to editing this entry 
+	if ($questionid == 0) {$questionid = $qdb->addQuestion($post_details);}
+	else 
+	{
+		// add questionid to array
+		$post_details['questionid'] = $questionid;
+		$qdb->updateQuestion($post_details);
+	}
+		
+	//- update the associated quiz rel entries 
+	
 }
 // note get is deliberately different to post (question instead of questionid)
 // check it's a number - note is_int doesn't work 
@@ -160,7 +306,7 @@ foreach ($question_types as $qtype_key=>$qtype_value)
 }
 print "</select><br />\n";
 
-// Type
+// Answer
 if ($questionid >0) {$value = $question->getAnswer();}
 else {$value = "";}
 print "Answer (<span id=\"".CSS_ID_EDIT_HINT_ANSWER."\"></span>) : <br />\n";
