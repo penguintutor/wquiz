@@ -11,7 +11,7 @@ ini_set('display_errors', true);
 
 // must add this before we require the menu 
 $admin_menu = 'edit';
-//$debug = true;
+$debug = true;
 
 // message is used to provide feedback to the user
 //eg. if we get here from an expired session
@@ -59,10 +59,11 @@ $templates->includeTemplate('header', 'admin');
 
 /** Edit or Save ? **/
 // if post it's a save
-if (isset($_POST['questionid']))
+if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 {
+	$questionid = $_POST['questionid'];
 	// if questionid is 0 then this is a create instead of an update
-	//-- add save code here
+	if ($debug) {print "\nSave on question $questionid\n";}
 	// we validate all details before storing them into an array (we then use this to save to DB)
 	$post_details = array();
 	// store quizzes seperately as those are not saved in the question table in the DB
@@ -70,6 +71,7 @@ if (isset($_POST['questionid']))
 	
 	// Quizzes
 	// we need to check all possible quizzes
+	if ($debug) {print "Quizzes: ";}
 	for ($i =0; $i < $all_quizzes->count(); $i++)
 	{
 		if (isset ($_POST["quiz_".$i])) 
@@ -78,9 +80,13 @@ if (isset($_POST['questionid']))
 			if ($all_quizzes->validateQuizname($_POST["quiz_".$i]))
 			{
 				$post_quizzes[] = $_POST["quiz_".$i];
+				if ($debug) {print $_POST["quiz_".$i]." ";}
 			}
+			
 		}
 	}
+	if ($debug) {print "\n";}
+	
 
 	// Intro
 	if (isset ($_POST['intro'])) 
@@ -91,6 +97,19 @@ if (isset($_POST['questionid']))
 		// remove magicquotes as they will be added when we put into the database anyway
 		if (get_magic_quotes_gpc()) { $post_details['intro'] = stripslashes($_POST['intro']); }
 		else {$post_details['intro'] = $_POST['intro'];}
+		if ($debug) {print "Intro: ".$post_details['intro']."\n";}
+	}
+	
+	// Input
+	if (isset ($_POST['input'])) 
+	{
+		// Do not apply strict security validation as this can only be added by an administrator
+		// This means that they could inject javascript etc, the same as if you allowed them to edit
+		// a html template etc.
+		// remove magicquotes as they will be added when we put into the database anyway
+		if (get_magic_quotes_gpc()) { $post_details['input'] = stripslashes($_POST['input']); }
+		else {$post_details['input'] = $_POST['input'];}
+		if ($debug) {print "Input: ".$post_details['input']."\n";}
 	}
 	
 	
@@ -109,6 +128,7 @@ if (isset($_POST['questionid']))
 			$err->errorEvent(ERROR_PARAMETER, "Invalid question type");
 			exit (0);
 		}
+		if ($debug) {print "Type: ".$post_details['type']."\n";}
 	}
 	
 	
@@ -121,7 +141,8 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['answer'] = stripslashes($_POST['answer']); }
 		else {$post_details['answer'] = $_POST['answer'];}
 	}
-	else {$post_details['answer'] == ''};
+	else {$post_details['answer'] == '';}
+	if ($debug) {print "Answer: ".$post_details['answer']."\n";}
 	
 	
 	// Reason
@@ -132,7 +153,8 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['reason'] = stripslashes($_POST['reason']); }
 		else {$post_details['reason'] = $_POST['reason'];}
 	}
-	else {$post_details['reason'] == ''};
+	else {$post_details['reason'] == '';}
+	if ($debug) {print "Reason: ".$post_details['reason']."\n";}
 
 	
 	// Reference
@@ -143,7 +165,8 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['reference'] = stripslashes($_POST['reference']); }
 		else {$post_details['reference'] = $_POST['reference'];}
 	}	
-	else {$post_details['reference'] == ''};
+	else {$post_details['reference'] == '';}
+	if ($debug) {print "Reference: ".$post_details['reference']."\n";}
 	
 	
 	// Hint
@@ -154,8 +177,8 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['hint'] = stripslashes($_POST['hint']); }
 		else {$post_details['hint'] = $_POST['hint'];}
 	}
-	else {$post_details['hint'] == ''};
-	
+	else {$post_details['hint'] == '';}
+	if ($debug) {print "Hint: ".$post_details['hint']."\n";}
 	
 	// Image
 	if (isset ($_POST['image'])) 
@@ -165,7 +188,8 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['image'] = stripslashes($_POST['image']); }
 		else {$post_details['image'] = $_POST['image'];}
 	}	
-	else {$post_details['image'] == ''};
+	else {$post_details['image'] == '';}
+	if ($debug) {print "Image: ".$post_details['image']."\n";}
 	
 
 	// Comment
@@ -176,7 +200,8 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['comment'] = stripslashes($_POST['comment']); }
 		else {$post_details['comment'] = $_POST['comment'];}
 	}	
-	else {$post_details['comment'] == ''};
+	else {$post_details['comment'] == '';}
+	if ($debug) {print "Comment: ".$post_details['comment']."\n";}
 
 
 	// Contributer
@@ -187,7 +212,8 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['qfrom'] = stripslashes($_POST['qfrom']); }
 		else {$post_details['qfrom'] = $_POST['qfrom'];}
 	}	
-	else {$post_details['qfrom'] == ''};
+	else {$post_details['qfrom'] == '';}
+	if ($debug) {print "Contributer: ".$post_details['qfrom']."\n";}
 
 
 	// Email
@@ -199,7 +225,33 @@ if (isset($_POST['questionid']))
 		if (get_magic_quotes_gpc()) { $post_details['email'] = stripslashes($_POST['email']); }
 		else {$post_details['email'] = $_POST['email'];}
 	}	
-	else {$post_details['email'] == ''};	
+	else {$post_details['email'] == '';}	
+	if ($debug) {print "Email: ".$post_details['email']."\n";}
+	
+	
+	// Created
+	if (isset ($_POST['created']))
+	{
+		// check this is a valid date (don't neccessarily match end - if there is some time part on the string it will get dropped as we used $created_date[1]
+		if (preg_match ('/^(\d{2,4})-(\d{2})-(\d{2})/', $_POST['created'], $created_date))
+		{
+			// use checkdate to make sure it's valid - note checkdate is middle endian
+			if (checkdate ($created_date[2], $created_date[3], $created_date[1]))
+			{
+				$post_details['created'] = $created_date[0];
+			}
+		}
+	}
+	// if it didn't pass the tests set created to 0000-00-00
+	if (!isset($post_details['created'])) {$post_details['created'] = '0000-00-00';}
+	if ($debug) {print "Created: ".$post_details['created']."\n";}
+
+
+	// set updated to current date
+	$post_details['reviewed'] = date('c');
+
+	
+	// *** read through all parameters now perform save / update
 	
 	// then set $questionid so that we go back to editing this entry 
 	if ($questionid == 0) {$questionid = $qdb->addQuestion($post_details);}
@@ -209,9 +261,12 @@ if (isset($_POST['questionid']))
 		$post_details['questionid'] = $questionid;
 		$qdb->updateQuestion($post_details);
 	}
-		
-	//- update the associated quiz rel entries 
 	
+	
+	if ($debug) {print "\nSave completed - questionid is $questionid";}
+	
+	//- update the associated quiz rel entries
+
 }
 // note get is deliberately different to post (question instead of questionid)
 // check it's a number - note is_int doesn't work 
@@ -220,6 +275,8 @@ elseif (isset($_GET['question']) && is_numeric($_GET['question']))
 	$questionid = $_GET['question']; 
 }
 
+
+
 // no questionid - error and back to index page
 // 0 is used for new rather than edit
 if ($questionid < 0)
@@ -227,7 +284,7 @@ if ($questionid < 0)
 	$err = Errors::getInstance();
 	$err->errorEvent(WARNING_QUESTION, "Unable to load question $questionid");
 	// redirect to admin index page
-	header("Location: ".ADMIN_FILE."?status=".WARNING_QUESTION);
+	if (!$debug) {header("Location: ".ADMIN_FILE."?status=".WARNING_QUESTION);}
 	exit (0);
 }
 elseif ($questionid > 0)
@@ -241,7 +298,7 @@ elseif ($questionid > 0)
 		$err = Errors::getInstance();
 		$err->errorEvent(WARNING_PARAMETER, "Question parameter missing on edit page");
 		// redirect to admin index page
-		header("Location: ".ADMIN_FILE."?status=".WARNING_PARAMETER);
+		if (!$debug) {header("Location: ".ADMIN_FILE."?status=".WARNING_PARAMETER);}
 		exit (0);
 	}
 }
@@ -306,6 +363,14 @@ foreach ($question_types as $qtype_key=>$qtype_value)
 }
 print "</select><br />\n";
 
+// Input
+if ($questionid >0) {$value = $question->getInput();}
+else {$value = "";}
+print "Input : <br />\n";
+print "<textarea name=\"input\" cols=\"60\" rows=\"5\">";
+print $value;
+print "</textarea><br />\n";
+
 // Answer
 if ($questionid >0) {$value = $question->getAnswer();}
 else {$value = "";}
@@ -362,7 +427,7 @@ print "Contributor Email: ";
 print "<input type=\"text\" name=\"email\" value=\"$value\"><br />\n";
 
 // Created date
-if ($questionid >0) {$value = $question->getIntro();}
+if ($questionid >0) {$value = $question->getcreated();}
 else {$value = "0000-00-00";}
 print "<input type=\"hidden\" name=\"created\" value=\"$value\"><br />\n";
 
