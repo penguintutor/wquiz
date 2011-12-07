@@ -166,9 +166,6 @@ if ($action != 'display')
 if ($action != 'display')
 {
 	$all_answers = $quiz_session->getAnswers();
-	// debug Dump answers
-	//print "<h3>Prev answers</h3>";
-	//print_r ($all_answers);
 	// check for exact match (checkbox 01 == 1 which is wrong)
 	if ($all_answers[$question_num-1] !== $answer) 
 	{
@@ -177,13 +174,6 @@ if ($action != 'display')
 	}
 	// otherwise not changed so no need to save
 }
-
-// debug Dump answers
-//print "<h3>New answers</h3>";
-//print_r ($all_answers);
-
-
-	
 
 if ($debug) {print "Action is $action";}
 // Handle change in page (eg. Finish / trying to go past first) 

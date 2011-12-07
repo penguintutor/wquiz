@@ -111,7 +111,11 @@ class Question
     	return $this->reason;
     }
     
-    
+   
+    public function getUpdated()
+    {
+    	return $this->updated;
+    }
     
     // return a string listing quizzes
     public function getQuizzes ()
@@ -142,7 +146,12 @@ class Question
     public function getAnswer()
     {
     	return $this->answer;
-    }    
+    }
+
+    public function getInput()
+    {
+    	return $this->input;
+    }        
     
     public function getCreated()
     {

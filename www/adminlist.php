@@ -51,7 +51,7 @@ foreach ($quiz_array as $this_quiz_array)
 $templates->includeTemplate('header', 'admin');
 
 // questions
-$questions_array = $qdb->getQuestionIDs();
+$questions_array = $qdb->getQuestionIds();
 
 
 require_once ($include_dir."adminmenu.php");
