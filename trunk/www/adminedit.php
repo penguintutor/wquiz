@@ -11,7 +11,7 @@ ini_set('display_errors', true);
 
 // must add this before we require the menu 
 $admin_menu = 'edit';
-$debug = true;
+//$debug = true;
 
 // message is used to provide feedback to the user
 //eg. if we get here from an expired session
@@ -99,6 +99,7 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 		else {$post_details['intro'] = $_POST['intro'];}
 		if ($debug) {print "Intro: ".$post_details['intro']."\n";}
 	}
+	
 	
 	// Input
 	if (isset ($_POST['input'])) 
@@ -193,15 +194,15 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 	
 
 	// Comment
-	if (isset ($_POST['comment'])) 
+	if (isset ($_POST['comments'])) 
 	{
 		// As per Intro only minimal security checks
 		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['comment'] = stripslashes($_POST['comment']); }
-		else {$post_details['comment'] = $_POST['comment'];}
+		if (get_magic_quotes_gpc()) { $post_details['comments'] = stripslashes($_POST['comments']); }
+		else {$post_details['comments'] = $_POST['comments'];}
 	}	
-	else {$post_details['comment'] == '';}
-	if ($debug) {print "Comment: ".$post_details['comment']."\n";}
+	else {$post_details['comments'] == '';}
+	if ($debug) {print "Comment: ".$post_details['comments']."\n";}
 
 
 	// Contributer
@@ -230,7 +231,12 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 	
 	
 	// Created
-	if (isset ($_POST['created']))
+	// if it's a new question then created is today
+	if ($questionid == 0)
+	{
+		$post_details['created'] = date('c');
+	}
+	else if (isset ($_POST['created']))
 	{
 		// check this is a valid date (don't neccessarily match end - if there is some time part on the string it will get dropped as we used $created_date[1]
 		if (preg_match ('/^(\d{2,4})-(\d{2})-(\d{2})/', $_POST['created'], $created_date))
@@ -257,6 +263,7 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 	if ($questionid == 0) {$questionid = $qdb->addQuestion($post_details);}
 	else 
 	{
+		// we save even if no changes - more work for sql, but less checking within PHP
 		// add questionid to array
 		$post_details['questionid'] = $questionid;
 		$qdb->updateQuestion($post_details);
@@ -410,7 +417,7 @@ print "<input type=\"text\" name=\"image\" value=\"$value\"><br />\n";
 if ($questionid >0) {$value = $question->getComments();}
 else {$value = "";}
 print "Comment (not shown to the user):<br />\n";
-print "<textarea name=\"comment\" cols=\"60\" rows=\"5\">";
+print "<textarea name=\"comments\" cols=\"60\" rows=\"5\">";
 print $value;
 print "</textarea><br />\n";
 

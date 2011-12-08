@@ -81,8 +81,8 @@ foreach ($questions_array as $this_question_entry)
 	print "<tr>\n";
 	//print "<td>$this_question_entry</td>";
 	$this_question = new Question($qdb->getQuestion($this_question_entry));
-	print "<td>$this_question_entry</td>";
-	//print "<td>-</td>";
+	// Allow either q number or summary to be clicked (as summary may be null - eg. picture quiz)
+	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question->getQuestionID()."\">$this_question_entry</a></td>";
 	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question->getQuestionID()."\">".$this_question->getSummary()."</a></td>";
 	print "<td>".$this_question->getType()."</td>";
 	print "<td>".$this_question->getQuizzes()."</td>";
