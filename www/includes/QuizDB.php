@@ -110,7 +110,10 @@ class QuizDB
     	
     	//--- fails on the join if the question is not assigned to any quizzes!!!
     	
-    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid,intro,input,type,answer,reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname from ".$this->table_prefix.$this->quiz_tables['questions']." JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid where ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=$question_num";
+    	// Note a left outer join is needed instead of just join as the right hand table may then be null and we still match on the questions table
+    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid,intro,input,type,answer,reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname from ".$this->table_prefix.$this->quiz_tables['questions']." LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid where ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=$question_num";
+
+    	
     	
     	if ($debug) {print "Loading question $question_num: \n SQL is:\n $sql \n\n";}
     	
@@ -158,9 +161,8 @@ class QuizDB
     	global $debug;
     	
     	// if $quiz not specified get all questions in db (even those with no quiz)
-    	//--- note this is not working where question is not assigned to a quiz (as we fail on the join)
     	// Initial sql without where - add where part later if required
-    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, section, intro, input, type, answer, reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
+    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, section, intro, input, type, answer, reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " LEFT OUTER LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
     	
     	   	
     	// if we limit to a quiz then handle here
@@ -225,8 +227,7 @@ class QuizDB
     public function addQuestion ($post_details) 
     {
     	global $debug;
-    	// join used to get the quiznames from the relationship table
-    	// may end up with multiple results with quizname being the unique part of each entry
+    	
     	$question_result = array();
     	
     	// set questionid to 0 for add (auto-increment)
@@ -240,7 +241,7 @@ class QuizDB
     	{
     		$fields .= $comma.$this_element;
     		// if value is not set then we set to a default
-    		if (isset ($post_details[$this_element])) {$values .= $comma."\"".$post_details[$this_element]."\"";}
+    		if (isset ($post_details[$this_element])) {$values .= $comma."\"".mysql_real_escape_string($post_details[$this_element])."\"";}
     		else {$values .= $comma."\"\"";}
     		$comma = ',';
     	}
@@ -265,27 +266,23 @@ class QuizDB
     // change existing question
     public function updateQuestion ($post_details) 
     {
-    	/*// join used to get the quiznames from the relationship table
-    	// may end up with multiple results with quizname being the unique part of each entry
-    	$question_result = array();
+    	global $debug;
     	
-    	// set questionid to 0 for add (auto-increment)
-    	$post_details['questionid'] = '';
+    	$question_result = array();
     	
     	// create two strings - one with field names - second with values
     	$fields = '';
-    	$values = '';
-    	foreach ($question_elements as $this_element)
+    	$comma = '';
+    	foreach ($this->question_elements as $this_element)
     	{
-    		$comma = '';
-    		$fields .= $comma.$this_element;
-    		// if value is not set then we set to a default
-    		if (isset $post_details[$this_element]) {$values .= $comma.$post_details[$this_element];}
-    		else {$values .= $comma.'';}
+    		// if section not set then we ignore (not same as ='' which we will update with)
+    		if (!isset($post_details[$this_element])) {continue;}
+    		$fields .= $comma.$this_element."=\"".mysql_real_escape_string($post_details[$this_element])."\"";
     		$comma = ',';
     	}
     	
-    	$sql = "INSERT INTO ".$this->table_prefix.$this->quiz_tables['questions']."($fields) VALUES ($values)";
+    	$sql = "UPDATE ".$this->table_prefix.$this->quiz_tables['questions']." SET $fields WHERE questionid=".$post_details['questionid'];
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	$temp_array = $this->db_object->updateRow($sql);
     	    	
@@ -294,8 +291,7 @@ class QuizDB
     	{
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
-    	}
-    	*/
+    	} 	
     	return true;
     }
 
@@ -305,7 +301,7 @@ class QuizDB
     {
     	// if $quiz not specified get all questions in db (even those with no quiz)
     	// Initial sql without where - add where part later if required
-    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
+    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
     	
     	// if we limit to a quiz then handle here
     	if ($quiz!="")
@@ -346,6 +342,61 @@ class QuizDB
     	}
     	return $return_array;
     }
+
+
+
+    /** question_rel table updates **/
+    // We have add and del 
+    // there is no need to update / save as only 2 fields - del and then add if appropriate
+    
+    // Adds an entry to the question_rel table
+    public function addQuestionQuiz ($quizname, $questionid) 
+    {
+    	global $debug;
+    	
+    	$question_result = array();
+    	
+    	// create two strings - one with field names - second with values
+    	$sql = "INSERT INTO ".$this->table_prefix.$this->quiz_tables['rel']." SET quizname=$quizname,questionid=$questionid";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    }    
+    
+
+
+    // Deletes an entry to the question_rel table
+    public function delQuestionQuiz ($quizname, $questionid) 
+    {
+    	global $debug;
+    	
+    	$question_result = array();
+    	
+    	// create two strings - one with field names - second with values
+    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['rel']." WHERE quizname=$quizname,questionid=$questionid";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    }    
+    
     
     
 }
