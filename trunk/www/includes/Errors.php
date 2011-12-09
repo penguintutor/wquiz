@@ -82,6 +82,7 @@ class Errors
     
     public function errorEvent ($error_num, $error_txt) 
     {
+    	global $debug;
     	// handle fatals first as we don't need to store - we just die
         if ($error_num < ERROR_LEVEL)
         {
@@ -90,10 +91,12 @@ class Errors
         	// get previous errors / info to include in output
         	// as this was fatal we provide all previous entries as they may be relevant
         	$previous_events = $this->listEvents(INFO_LEVEL);
+        	if ($debug) {print "ERROR: ".$previous_events.$error_num." - ".$error_txt."\n\n\n";}
         	// note previous_events will already include a trailing \n
         	die ($previous_events.$error_num." - ".$error_txt);
         }
         
+        if ($debug) {print "MESSAGE: $error_num :: $error_txt";}
         // store message
         $this->events[] = new ErrorMsg ($error_num, $error_txt);
         

@@ -74,8 +74,8 @@ if (array_key_exists('quizname', $_POST))
 	{
 		// Get quizobject for this particular quiz
 		$this_quiz = $all_quizzes->getQuiz($quiz);
-		// check this quiz is enabled in this mode
-		if ($this_quiz->isEnabled($quiz_type) == false)
+		// check this quiz is enabled in this mode - and is set to at least 1 question
+		if ($this_quiz->isEnabled($quiz_type) == false || $this_quiz->getNumQuestions($quiz_type) < 1)
 		{
 			// quiz is disabled
 			print "<h3>Selected quiz is disabled for $quiz_type use</h3>\n";
