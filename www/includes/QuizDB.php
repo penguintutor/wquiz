@@ -54,6 +54,8 @@ class QuizDB
     // returns hash array of key value pairs
     public function getSettingsAll ()
     {
+    	global $debug;
+    	
     	$settings = array();
     	$select_string = "select settings_key,settings_value from ".$this->table_prefix.$this->quiz_tables['settings'];
     	$settings = $this->db_object->getKeyValue ($select_string, "settings_key", "settings_value");
@@ -65,7 +67,10 @@ class QuizDB
     // due to error level chosen will exit application on error (but could change to warning)
     public function updateSetting ($key, $value)
     {
+    	global $debug;
+    	
     	$sql = "update ".$this->table_prefix.$this->quiz_tables['settings']." set settings_value='$value' where settings_key='$key'";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	$temp_array = $this->db_object->updateRow($sql);
     	    	
@@ -83,7 +88,10 @@ class QuizDB
     // due to error level chosen will exit application on error (but could change to warning)
     public function insertSetting ($key, $value)
     {
+    	global $debug;
+    	
     	$sql = "insert into ".$this->table_prefix.$this->quiz_tables['settings']." (settings_value, settings_key) value('$value', '$key')";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	$temp_array = $this->db_object->updateRow($sql);
     	    	
@@ -112,8 +120,7 @@ class QuizDB
     	
     	// Note a left outer join is needed instead of just join as the right hand table may then be null and we still match on the questions table
     	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid,intro,input,type,answer,reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname from ".$this->table_prefix.$this->quiz_tables['questions']." LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid where ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=$question_num";
-
-    	
+   	
     	
     	if ($debug) {print "Loading question $question_num: \n SQL is:\n $sql \n\n";}
     	
@@ -162,7 +169,8 @@ class QuizDB
     	
     	// if $quiz not specified get all questions in db (even those with no quiz)
     	// Initial sql without where - add where part later if required
-    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, section, intro, input, type, answer, reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " LEFT OUTER LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
+    	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, section, intro, input, type, answer, reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	   	
     	// if we limit to a quiz then handle here
@@ -299,9 +307,12 @@ class QuizDB
     // returns list of question ids associated with particular quiz (or all if no quiz specified)
     public function getQuestionIds ($quiz="") 
     {
+    	global $debug;
+    	
     	// if $quiz not specified get all questions in db (even those with no quiz)
     	// Initial sql without where - add where part later if required
     	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	// if we limit to a quiz then handle here
     	if ($quiz!="")
@@ -357,7 +368,7 @@ class QuizDB
     	$question_result = array();
     	
     	// create two strings - one with field names - second with values
-    	$sql = "INSERT INTO ".$this->table_prefix.$this->quiz_tables['rel']." SET quizname=$quizname,questionid=$questionid";
+    	$sql = "INSERT INTO ".$this->table_prefix.$this->quiz_tables['rel']." SET quizname=\"$quizname\",questionid=\"$questionid\"";
     	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	$temp_array = $this->db_object->updateRow($sql);
@@ -382,7 +393,7 @@ class QuizDB
     	$question_result = array();
     	
     	// create two strings - one with field names - second with values
-    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['rel']." WHERE quizname=$quizname,questionid=$questionid";
+    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['rel']." WHERE quizname=\"$quizname\" AND questionid=\"$questionid\"";
     	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	$temp_array = $this->db_object->updateRow($sql);

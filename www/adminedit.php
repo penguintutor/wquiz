@@ -33,7 +33,8 @@ foreach ($quiz_array as $this_quiz_array)
 {
 	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
 }
-
+// get list of all quizzes to show / check for updates
+$quiz_array = $all_quizzes->getQuizNameArray();
 
 
 /*** Authentication ***/
@@ -270,9 +271,35 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 	}
 	
 	
-	if ($debug) {print "\nSave completed - questionid is $questionid";}
+	if ($debug) {print "\nSave completed - questionid is $questionid\n";}
 	
-	//- update the associated quiz rel entries
+	if ($debug) {print "\nUpdating relationship entries for question / quiz\n";}
+	
+	// update the associated quiz rel entries
+	// load question - this is a temp. We won't use this later, but instead reload with the updated rel entries 
+	$question_temp = new Question($qdb->getQuestion($questionid));
+	// now check that we have loaded question correctly - check that the db read was valid
+	if ($questionid != $question_temp->getQuestionID()) 
+	{
+		$err = Errors::getInstance();
+		$err->errorEvent(ERROR_INTERNAL, "Error reading back loaded file");
+		exit (0);
+	}
+	
+	// it's the shortname that we are using call - $this_quiz
+	foreach ($quiz_array as $this_quiz=>$long_quizname)
+	{
+		// if currently set, but removed in save
+		if ($question_temp->isInQuiz($this_quiz) && !in_array($this_quiz, $post_quizzes))
+		{
+			$qdb->delQuestionQuiz($this_quiz, $questionid);
+		}
+		// not set, but needs to be
+		else if (!$question_temp->isInQuiz($this_quiz) && in_array($this_quiz, $post_quizzes))
+		{
+			$qdb->addQuestionQuiz($this_quiz, $questionid);
+		}
+	}
 
 }
 // note get is deliberately different to post (question instead of questionid)
@@ -323,8 +350,7 @@ else {print "<h3>Question number: ".$questionid."</h3>\n";}
 print "<input type=\"hidden\" name=\"questionid\" value=\"".$questionid."\" /></h3>\n";
 print "Quizzes\n<ul>\n";
 
-// get list of all quizzes to show
-$quiz_array = $all_quizzes->getQuizNameArray();
+
 
 // Provide basic ul with checkboxes (if we are expecting a lot of quizzes could change this for a scroll box with the list within that 
 $quiz_count = 0;

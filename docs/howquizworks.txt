@@ -43,6 +43,7 @@ number allows for user to enter value if they enter more than that only first se
 
 The value must be between min and max, which can be set to the same if only allow specific value
 If they enter the word (e.g. ten) then it will fail
+Only positive numbers supported (see above regarding -1).
 
 regexp in answer does not include / chars - it will be matched with -i
 
@@ -206,6 +207,7 @@ Browser autoprompt
 To prevent the autoprompt from the browser a short part of the session 
 is used in the name of the "answer" field. Eg. for text, number and TEXT 
 field name is answeruvwxyz - where uvwxyz is taken from the session 
+
 
 
 
