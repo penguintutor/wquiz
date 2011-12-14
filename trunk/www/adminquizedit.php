@@ -26,8 +26,10 @@ $admin_menu = 'editquiz';
 // message is used to provide feedback to the user
 //eg. if we get here from an expired session
 $message = '';
-// action should be new or save
+// action should be new or edit
+// note edit rather than save (save is used in post) as that is what we are doing in this
 $action = '';
+$quizname = '';
 
 require_once("includes/setup.php");
 // Authentication class required for admin functions
@@ -74,7 +76,7 @@ $templates->includeTemplate('header', 'admin');
 if (isset($_POST['action']))
 {
 	if ($_POST['action'] == 'new') {$action = 'new';}
-	else if ($_POST['action'] == 'save') {$action = 'save';}
+	elseif ($_POST['action'] == 'save') {$action = 'edit';}
 	else 
 	{
 		$err = Errors::getInstance();
@@ -86,14 +88,14 @@ if (isset($_POST['action']))
 	if (isset($_POST['quizname']) &&  ctype_alnum($_POST['quizname']))
 	{
 		// If this is existing then make sure that this exists
-		if ($action=='save' && !array_key_exists($_POST['quizname'], $quiz_array)) 
+		if ($action=='edit' && !array_key_exists($_POST['quizname'], $quiz_array)) 
 		{
 			$err = Errors::getInstance();
 			$err->errorEvent(ERROR_PARAMETER, "Not a valid quizname (does not exist)");
 			exit (0);
 		}
 		// if it's not existing then make sure it doesn't exist
-		else if ($action=='new' && array_key_exists($_POST['quizname'], $quiz_array)) 
+		elseif ($action=='new' && array_key_exists($_POST['quizname'], $quiz_array)) 
 		{
 			$err = Errors::getInstance();
 			$err->errorEvent(ERROR_PARAMETER, "Not a valid quizname (new quizname)");
@@ -136,12 +138,17 @@ if (isset($_POST['action']))
 	if (isset ($_POST['numquestions']) && is_numeric($_POST['numquestions']))
 	{
 		// check it's positive and a sensible number - 0 is acceptable (eg. as well as enabled - but should only be used for disabled quizzes - we only allow enable if more than 0) 
-		if ($_POST['numquestions'] < 0 || $_POST['numquestions'] > $settings->getSetting('quiz_max_questions'))
+		if ($_POST['numquestions'] >= 0 && $_POST['numquestions'] <= $settings->getSetting('quiz_max_questions'))
+		{
+			$post_details['numquestions'] = $_POST['numquestions'];
+		}
+		else
 		{
 			$err = Errors::getInstance();
 			$err->errorEvent(ERROR_PARAMETER, "Invalid number of questions ".$_POST['numquestions']);
 			exit (0);
 		}
+		
 	}
 	else
 	{
@@ -154,7 +161,11 @@ if (isset($_POST['action']))
 	if (isset ($_POST['numquestionsoffline']) && is_numeric($_POST['numquestionsoffline']))
 	{
 		// check it's positive and a sensible number - 0 is acceptable (eg. as well as enabled - but should only be used for disabled quizzes - we only allow enable if more than 0) 
-		if ($_POST['numquestionsoffline'] < 0 || $_POST['numquestionsoffline'] > $settings->getSetting('quiz_max_questions'))
+		if ($_POST['numquestionsoffline'] >= 0 && $_POST['numquestionsoffline'] <= $settings->getSetting('quiz_max_questions'))
+		{
+			$post_details['numquestionsoffline'] = $_POST['numquestionsoffline'];
+		}
+		else
 		{
 			$err = Errors::getInstance();
 			$err->errorEvent(ERROR_PARAMETER, "Invalid number of questions (offline) ".$_POST['numquestionsoffline']);
@@ -229,176 +240,162 @@ if (isset($_POST['action']))
 	
 	if ($debug) {print "\nSave completed - quiznname is $quizname\n";}
 
-	// if it's a new one now change to edit and add this quiz
+	// if it's a new one we have just created now change to edit and add this quiz
 	if ($action=='new')
 	{
 		$action = 'edit';
-		//- load this quiz
+		// load this quiz and add to the all quiz
+		// Not needed (we don't use all_quiz again (just load the current quiz)
+		//$new_quiz = $qdb->getQuiz($quizname);
+		//$all_quizzes->addQuiz(new Quiz($new_quiz));
 	}
 	
 }
-elseif (isset($_GET['quiz']) && ctype_alnum($_GET['alphnum']))
+// else if it's a edit with quizname provided
+elseif (isset($_GET['quiz']) && ctype_alnum($_GET['quiz']))
 {
 	// check it's valid existing
-	//-
-	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
- 
-}
-
-
-
-// no questionid - error and back to index page
-// 0 is used for new rather than edit
-if ($questionid < 0)
-{
-	$err = Errors::getInstance();
-	$err->errorEvent(WARNING_QUESTION, "Unable to load question $questionid");
-	// redirect to admin index page
-	if (!$debug) {header("Location: ".ADMIN_FILE."?status=".WARNING_QUESTION);}
-	exit (0);
-}
-elseif ($questionid > 0)
-{
-	// load questionid 
-	$question = new Question($qdb->getQuestion($questionid));
-
-	// now check that we have loaded question correctly - check that the db read was valid
-	if ($questionid != $question->getQuestionID()) 
+	if ($all_quizzes->validateQuizname($_GET['quiz']))
+	{
+		$quizname = $_GET['quiz'];
+		$action = 'edit';
+	}
+	else
 	{
 		$err = Errors::getInstance();
-		$err->errorEvent(WARNING_PARAMETER, "Question parameter missing on edit page");
-		// redirect to admin index page
-		if (!$debug) {header("Location: ".ADMIN_FILE."?status=".WARNING_PARAMETER);}
+		$err->errorEvent(ERROR_PARAMETER, "Invalid quizname");
 		exit (0);
 	}
 }
+elseif (isset($_GET['action']) && $_GET['action'] == 'new')
+{
+	$action = 'new';
+}
+// no parameter - not allowed
+else
+{
+	$err = Errors::getInstance();
+	$err->errorEvent(ERROR_PARAMETER, "Missing action request");
+	exit (0);
+}
 
 
-/* At this point we have loaded the current question - (or it's a new) so display form */
+// no quizname for edit - error and back to index page
+if ($action == 'edit' && $quizname == '')
+{
+	$err = Errors::getInstance();
+	$err->errorEvent(WARNING_PARAMETER, "A valid quiz name has not been provided");
+	// redirect to admin index page
+	if (!$debug) {header("Location: ".ADMIN_FILE."?status=".WARNING_PARAMETER);}
+	exit (0);
+}
+else
+{
+	$this_quiz = $qdb->getQuiz($quizname);
+	// if quiz didn't load properly
+	if ($this_quiz['quizname'] != $quizname)
+	{
+		$err = Errors::getInstance();
+		$err->errorEvent(ERROR_INTERNAL, "Unable to read the quiz information");
+		exit (0);
+	}
+		
+}		
+
+
+
+
+/* At this point we have loaded the current quiz - (or it's a new) so display form */
 require_once ($include_dir."adminmenu.php");
 
 
-print "<h2>Edit Question</h2>\n";
+print "<h2>Edit Quiz</h2>\n";
 print "<p>Do NOT use apostrophes etc, instead use their html equivelant.<br />(e.g. &amp;quot; = &quot;  &amp;amp;=&amp;)</p>\n";
-print "<form action=\"".ADMIN_EDIT_FILE."\" method=\"post\">\n";
-if ($questionid == 0) {print "<h3>New question</h3>\n";}
-else {print "<h3>Question number: ".$questionid."</h3>\n";}
-print "<input type=\"hidden\" name=\"questionid\" value=\"".$questionid."\" /></h3>\n";
-print "Quizzes\n<ul>\n";
+print "<form action=\"".ADMIN_EDIT_QUIZ_FILE."\" method=\"post\">\n";
+if ($action == 'new') {print "<h3>New quiz</h3>\n";}
+else {print "<h3>Quiz name: ".$this_quiz['title']." ($quizname)</h3>\n";}
 
-
-
-// Provide basic ul with checkboxes (if we are expecting a lot of quizzes could change this for a scroll box with the list within that 
-$quiz_count = 0;
-
-
-foreach ($quiz_array as $short_quizname=>$long_quizname)
+if ($action == 'new')
 {
-	if ($questionid > 0 && $question->isInQuiz($short_quizname))
-	{
-		print "<li><input type=\"checkbox\" name=\"quiz_$quiz_count\" value=\"$short_quizname\" checked=\"checked\">$long_quizname</li>\n";
-	}
-	else
-	{
-		print "<li><input type=\"checkbox\" name=\"quiz_$quiz_count\" value=\"$short_quizname\">$long_quizname</li>\n";
-	}
-	$quiz_count++;
+	print "<input type=\"hidden\" name=\"action\" value=\"new\" /></h3>\n";
 }
-print "</ul>\n\n";
-
-
-// Intro
-if ($questionid >0) {$value = $question->getIntro();}
-else {$value = "";}
-print "Intro:<br />\n";
-print "<textarea name=\"intro\" cols=\"60\" rows=\"20\">";
-print $value;
-print "</textarea><br />\n";
-
-
-// Type
-print "Question Type:";
-print "<select name=\"type\" id=\"type\">\n";
-foreach ($question_types as $qtype_key=>$qtype_value)
+else
 {
-	if ($questionid > 0 && $question->getType() == $qtype_key)
-	{
-		print " <option value=\"$qtype_key\" selected=\"selected\">$qtype_value</option>\n";
-	}
-	else
-	{
-		print " <option value=\"$qtype_key\">$qtype_value</option>\n";
-	}
+	print "<input type=\"hidden\" name=\"quizname\" value=\"".$quizname."\" /></h3>\n";
+	print "<input type=\"hidden\" name=\"action\" value=\"save\" /></h3>\n";
 }
-print "</select><br />\n";
 
-// Input
-if ($questionid >0) {$value = $question->getInput();}
+// Short quizname - only if new (cannot edit this field)
+if ($action == 'new')
+{
+	print "Quizname (shortname alpha numeric): "; 
+	print "<input type=\"text\" name=\"quizname\" value=\"\"><br />\n";
+}
+
+
+// Title
+if ($action != 'new') {$value = $this_quiz['title'];}
 else {$value = "";}
-print "Input : <br />\n";
-print "<textarea name=\"input\" cols=\"60\" rows=\"5\">";
+print "Title: "; 
+print "<input type=\"text\" name=\"title\" value=\"$value\"><br />\n";
+
+
+
+// Number of questions
+if ($action != 'new') {$value = $this_quiz['numquestions'];}
+else {$value = "";}
+print "Number of questions: "; 
+print "<input type=\"text\" name=\"numquestions\" value=\"$value\"><br />\n";
+
+
+// Number of questions (offline)
+if ($action != 'new') {$value = $this_quiz['numquestionsoffline'];}
+else {$value = "";}
+print "Number of offline questions: "; 
+print "<input type=\"text\" name=\"numquestionsoffline\" value=\"$value\"><br />\n";
+
+
+// Quiz Intro
+if ($action != 'new') {$value = $this_quiz['quizintro'];}
+else {$value = "";}
+print "Quiz introduction text:<br />\n";
+print "<textarea name=\"quizintro\" cols=\"60\" rows=\"20\">";
 print $value;
 print "</textarea><br />\n";
 
-// Answer
-if ($questionid >0) {$value = $question->getAnswer();}
-else {$value = "";}
-print "Answer (<span id=\"".CSS_ID_EDIT_HINT_ANSWER."\"></span>) : <br />\n";
-//(radio = number from 0; number = min,max; text = perl regexp no /; checkbox=digits of answer starting 0)
-print "<textarea name=\"answer\" cols=\"60\" rows=\"5\">";
-print $value;
-print "</textarea><br />\n";
 
-// Reason
-if ($questionid >0) {$value = $question->getReason();}
-else {$value = "";}
-print "Reason (use &lt;b&gt; around the actual answer):<br />\n";
-print "<textarea name=\"reason\" cols=\"60\" rows=\"10\">";
-print $value;
-print "</textarea><br />\n";
 
-// Reference
-if ($questionid >0) {$value = $question->getReference();}
-else {$value = "";}
-print "Reference: "; 
-print "<input type=\"text\" name=\"reference\" value=\"$value\"><br />\n";
+// Priority
+if ($action != 'new') {$value = $this_quiz['priority'];}
+else {$value = "1";}
+print "Priority (highest first): "; 
+print "<input type=\"text\" name=\"priority\" value=\"$value\"><br />\n";
 
-// Hint
-if ($questionid >0) {$value = $question->getHint();}
-else {$value = "";}
-print "Hint: ";
-print "<input type=\"text\" name=\"hint\" value=\"$value\"><br />\n";
 
-// Image
-if ($questionid >0) {$value = $question->getImage();}
-else {$value = "";}
-print "Image (URL): ";
-print "<input type=\"text\" name=\"image\" value=\"$value\"><br />\n";
+// enable (default yes)
+print "Enable online:\n";
+if ($action == 'new' || $this_quiz['enableonline'])
+{
+	print "<input type=\"checkbox\" name=\"enableonline\" checked=\"checked\"><br />\n";
+}
+else
+{
+	print "<input type=\"checkbox\" name=\"enableoffline\"><br />\n";
+}
 
-// Comment
-if ($questionid >0) {$value = $question->getComments();}
-else {$value = "";}
-print "Comment (not shown to the user):<br />\n";
-print "<textarea name=\"comments\" cols=\"60\" rows=\"5\">";
-print $value;
-print "</textarea><br />\n";
+// enable offline (default yes)
+print "Enable offline:\n";
+if ($action == 'new' || $this_quiz['enableoffline'])
+{
+	print "<input type=\"checkbox\" name=\"enableoffline\" checked=\"checked\"><br />\n";
+}
+else
+{
+	print "<input type=\"checkbox\" name=\"enableoffline\"><br />\n";
+}
 
-// Contributer
-if ($questionid >0) {$value = $question->getQfrom();}
-else {$value = "";}
-print "Contributor: "; 
-print "<input type=\"text\" name=\"qfrom\" value=\"$value\"><br />\n";
 
-// Email
-if ($questionid >0) {$value = $question->getEmail();}
-else {$value = "";}
-print "Contributor Email: ";
-print "<input type=\"text\" name=\"email\" value=\"$value\"><br />\n";
 
-// Created date
-if ($questionid >0) {$value = $question->getcreated();}
-else {$value = "0000-00-00";}
-print "<input type=\"hidden\" name=\"created\" value=\"$value\"><br />\n";
 
 print "<input type=\"submit\" value=\"Save\" />\n";
 

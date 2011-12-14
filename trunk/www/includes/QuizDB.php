@@ -43,6 +43,19 @@ class QuizDB
     	'reviewed'
     );
     
+    
+    private $quiz_elements = array 
+    (
+    	'quizname',
+    	'title',
+    	'numquestions',
+    	'numquestionsoffline',
+    	'quizintro',
+    	'priority',
+    	'enableonline',
+    	'enableoffline'
+    );
+    
     /* needs to be passed the database object for class Database */
     public function __construct ($db_object) 
     {
@@ -115,8 +128,6 @@ class QuizDB
     	// join used to get the quiznames from the relationship table
     	// may end up with multiple results with quizname being the unique part of each entry
     	$question_result = array();
-    	
-    	//--- fails on the join if the question is not assigned to any quizzes!!!
     	
     	// Note a left outer join is needed instead of just join as the right hand table may then be null and we still match on the questions table
     	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid,intro,input,type,answer,reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname from ".$this->table_prefix.$this->quiz_tables['questions']." LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid where ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=$question_num";
@@ -231,6 +242,124 @@ class QuizDB
     }
     
     
+    
+    // returns an array
+    public function getQuiz ($quizname) 
+    {
+    	global $debug;
+    	// join used to get the quiznames from the relationship table
+    	// may end up with multiple results with quizname being the unique part of each entry
+    	$quizn_result = array();
+    	
+    	// Note a left outer join is needed instead of just join as the right hand table may then be null and we still match on the questions table
+    	$sql = "Select * from ".$this->table_prefix.$this->quiz_tables['quizzes']." where quizname=\"$quizname\"";
+   	
+    	
+    	if ($debug) {print "Loading quiz $quizname: \n SQL is:\n $sql \n\n";}
+    	
+    	// get all results into a temp array then we can combine to a single array with the quizname entries joined
+    	$result = $this->db_object->getRow ($sql);
+    	
+    	
+    	// check for errors
+    	if (isset ($result['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']);
+    		// not needed as we exit anyway, but removes risk of failure
+    		exit(0);
+    	}
+    	
+    	return ($result);
+    }
+
+
+    // create new quiz
+    public function addQuiz ($post_details) 
+    {
+    	global $debug;
+
+    	// create two strings - one with field names - second with values
+    	$fields = '';
+    	$values = '';
+    	$comma = '';
+    	foreach ($this->quiz_elements as $this_element)
+    	{
+    		$fields .= $comma.$this_element;
+    		// if value is not set then we set to a default
+    		if (isset ($post_details[$this_element])) {$values .= $comma."\"".mysql_real_escape_string($post_details[$this_element])."\"";}
+    		else {$values .= $comma."\"\"";}
+    		$comma = ',';
+    	}
+    	
+    	$sql = "INSERT INTO ".$this->table_prefix.$this->quiz_tables['quizzes']."($fields) VALUES ($values)";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	return true;
+    }
+
+    
+    // change existing quiz
+    public function updateQuiz ($post_details) 
+    {
+    	global $debug;
+    	
+    	// create two strings - one with field names - second with values
+    	$fields = '';
+    	$comma = '';
+    	foreach ($this->quiz_elements as $this_element)
+    	{
+    		// if section not set then we ignore (not same as ='' which we will update with)
+    		if (!isset($post_details[$this_element])) {continue;}
+    		$fields .= $comma.$this_element."=\"".mysql_real_escape_string($post_details[$this_element])."\"";
+    		$comma = ',';
+    	}
+    	
+    	$sql = "UPDATE ".$this->table_prefix.$this->quiz_tables['quizzes']." SET $fields WHERE quizname=\"".$post_details['quizname']."\"";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	} 	
+    	return true;
+    }
+
+    
+    // does not del rel entries - they need to be done seperately (pref first)
+    public function delQuiz ($quizname) 
+    {
+    	global $debug;
+    	
+    	// create two strings - one with field names - second with values
+    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['quiz']." WHERE quizname=\"$quizname\"";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    }       
+    
+    
     // create new question
     public function addQuestion ($post_details) 
     {
@@ -303,6 +432,29 @@ class QuizDB
     	return true;
     }
 
+    
+    
+    // does not del rel entries - they need to be done seperately (pref first)
+    public function delQuestion ($questionid) 
+    {
+    	global $debug;
+    	
+    	// create two strings - one with field names - second with values
+    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['questions']." WHERE questionid=\"$questionid\"";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    }    
+    
 
     // returns list of question ids associated with particular quiz (or all if no quiz specified)
     public function getQuestionIds ($quiz="") 
@@ -390,8 +542,6 @@ class QuizDB
     {
     	global $debug;
     	
-    	$question_result = array();
-    	
     	// create two strings - one with field names - second with values
     	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['rel']." WHERE quizname=\"$quizname\" AND questionid=\"$questionid\"";
     	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
@@ -407,6 +557,50 @@ class QuizDB
     	
     	return true;
     }    
+    
+
+    // Deletes entries to the question_rel table - all which match quizname
+    public function delQuestionQuizQuizname ($quizname) 
+    {
+    	global $debug;
+    	
+    	// create two strings - one with field names - second with values
+    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['rel']." WHERE quizname=\"$quizname\"";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    }    
+
+
+    // Deletes entries to the question_rel table - all which match questionid
+    public function delQuestionQuizQuestionid ($questionid) 
+    {
+    	global $debug;
+    	
+    	// create two strings - one with field names - second with values
+    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['rel']." WHERE questionid=\"$questionid\"";
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
+    	$temp_array = $this->db_object->updateRow($sql);
+    	    	
+    	// check for errors
+    	if (isset ($temp_array['ERRORS'])) 
+    	{
+    		$err =  Errors::getInstance();
+    		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
+    	}
+    	
+    	return true;
+    }
     
     
     
