@@ -76,6 +76,8 @@ EOT;
 
 /** Display questions - could use a table formatter function, but for now coded in this file **/
 
+/* This is very inefficient and results in very slow load times - need to reduce the number of sql queries */
+
 foreach ($questions_array as $this_question_entry)
 {
 	print "<tr>\n";
