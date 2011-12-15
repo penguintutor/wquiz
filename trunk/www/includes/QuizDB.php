@@ -455,6 +455,16 @@ class QuizDB
     	return true;
     }    
     
+    
+    // Check if a question exists or not
+    // returns true if exists - false if not
+    public function checkQuestionID($questionid)
+    {
+    	global $debug;
+    	
+    	
+    }
+    
 
     // returns list of question ids associated with particular quiz (or all if no quiz specified)
     public function getQuestionIds ($quiz="") 
