@@ -35,10 +35,6 @@ if ($status != 1)
 $sessionUsername = $auth->getUser();
 
 
-
-
-// todo customise below
-
 // get all the quizzes and add to object
 $all_quizzes = new Quizzes();
 $quiz_array = $qdb->getQuizzesAll();
