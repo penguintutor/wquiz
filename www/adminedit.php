@@ -347,7 +347,7 @@ print "<p>Do NOT use apostrophes etc, instead use their html equivelant.<br />(e
 print "<form action=\"".ADMIN_EDIT_FILE."\" method=\"post\">\n";
 if ($questionid == 0) {print "<h3>New question</h3>\n";}
 else {print "<h3>Question number: ".$questionid."</h3>\n";}
-print "<input type=\"hidden\" name=\"questionid\" value=\"".$questionid."\" /></h3>\n";
+print "<input type=\"hidden\" name=\"questionid\" value=\"".$questionid."\" />\n";
 print "Quizzes\n<ul>\n";
 
 
@@ -467,6 +467,14 @@ print "<input type=\"hidden\" name=\"created\" value=\"$value\"><br />\n";
 print "<input type=\"submit\" value=\"Save\" />\n";
 
 print "</form>\n";
+
+
+// Display delete form
+print "<form action=\"".ADMIN_DEL_Q_FILE."\" method=\"post\">\n";
+print "<input type=\"hidden\" name=\"questionid\" value=\"".$questionid."\" />\n";
+print "<input type=\"submit\" value=\"Delete\" />\n";
+print "</form>\n";
+
 
 // footer template
 $templates->includeTemplate('footer', 'admin');

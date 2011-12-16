@@ -344,7 +344,7 @@ class QuizDB
     	global $debug;
     	
     	// create two strings - one with field names - second with values
-    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['quiz']." WHERE quizname=\"$quizname\"";
+    	$sql = "DELETE FROM ".$this->table_prefix.$this->quiz_tables['quizzes']." WHERE quizname=\"$quizname\"";
     	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
     	
     	$temp_array = $this->db_object->updateRow($sql);
@@ -613,6 +613,44 @@ class QuizDB
     }
     
     
+    // check to see if question exists (if yes return true)
+    public function checkQuestion ($question_num) 
+    {
+    	global $debug;
+    	    	
+    	// Note a left outer join is needed instead of just join as the right hand table may then be null and we still match on the questions table
+    	// some more fields are included in case we want to make a more advanced check
+    	$sql = "SELECT questionid,intro,type from ".$this->table_prefix.$this->quiz_tables['questions']." where questionid=\"$question_num\"";
+   	
+    	
+    	if ($debug) {print "Checking question $question_num: \n SQL is:\n $sql \n\n";}
+    	
+    	// get all results into a temp array then we can combine to a single array with the quizname entries joined
+    	$temp_array = $this->db_object->getRowsAll ($sql);
+    	
+    	// if we have an entry then it does exist
+    	if (count($temp_array) > 0) {return true;}
+    	else {return false;}
+    }
+    
+    public function checkQuiz ($quizname) 
+    {
+    	global $debug;
+    	    	
+    	// Note a left outer join is needed instead of just join as the right hand table may then be null and we still match on the questions table
+    	// some more fields are included in case we want to make a more advanced check
+    	$sql = "SELECT quizname,title from ".$this->table_prefix.$this->quiz_tables['quizzes']." where quizname=\"$quizname\"";
+   	
+    	
+    	if ($debug) {print "Checking quiz $quizname: \n SQL is:\n $sql \n\n";}
+    	
+    	// get all results into a temp array then we can combine to a single array with the quizname entries joined
+    	$temp_array = $this->db_object->getRowsAll ($sql);
+    	
+    	// if we have an entry then it does exist
+    	if (count($temp_array) > 0) {return true;}
+    	else {return false;}
+    }
     
 }
 ?>
