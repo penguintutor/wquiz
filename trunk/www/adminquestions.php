@@ -172,6 +172,8 @@ else
 
 }
 
+
+
 // footer template
 $templates->includeTemplate('footer', 'normal');
 

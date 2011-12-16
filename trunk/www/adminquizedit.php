@@ -401,6 +401,14 @@ print "<input type=\"submit\" value=\"Save\" />\n";
 
 print "</form>\n";
 
+
+// Display delete form
+print "<form action=\"".ADMIN_DEL_QUIZ_FILE."\" method=\"post\">\n";
+print "<input type=\"hidden\" name=\"quizname\" value=\"".$quizname."\" />\n";
+print "<input type=\"submit\" value=\"Delete\" />\n";
+print "</form>\n";
+
+
 // footer template
 $templates->includeTemplate('footer', 'admin');
 
