@@ -37,27 +37,21 @@ $sessionUsername = $auth->getUser();
 
 /*** Setup some values ***/
 
+/** - not yet used - for managing quizzes **/
+/*// get all the quizzes and add to object
+$all_quizzes = new Quizzes();
+$quiz_array = $qdb->getQuizzesAll();
+// add this one to allQuizzes
+foreach ($quiz_array as $this_quiz_array)
+{
+	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
+}*/
 
 // header template
 $templates->includeTemplate('header', 'admin');
 
 // questions
-// We load the questions as array and manipulate directly
-// This is not a tidy as using a question object and loading indivdually, but is much faster 
-// Improves performance by approx ...
-//$questions_array = $qdb->getQuestionIds();
-// load all questions
-$all_questions = $qdb->getQuestionQuiz();
-// load all relationships
-$all_rel = $qdb->getRelAll();
-
-// loop over all_rel and store relationships under array with questionid as index (human readable space seperated)
-$quiz_rel = array(); 
-foreach ($all_rel as $this_rel)
-{
-	if (!isset($quiz_rel[$this_rel['questionid']])) {$quiz_rel[$this_rel['questionid']] = $this_rel['quizname'];}
-	else {$quiz_rel[$this_rel['questionid']] .= " ".$this_rel['quizname'];} 
-}
+$questions_array = $qdb->getQuestionIds();
 
 
 require_once ($include_dir."adminmenu.php");
@@ -84,24 +78,20 @@ EOT;
 
 /* This is very inefficient and results in very slow load times - need to reduce the number of sql queries */
 
-foreach ($all_questions as $this_question_entry)
+foreach ($questions_array as $this_question_entry)
 {
 	print "<tr>\n";
+	//print "<td>$this_question_entry</td>";
+	$this_question = new Question($qdb->getQuestion($this_question_entry));
 	// Allow either q number or summary to be clicked (as summary may be null - eg. picture quiz)
-	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question_entry['questionid']."\">".$this_question_entry['questionid']."</a></td>";
-	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question_entry['questionid']."\">".getSummary($this_question_entry['intro'])."</a></td>";
-	print "<td>".$this_question_entry['type']."</td>";
-	if (isset($quiz_rel[$this_question_entry['questionid']])) 
-	{
-		print "<td>".$quiz_rel[$this_question_entry['questionid']]."</td>";
-	}
-	else
-	{
-		print "<td></td>";
-	}
-	print "<td>".$this_question_entry['created']."</td>";
-	print "<td>".$this_question_entry['reviewed']."</td>\n";
-	print "<td><a href=\"".ADMIN_Q_FILE."?question=".$this_question_entry['questionid']."\">Test</a></td>\n";
+	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question->getQuestionID()."\">$this_question_entry</a></td>";
+	// Note hard coded length of summary (this file to be discontinued)
+	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question->getQuestionID()."\">".$this_question->getSummary(45)."</a></td>";
+	print "<td>".$this_question->getType()."</td>";
+	print "<td>".$this_question->getQuizzes()."</td>";
+	print "<td>".$this_question->getCreated()."</td>";
+	print "<td>".$this_question->getReviewed()."</td>\n";
+	print "<td><a href=\"".ADMIN_Q_FILE."?question=".$this_question->getQuestionID()."\">Test</a></td>\n";
 	print "</tr>\n";
 }
 
@@ -110,21 +100,6 @@ print "</table>\n";
 
 // footer template
 $templates->includeTemplate('footer', 'admin');
-
-
-
-
-// Added directly to this file for performance issues (over using a question object)
-function getSummary($intro)
-    {
-    	global $settings;
-    	$summary_length = $settings->getSetting('summary_length');
-    	if (strlen($intro) > $summary_length) 
-    	{
-    		return (substr($intro, 0, $summary_length-4)." ...");
-    	}
-    	else {return $intro;}
-    }
 
 
 

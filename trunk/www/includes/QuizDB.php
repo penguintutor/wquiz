@@ -240,7 +240,13 @@ class QuizDB
     {
     	return ($this->db_object->getRowsAll ("Select * from ".$this->table_prefix.$this->quiz_tables['quizzes']));
     }
-    
+
+
+    // returns all rel entries
+    public function getRelAll ()
+    {
+    	return ($this->db_object->getRowsAll ("Select * from ".$this->table_prefix.$this->quiz_tables['rel']));
+    }    
     
     
     // returns an array

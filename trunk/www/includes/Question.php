@@ -30,7 +30,8 @@ class Question
     private $quizzes = array();
     
     // num of chars in summary
-    private $summary_length = 45;
+    // moved to settings - must be specified when calling summary_length
+//    private $summary_length = 45; 
 
 	// normally create instance with details, but set to null in case 
 	// creating a new one (eg. new question)
@@ -83,11 +84,11 @@ class Question
     
     // gives a brief summary based on the introduction text (truncated)
     // if > $summary_length chars then return trunc ...
-    public function getSummary()
+    public function getSummary($summary_length)
     {
-    	if (strlen($this->intro) > $this->summary_length) 
+    	if (strlen($this->intro) > $summary_length) 
     	{
-    		return (substr($this->intro, 0, $this->summary_length-4)." ...");
+    		return (substr($this->intro, 0, $summary_length-4)." ...");
     	}
     	else {return $this->intro;}
     }
