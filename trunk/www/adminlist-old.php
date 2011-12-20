@@ -37,6 +37,9 @@ $sessionUsername = $auth->getUser();
 
 /*** Setup some values ***/
 
+// performance debug
+if (isset($debug) && $debug) {$start_time = time();}
+
 /** - not yet used - for managing quizzes **/
 /*// get all the quizzes and add to object
 $all_quizzes = new Quizzes();
@@ -97,6 +100,15 @@ foreach ($questions_array as $this_question_entry)
 
 print "</table>\n";
 
+
+if (isset($debug) && $debug) 
+	{
+		$end_time = time();
+		$total_time = $end_time - $start_time;
+		print "Start time: $start_time \n";
+		print "End time: $end_time \n";
+		print "Time taken: $total_time secs\n";
+	}
 
 // footer template
 $templates->includeTemplate('footer', 'admin');

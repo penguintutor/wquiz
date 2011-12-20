@@ -38,13 +38,18 @@ $sessionUsername = $auth->getUser();
 /*** Setup some values ***/
 
 
+// performance debug
+if (isset($debug) && $debug) {$start_time = time();}
+
+
+
 // header template
 $templates->includeTemplate('header', 'admin');
 
 // questions
 // We load the questions as array and manipulate directly
 // This is not a tidy as using a question object and loading indivdually, but is much faster 
-// Improves performance by approx ...
+// Improves performance by approx 7 times (on 250 questions)
 //$questions_array = $qdb->getQuestionIds();
 // load all questions
 $all_questions = $qdb->getQuestionQuiz();
@@ -106,6 +111,16 @@ foreach ($all_questions as $this_question_entry)
 }
 
 print "</table>\n";
+
+
+if (isset($debug) && $debug) 
+	{
+		$end_time = time();
+		$total_time = $end_time - $start_time;
+		print "Start time: $start_time \n";
+		print "End time: $end_time \n";
+		print "Time taken: $total_time secs\n";
+	}
 
 
 // footer template
