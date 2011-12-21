@@ -14,8 +14,7 @@ $message = '';
 require_once("includes/setup.php");
 // Authentication class required for admin functions
 require_once("includes/SimpleAuth.php");
-// add this here as not required for some pages (which use Quiz.php instead)
-require_once ($include_dir."Quizzes.php");
+require_once("includes/QuestionNavigation.php");	// used later for navigation buttons
 
 
 /*** Authentication ***/
@@ -35,142 +34,162 @@ if ($status != 1)
 $sessionUsername = $auth->getUser();
 
 
-// get all the quizzes and add to object
-$all_quizzes = new Quizzes();
-$quiz_array = $qdb->getQuizzesAll();
-// add this one to allQuizzes
-foreach ($quiz_array as $this_quiz_array)
+// action is a string based on button pressed - determines how we handle the post
+// default action is to show question
+$action = 'display';
+// message is used to provide feedback to the user
+// most cases we ignore errors, but for instance if a user does not enter a number in a number field we can notify the user of this when we go in display mode
+$message = 'Test mode';
+
+
+
+// class for action
+// we are using default from settings - could override here if required - will also need to pass with showNavigation
+$navigation = new QuestionNavigation(1, $num_questions);
+
+
+
+
+// get question number from the post
+// unlike in question.php - this is the actual db questionid - rather than number in session
+// we also allow GET so reverse the logic compared to question.php
+
+if (isset($_POST['question']) && is_numeric($_POST['question']) && $qdb->checkQuestion($_POST['question']))
+	{
+		$questionid = $_POST['question'];
+	}
+// if get (only allowed on test - not real)
+elseif (isset($_GET['question']) && is_numeric($_GET['question']) && $qdb->checkQuestion($_GET['question'])) 
+	{
+		$questionid = $_GET['question'];
+		// set action to default as we didn't have a valid question number
+		$action == 'display';
+	}
+else 
+	{
+		$err = Errors::getInstance();
+		$err->errorEvent(ERROR_PARAMETER, "no valid questionid provided - test");
+	}
+
+	
+//submit buttons
+// Determine what action required based on submit
+if (isset($_POST['nav']))
 {
-	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
+	// see if this is a valid action - gets action back
+	$action = $navigation->getAction ($_POST['nav']);
+	if ($action == 'invalid') 
+	{
+		$err = Errors::getInstance();
+		$err->errorEvent(WARNING_PARAMETER, "Action invalid - defaulting to display");
+		$action = 'display';
+	}
+}
+	
+	
+// question_from is the same (we don't honour the different navigation buttons)
+$question = new Question($qdb->getQuestion($questionid));
+$question_from = new Question($qdb->getQuestion($questionid));
+
+
+
+
+// check answer
+$answer = '';
+// check for hidden field to show that this was from an existing question
+if ($action != 'display')
+{
+	// no type - we didn't come from a question display
+	if (!isset ($_POST['type']) || !$question_from->validateType($_POST['type'])) 
+	{
+		$err = Errors::getInstance();
+		$err->errorEvent(WARNING_PARAMETER, "Parameter type does not match question type");
+		$action = 'display';
+	}
+	// checkbox is handled differently for a checkbox as it can be multiple answers
+	else if ($_POST['type'] == 'checkbox')
+	{
+	for ($i=0; $i<10; $i++)
+		{
+			if (isset ($_POST['answer-'.$i])) {$answer .= $i;}
+		}
+		// if none selected set back to default (-1)
+		if ($answer == '') {$answer = -1;}
+	}
+	//  handle default where answer is not set at all (eg. radio with nothing ticked)
+	else if (!isset ($_POST['answer']) || $_POST['answer'] == '') 
+	{
+		$answer = -1;
+	}
+	else // All others we just have one value from post which is $answers 
+	{
+		if ($question_from->validateAnswer($_POST['answer']))
+		{
+			$answer = $_POST['answer'];
+		}
+		else
+		{
+		// set message as this may have been a genuine error (eg. seven instead of 7)
+		$err = Errors::getInstance();
+		$err->errorEvent(INFO_PARAMETER, "Answer provided is not a valid response for ". $question_from->getType());
+		$message = 'Answer provided is not a valid response';
+		$action = 'display';
+		}
+	}
 }
 
-// No quizzes found - most likely not setup
-if ($all_quizzes->count() < 1) {header("Location: ".FIRST_FILE); exit(0);}
+
+
+
+
+if ($debug) {print "Action is $action";}
+// don't change page we just show this one 
+
+// Pull in templates
+$templates->includeTemplate('header', 'normal');
+
+// start form
+// Form starts at the top
+print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
+
+// show message if there is one
+if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
+
+// show position in quiz
+// todo may want to allow this wording to be changed via a setting
+print "<p class=\"".CSS_CLASS_STATUS."\">Question $question_num of $num_questions</p>\n";
+
+
+
+// load this question - note -1 used to select array position (ie. question 1 = array 0)
+$question = new Question($qdb->getQuestion($questions_array[$question_num-1]));
+// first print status bar if req'd (eg. question 1 of 10)
+// answer is currently selected -1 = not answered
+print ($question->getHtmlString($quiz_session->getAnswer($question_num-1)));
+
+
+// add navigation buttons
+print "<div id=\"".CSS_ID_NAVIGATION."\">\n";
+$navigation->showNavigation($question_num);
+print "\n</div><!-- ".CSS_ID_NAVIGATION." -->\n";
+
+// end form
+print "</form>\n";
+
+
+//-- here this needs to be added
+// show correct answer (use $answer)
+if ($action != 'display')
+{
+
+}
+
+
+
 
 
 // header template
 $templates->includeTemplate('header', 'normal');
-
-
-// first look for url get as expired (indicates question.php send us here due to an expired entry)
-// we don't do anything differently other than tell the user that's why they were redirected there
-if (isset($_GET['status']) && ($_GET['status'] == 'expired'))
-{
-	// todo - make customisable
-	$message = "Session expired";
-}
-
-// is this result of POST - if so setup page, otherwise display menu
-// note going to this page outside of quiz can result in rerunning session creation - hence new quiz
-if (array_key_exists('quizname', $_POST))
-{
-	// Very important
-	// todo 
-	// validate field input
-	$quiz = $_POST['quizname'];
-	//first check that this is just a string - no 
-	if (!ctype_alnum($quiz)) 
-	{
-		$err =  Errors::getInstance();
-		$err->errorEvent(ERROR_SECURITY, "Error security violoation - quizname is invalid"); 
-	}
-	// default is online - changed by post value
-	$quiz_type = 'online';
-	if (array_key_exists('offline', $_POST) && ($_POST == 'yes')) {$quiz_type = 'offline';}
-	
-
-	//check that this is a valid quizname
-	// handle this as a warning using the errorEvent - we then provide a more user friendly error
-	// this is not a security event, but is still wrong
-	if (!$all_quizzes->validateQuizname($quiz))
-	{
-		// we handle error in more user friendly way than if we suspect attempt to hack
-		$err =  Errors::getInstance();
-		$err->errorEvent(WARNING_PARAMETER, "Warning parameter incorrect - quizname is invalid");
-		//--todo we don't give an error just show menu
-		printMenu($all_quizzes);
-	}
-	else
-	{
-		// Get quizobject for this particular quiz
-		$this_quiz = $all_quizzes->getQuiz($quiz);
-		// check this quiz is enabled in this mode
-		if ($this_quiz->isEnabled($quiz_type) == false)
-		{
-			// quiz is disabled
-			print "<h3>Selected quiz is disabled for $quiz_type use</h3>\n";
-			$err =  Errors::getInstance();
-			$err->errorEvent(INFO_QUIZSTATUS, "quiz $quiz is disabled for $quiz_type use");
-			printMenu($all_quizzes);
-		}
-		else
-		{
-			// quiz is enabled if we have got this far
-			// Get all the questions as question array (sql format - not objects)
-			$question_array = $qdb->getQuestionQuiz($quiz);
-			// random order array to randomise questions - we can then just take the first x number of questions
-			shuffle ($question_array);
-			// check we have sufficient questions
-			if (count($question_array) <= $this_quiz->getNumQuestions($quiz_type)) 
-			{
-				print "<h3>Insufficient questions in selected quiz</h3>\n";
-				$err =  Errors::getInstance();
-				$err->errorEvent(WARNING_QUIZQUESTIONS, "insufficient questions in $quiz, requires: "+$this_quiz->getNumQuestions($quiz_type)+" - has "+count($question_array));
-				printMenu($all_quizzes);
-			
-			}
-			else
-			{
-				$random_questions = array();
-				$answers = array();
-				for ($i = 0; $i < $this_quiz->getNumQuestions($quiz_type); $i++)
-				{
-					// get the question numbers from the array (we have already shuffled to random order
-					$random_questions[$i] = $question_array[$i]['questionid'];
-					// set array with answers set to -1
-					$answers[$i] = -1;
-					//print "<p>question ".$random_questions[$i]." selected</p>\n"; 
-				}
-				/** We now have the questions - now create the session etc.**/
-				// store questions into session
-				$quiz_session->setQuestions ($random_questions);
-				$quiz_session->setAnswers ($answers);
-				$quiz_session->setStatus (SESSION_STATUS_ACTIVE);
-				
-				// Form starts at the top as future pages use options within form
-				print "<form id=\"wquiz-form\" method=\"post\" action=\"question.php\">\n";
-				
-
-				print "<div id=\"".CSS_ID_QUIZ_INTRO."\">\n";
-				print "<h3 id=\"".CSS_ID_QUIZ_TITLE."\">".$this_quiz->getTitle()."</h3>\n\n";
-				// if this does not already include paragraphs then add
-				$this_intro = $this_quiz->getIntro();
-				if (!isParagraph($this_intro)) {print "<p>\n$this_intro\n</p>\n";}
-				else {print $this_intro;}
-				print "\n</div><!-- ".CSS_ID_QUIZ_INTRO." -->\n";
-
-				// Add start button
-				// Basic text button here - but replace with graphical buttons using CSS
-				print "<div id=\"".CSS_ID_BUTTONS."\">";
-				print "<input type=\"submit\" value=\"start\" name=\"start\" />\n";
-				print "</div><!-- ".CSS_ID_BUTTONS." -->\n";
-				
-				
-				print "</form>\n";
-			}
-		}
-		
-	}
-	
-}
-else 
-{
-
-	// show message if there is one
-	if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
-	printMenu($all_quizzes);
-
-}
 
 
 

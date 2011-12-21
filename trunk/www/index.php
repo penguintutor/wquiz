@@ -15,6 +15,7 @@ require_once("includes/setup.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 
+if ($debug) {print "Loading Quizzes \n";}
 // get all the quizzes and add to object
 $all_quizzes = new Quizzes();
 $quiz_array = $qdb->getQuizzesAll();
@@ -27,11 +28,10 @@ foreach ($quiz_array as $this_quiz_array)
 // No quizzes found - most likely not setup
 if ($all_quizzes->count() < 1) {header("Location: ".FIRST_FILE); exit(0);}
 
-
 // header template
 $templates->includeTemplate('header', 'normal');
 
-
+if ($debug) {print "Reading parameters \n";}
 // first look for url get as expired (indicates question.php send us here due to an expired entry)
 // we don't do anything differently other than tell the user that's why they were redirected there
 if (isset($_GET['status']) && ($_GET['status'] == 'expired'))
@@ -52,7 +52,7 @@ if (array_key_exists('quizname', $_POST))
 	if (!ctype_alnum($quiz)) 
 	{
 		$err =  Errors::getInstance();
-		$err->errorEvent(ERROR_SECURITY, "Error security violoation - quizname is invalid"); 
+		$err->errorEvent(ERROR_SECURITY, "Error security violation - quizname is invalid"); 
 	}
 	// default is online - changed by post value
 	$quiz_type = 'online';
@@ -72,6 +72,7 @@ if (array_key_exists('quizname', $_POST))
 	}
 	else
 	{
+		if ($debug) {print "Getting Quiz \n";}
 		// Get quizobject for this particular quiz
 		$this_quiz = $all_quizzes->getQuiz($quiz);
 		// check this quiz is enabled in this mode - and is set to at least 1 question
@@ -87,8 +88,10 @@ if (array_key_exists('quizname', $_POST))
 		{
 			// quiz is enabled if we have got this far
 			// Get all the questions as question array (sql format - not objects)
+			if ($debug) {print "Getting questions \n";}
 			$question_array = $qdb->getQuestionQuiz($quiz);
 			// random order array to randomise questions - we can then just take the first x number of questions
+			if ($debug) {print "Randomise questions \n";}
 			shuffle ($question_array);
 			// check we have sufficient questions
 			if (count($question_array) <= $this_quiz->getNumQuestions($quiz_type)) 
@@ -101,6 +104,7 @@ if (array_key_exists('quizname', $_POST))
 			}
 			else
 			{
+				if ($debug) {print "Have sufficient questions \n";}
 				$random_questions = array();
 				$answers = array();
 				for ($i = 0; $i < $this_quiz->getNumQuestions($quiz_type); $i++)
@@ -112,6 +116,7 @@ if (array_key_exists('quizname', $_POST))
 					//print "<p>question ".$random_questions[$i]." selected</p>\n"; 
 				}
 				/** We now have the questions - now create the session etc.**/
+				if ($debug) {print "Creating session \n";}
 				// store questions into session
 				$quiz_session->setQuestions ($random_questions);
 				$quiz_session->setAnswers ($answers);

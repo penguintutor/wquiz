@@ -1,7 +1,7 @@
 This folder contains test scripts for the wquiz software.
 These are primarly intended for testing that the classes are working correctly
 rather than testing the actual page code (although some parts of that are tested
-as well)
+ as well)
 
 The scripts in this folder MUST NOT be installed on any production system.
 Doing so would risk the integrity of any production data as well as well as 
