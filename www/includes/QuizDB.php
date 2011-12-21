@@ -111,6 +111,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in insertSetting \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
     	}
@@ -142,6 +143,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in getQuestion \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']);
     		// not needed as we exit anyway, but removes risk of failure
@@ -174,6 +176,7 @@ class QuizDB
 
     // returns array of arrays - all questions in Quiz (category)
 	// no category returns all
+	// sorted by questionid (assending)
     public function getQuestionQuiz ($quiz="") 
     {
     	global $debug;
@@ -181,9 +184,7 @@ class QuizDB
     	// if $quiz not specified get all questions in db (even those with no quiz)
     	// Initial sql without where - add where part later if required
     	$sql = "SELECT ".$this->table_prefix.$this->quiz_tables['questions'].".questionid, section, intro, input, type, answer, reason, reference, hint, image, comments, qfrom, email, created, reviewed, quizname FROM ". $this->table_prefix.$this->quiz_tables['questions']. " LEFT OUTER JOIN ".$this->table_prefix.$this->quiz_tables['rel']." on ".$this->table_prefix.$this->quiz_tables['questions'].".questionid=".$this->table_prefix.$this->quiz_tables['rel'].".questionid";
-    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
-    	
-    	   	
+    	    	   	
     	// if we limit to a quiz then handle here
     	if ($quiz!="")
     	{
@@ -191,12 +192,19 @@ class QuizDB
     		$sql .= " WHERE ".$this->table_prefix.$this->quiz_tables['rel'].".quizname=\"$quiz\"";
     	}
     	
+    	// Add order by after where clause if we have one
+    	$sql .= " ORDER BY ".$this->table_prefix.$this->quiz_tables['questions'].".questionid";
+    	
+    	
+    	if (isset ($debug) && $debug) {print "SQL: \n".$sql."\n\n";}
+    	
     	// Get all the rows into a temp array - we then reformat appropriately (eg. move quizname into array instead of individual rows
     	
     	$temp_array = $this->db_object->getRowsAll ($sql);
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in getQuestionQuiz \n";}
     		//-here userfriendly handling?
     		//print "An error has occurred";
     		$err =  Errors::getInstance();
@@ -255,7 +263,7 @@ class QuizDB
     	global $debug;
     	// join used to get the quiznames from the relationship table
     	// may end up with multiple results with quizname being the unique part of each entry
-    	$quizn_result = array();
+    	$quiz_result = array();
     	
     	// Note a left outer join is needed instead of just join as the right hand table may then be null and we still match on the questions table
     	$sql = "Select * from ".$this->table_prefix.$this->quiz_tables['quizzes']." where quizname=\"$quizname\"";
@@ -270,6 +278,7 @@ class QuizDB
     	// check for errors
     	if (isset ($result['ERRORS'])) 
     	{
+    		if ($debug) {print "getQuiz \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']);
     		// not needed as we exit anyway, but removes risk of failure
@@ -306,6 +315,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in addQuiz \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
     	}
@@ -337,6 +347,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in updateQuiz \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
     	} 	
@@ -358,6 +369,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in delQuiz \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
     	}
@@ -468,7 +480,7 @@ class QuizDB
     {
     	global $debug;
     	
-    	
+    	//-- implement this
     }
     
 
@@ -496,7 +508,7 @@ class QuizDB
     	if (isset ($temp_array['ERRORS'])) 
     	{
     		//-here userfriendly handling?
-    		//print "An error has occurred";
+    		if ($debug) {print "Error in getQuestionIds \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error reading database"+$temp_array['ERRORS']);
 
@@ -567,6 +579,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in delQuestionQuiz \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
     	}
@@ -589,6 +602,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in delQuestionQuizQuizname \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
     	}
@@ -611,6 +625,7 @@ class QuizDB
     	// check for errors
     	if (isset ($temp_array['ERRORS'])) 
     	{
+    		if ($debug) {print "Error in delQuestionQuizQuestionid \n";}
     		$err =  Errors::getInstance();
     		$err->errorEvent(ERROR_DATABASE, "Error writing to database"+$temp_array['ERRORS']); 
     	}
