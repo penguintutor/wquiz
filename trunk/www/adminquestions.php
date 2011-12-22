@@ -41,29 +41,21 @@ $action = 'display';
 // most cases we ignore errors, but for instance if a user does not enter a number in a number field we can notify the user of this when we go in display mode
 $message = 'Test mode';
 
-
-
-// class for action
-// we are using default from settings - could override here if required - will also need to pass with showNavigation
-$navigation = new QuestionNavigation(1, $num_questions);
-
-
-
-
 // get question number from the post
 // unlike in question.php - this is the actual db questionid - rather than number in session
 // we also allow GET so reverse the logic compared to question.php
-
 if (isset($_POST['question']) && is_numeric($_POST['question']) && $qdb->checkQuestion($_POST['question']))
 	{
 		$questionid = $_POST['question'];
+		$action = 'test';
 	}
 // if get (only allowed on test - not real)
 elseif (isset($_GET['question']) && is_numeric($_GET['question']) && $qdb->checkQuestion($_GET['question'])) 
 	{
 		$questionid = $_GET['question'];
 		// set action to default as we didn't have a valid question number
-		$action == 'display';
+		$action = 'display';
+		$answer = -1;
 	}
 else 
 	{
@@ -150,47 +142,44 @@ $templates->includeTemplate('header', 'normal');
 
 // start form
 // Form starts at the top
-print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
+print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".ADMIN_TEST_Q_FILE."\">\n";
+
+print "<input type=\"hidden\" name=\"question\" value=\"$questionid\" />\n";
 
 // show message if there is one
 if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
 
 // show position in quiz
 // todo may want to allow this wording to be changed via a setting
-print "<p class=\"".CSS_CLASS_STATUS."\">Question $question_num of $num_questions</p>\n";
+print "<p class=\"".CSS_CLASS_STATUS."\">Question $questionid</p>\n";
 
 
 
 // load this question - note -1 used to select array position (ie. question 1 = array 0)
-$question = new Question($qdb->getQuestion($questions_array[$question_num-1]));
+//$question = new Question($qdb->getQuestion($questionid));
 // first print status bar if req'd (eg. question 1 of 10)
 // answer is currently selected -1 = not answered
-print ($question->getHtmlString($quiz_session->getAnswer($question_num-1)));
+print ($question->getHtmlString($answer));
 
 
 // add navigation buttons
 print "<div id=\"".CSS_ID_NAVIGATION."\">\n";
-$navigation->showNavigation($question_num);
+print "<input type=\"submit\" value=\"Test\" />\n";
 print "\n</div><!-- ".CSS_ID_NAVIGATION." -->\n";
 
 // end form
 print "</form>\n";
 
 
-//-- here this needs to be added
 // show correct answer (use $answer)
 if ($action != 'display')
 {
 
+	if ($answer == -1) {print "Not answered\n";}
+	elseif ($question->markAnswer($answer)) {print "Correct\n";}
+	else {print "Incorrect\n";}
+	
 }
-
-
-
-
-
-// header template
-$templates->includeTemplate('header', 'normal');
-
 
 
 // footer template

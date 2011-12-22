@@ -148,6 +148,10 @@ $question = new Question($qdb->getQuestion($questions_array[$question_num-1]));
 print ($question->getHtmlString($quiz_session->getAnswer($question_num-1)));
 
 
+print "<h3>Answer</h3>\n";
+
+
+
 // add navigation buttons
 print "<div id=\"".CSS_ID_NAVIGATION."\">\n";
 $navigation->showNavigation($question_num);
