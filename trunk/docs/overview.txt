@@ -58,7 +58,7 @@ Settings
 
 Most settings are optional (defaults in brackets)
 
-review_enabled (true)  if false then after last question provide results immediately
+review_enable (true)  if false then after last question provide results immediately
 review_text - text for do you want to review (html)
 review_show_unanswered (true) - show "You have not answered ? questions".
 

@@ -42,12 +42,16 @@ $templates->includeTemplate('header', 'admin');
 
 $quizzes = ADMIN_QUIZZES_FILE;
 $questions = ADMIN_LIST_FILE;
+$settings_file = ADMIN_EDIT_SETTINGS_FILE;
 print <<< EOT
 <h1>Administration</h1>
 <h2>Tasks</h2>
 <ul>
 <li><a href="$quizzes">Quizzes</a></li>
 <li><a href="$questions">Questions</a></li>
+</ul>
+<ul>
+<li><a href="$settings_file">Settings</a></li>
 </ul>
 
 EOT;
