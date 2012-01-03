@@ -12,5 +12,6 @@ All classes are contained within includes directory (recognisable by Initial cap
 Other PHP includes are included within includes directory, starting with lowercase
 config files are within www directory ending with .cfg - PHP syntax (eg. default.cfg) - username information linked externally
 
-Any setting values that can be stored in database are
+Any setting values that can be stored in database are in there rather than files
+adminSettings.php contains the list of different settings that are permitted
 

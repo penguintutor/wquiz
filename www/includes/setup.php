@@ -21,7 +21,8 @@ define ("ADMIN_QUIZZES_FILE", "adminquizzes.php");			// List of quizzes
 define ("ADMIN_EDIT_QUIZ_FILE", "adminquizedit.php"); 		// edit quiz
 define ("ADMIN_DEL_Q_FILE", "adminquestiondel.php"); 		// del question
 define ("ADMIN_DEL_QUIZ_FILE", "adminquizdel.php"); 		// del question
-define ("ADMIN_TEST_Q_FILE", "adminquestions.php"); 			// del question
+define ("ADMIN_EDIT_SETTINGS_FILE", "adminsettings.php"); 	// edit settings
+
 
 
 // get directory for includes

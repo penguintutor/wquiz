@@ -38,7 +38,7 @@ else {$num_questions = count($questions_array);}
 $answers_array = $quiz_session->getAnswers();
 
 /*** Handle marking of the answers if review complete or review not allowed ***/
-if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enabled') == 'false' || $quiz_info['status'] == SESSION_STATUS_COMPLETE)
+if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enable') == 'false' || $quiz_info['status'] == SESSION_STATUS_COMPLETE)
 {
 	// change status to prevent from changing and resubmitting
 	$quiz_session->setStatus(SESSION_STATUS_COMPLETE);
