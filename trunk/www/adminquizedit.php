@@ -1,7 +1,5 @@
 <?php
 
-/*** Warning do not use as it - search for //- for where changes needed ***/
-
 /* New / Edit / Save quiz */
 /* Note error checking is quite brutal - we rely on javascript to provide more
 user friendly error checking before we get to this page */
