@@ -5,7 +5,7 @@
 // [2] = Title (optional)
 // [3] = hint (optional)
 
-//Type can be boolean, alphanum, text, textblock, directory, directory_ (no trailing /), int, regexp, custom
+//Type can be boolean, alphanum, text, textblock, directory, directory_ (no trailing /), int, custom
 //Type custom is ignored by normal template edit and so needs to be handled seperately (not currently supported) 
 $setting_types = array 
 (
@@ -99,7 +99,7 @@ $setting_types = array
 	),
 	array
 	(
-		'answer_summary_enablee',
+		'answer_summary_enable',
 		'boolean',
 		'Answer summary enable'
 	),
