@@ -93,7 +93,16 @@ class SimpleAuth
 		// Reach here and it was not a valid type 
 		return -2;
     }
-    
+
+    // just check password is correct (used for verify password if required before changing settings - typically before password change)
+    public function checkPassword($password)
+    {
+    	if (md5($password) == $this->adminpass) 
+    	{
+    		return true;
+    	}
+    	else {return false;}
+    }    
     
     public function loginNow($username, $password)
     {

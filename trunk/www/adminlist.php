@@ -64,7 +64,7 @@ foreach ($all_rel as $this_rel)
 	else {$quiz_rel[$this_rel['questionid']] .= " ".$this_rel['quizname'];} 
 }
 
-
+// Show menu
 require_once ($include_dir."adminmenu.php");
 
 print "<h1>Questions</h1>";

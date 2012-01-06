@@ -17,6 +17,8 @@ require_once("includes/SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 
+// must add this before we require the menu 
+$admin_menu = 'home';
 
 /*** Authentication ***/
 // user must be logged in for any admin functions
@@ -39,6 +41,9 @@ $sessionUsername = $auth->getUser();
 
 // header template
 $templates->includeTemplate('header', 'admin');
+
+// Show menu
+require_once ($include_dir."adminmenu.php");
 
 $quizzes = ADMIN_QUIZZES_FILE;
 $questions = ADMIN_LIST_FILE;
