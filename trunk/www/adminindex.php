@@ -48,6 +48,7 @@ require_once ($include_dir."adminmenu.php");
 $quizzes = ADMIN_QUIZZES_FILE;
 $questions = ADMIN_LIST_FILE;
 $settings_file = ADMIN_EDIT_SETTINGS_FILE;
+$pwchange_file = ADMIN_USER_FILE;
 print <<< EOT
 <h1>Administration</h1>
 <h2>Tasks</h2>
@@ -57,6 +58,7 @@ print <<< EOT
 </ul>
 <ul>
 <li><a href="$settings_file">Settings</a></li>
+<li><a href="$pwchange_file">Change password</a></li>
 </ul>
 
 EOT;
