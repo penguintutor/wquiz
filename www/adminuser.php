@@ -56,6 +56,9 @@ print "<h1>User administration - admin user</h1>\n";
 // at end we display confirmation and provide click back to home page
 if (isset($_POST['action']) && $_POST['action']=='pwchange')
 {
+	/**** IMPORTANT - these are all elseif options - only if we reach the 
+	else at the end do we change the password - if we match any of the if / elseif 
+	then we don't change the password *****/
 	// check existing password is entered
 	if (!isset($_POST['oldpassword']))
 	{
@@ -81,23 +84,43 @@ if (isset($_POST['action']) && $_POST['action']=='pwchange')
 		print "<strong>New password contains inavlid characters</strong>\n";
 	}
 	// check new passwords are identical
-	elseif (!isset($_POST['newpassword2']) || $_POST['newpassword'] != $_POST['newpassword2'])) 
+	elseif (!isset($_POST['newpassword2']) || $_POST['newpassword'] != $_POST['newpassword2']) 
 	{
 		print "<strong>New password is not the same as the repeated password</strong>\n";
 	}
 	// Reach here we can change password
-	//- need to add rest
-		
+	else
+	{
+		// get md5 version of password
+		$hash_password = $auth->hashPassword($_POST['newpassword2']);
+		// save it in the settings
+		$settings->setSetting('admin_login_password', $hash_password);
+		// if we changed password then we confirm back to the user with link back to main page
+		print "<p>Password change successful</p>\n<p><a href=\"".ADMIN_FILE."\">Admin home page</a></p>\n";
+		$templates->includeTemplate('footer', 'admin');
+		// exit if we succesfully change
+		// otherwise we show password change form
+		exit (0);
+	}
 }
 
 
+// display change password form
+print "<form action=\"".ADMIN_USER_FILE."\" method=\"post\">\n";
+print "<input type=\"hidden\" name=\"action\" value=\"pwchange\" />\n";
+
+print "Current password:<br />\n<input type=\"password\" name=\"oldpassword\" value=\"\"><br />\n";
+
+print "New password:<br />\n<input type=\"password\" name=\"newpassword\" value=\"\"><br />\n";
+print "Repeat password:<br />\n<input type=\"password\" name=\"newpassword2\" value=\"\"><br />\n";
+
+
+print "<input type=\"submit\" value=\"Change password\" />\n";
+print "</form>\n";
 
 
 // footer template
 $templates->includeTemplate('footer', 'admin');
-
-
-
 
 
 

@@ -104,6 +104,16 @@ class SimpleAuth
     	else {return false;}
     }    
     
+    
+    // return password hash
+    // md5 converted so it can be stored in db (more safely)
+    public function hashPassword($password)
+    {
+    	return (md5($password)); 
+    }
+    
+    
+    
     public function loginNow($username, $password)
     {
     	// check login
