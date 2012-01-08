@@ -53,6 +53,23 @@ wquiz-questionimage
 ** see special case below for details of laying out button positions
 
 
+Database config file
+--------------------
+
+default.cfg - normally points to a file outside of the DOCUMENT_ROOT
+
+the actual config file contains an array
+
+dbtype = database - only mysql is supported
+username 
+password
+hostname
+database
+tableprefix
+
+
+
+
 Settings
 --------
 
