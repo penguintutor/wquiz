@@ -56,10 +56,13 @@ if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enable') =
 	// todo add some comments about score
 	
 	// Link to review answers if enabled
-	if ($settings->getSetting('answer_summary_enable') != 'false')
+	if ($settings->getSetting('answer_view_enable') != 'false')
 	{
-		$response_text .= "<p><a href=\"".SUMMARY_FILE."\">Detailed results</a></p>";
+		$response_text .= "<p><a href=\"".SUMMARY_FILE."\">Detailed results</a></p>\n";
 	}
+	
+	$response_text .= "<p><a href=\"".INDEX_FILE."\">Start again</a></p>\n";
+	
 	
 	
 }
