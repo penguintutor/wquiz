@@ -23,6 +23,8 @@ class QuestionNavigation
 		// Text labels (note these are also the submit values
 		$this->labels = unserialize ($settings->getSetting('buttons_navigation_labels'));
 		$this->enabled = unserialize ($settings->getSetting('buttons_navigation_enabled'));
+		$this->show_answer_button = "false";
+		if ($settings->getSetting('buttons_show_answer_button') ==  "true") {$this->show_answer_button = "true";}
 		$this->min = $min;
 		$this->max = $max;
     }
@@ -65,6 +67,29 @@ class QuestionNavigation
 	{
 		// include the questionnum of current page (regardless of which page we redirect to afterwards)
 		print "<input type=\"hidden\" name=\"question\" value=\"$current\"/>\n";
+		
+		// Add answer button
+		// This can be hidden, but needs to exist to ensure that pressing ENTER on a text field
+		// submits the correct value
+		// it can be hidden by setting buttons_show_answer_button to false
+		// or in own css file
+		if ($this->show_answer_button == 'true')
+		{
+			// show as a normal div 
+			print "<div id=\"".CSS_ID_BUTTON_ANSWER."\">\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT."answer\"  value=\"answer\"/>\n";
+			print "</div>\n";
+		}
+		// otherwise it's hidden
+		else
+		{
+			// Note style should override id css code
+			print "<div style=\"height:0px; width:0px; position:absolute; overflow:hidden\">\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT."answer\"  value=\"answer\"/>\n";
+			print "</div>\n";
+		}
+		
+		
 		foreach ($this->enabled as $this_button)
 		{
 			// check matching label is defined - if not add as a warning and move to next
@@ -85,12 +110,13 @@ class QuestionNavigation
 	// returns action string
 	// - first, previous, next, last, review (keys of enabled array)
 	// returns 'invalid' if option is not enabled / valid
-	public function getAction ($value)
+	public function getAction ($value='')
 	{
-		// special case - if default then we return next
-		// this is to allow the hidden button method to deal with the user pressing enter
-		// we don't use this method by default preferring to use CSS to put the next button first in html, but later in display
-		if ($value == 'default') {return 'next';}
+		// special case - if default, blank or answer then we return next
+		// this is to deal with the user pressing enter
+		// we don't use hidden button (or javascript) preferring to use CSS to hide the answer button
+		// (we showed answer button on earlier version of the quiz - and that is still an option using this technique)
+		if ($value == '' || $value == 'default' || $value == 'answer') {return 'next';}
 		if (in_array($value, $this->labels))
 		{
 			$key = array_search ($value, $this->labels);

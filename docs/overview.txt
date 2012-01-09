@@ -96,8 +96,13 @@ Options:
 * create a hidden button with value "default" and hide it
 * use javascript to capture and handle the enter press 
 
+Implemented using the 2nd, but with option to show or hide the button as required
+Button is hidden using a div with class of hidden if following is false
+buttons_show_answer_button
 
+Alternative is to set this as true, but hide the div yourself
 
+This method still works without javascript and for screenreaders (who just see the answer button before the navigation buttons)
 
 ############ temp scratch area ############
 
