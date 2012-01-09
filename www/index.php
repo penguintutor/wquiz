@@ -183,7 +183,7 @@ function printMenu ($quiz_object)
 	
 	// Display menu
 	print "<div id=\"".CSS_ID_MENU."\">\n";
-	print "<span class=\"".CSS_ID_MENU_TITLE."\">Start Quiz</span>\n";
+	print "<span class=\"".CSS_ID_MENU_TITLE."\"></span>\n";
 	print ("<form method=\"post\" action=\"".INDEX_FILE."\" target=\"_top\">");
 
 	print <<<EOT

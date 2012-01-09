@@ -145,10 +145,30 @@ print "<p class=\"".CSS_CLASS_STATUS."\">Question $question_num of $num_question
 $question = new Question($qdb->getQuestion($questions_array[$question_num-1]));
 // first print status bar if req'd (eg. question 1 of 10)
 // answer is currently selected -1 = not answered
-print ($question->getHtmlString($quiz_session->getAnswer($question_num-1)));
+$answer = $quiz_session->getAnswer($question_num-1);
+print ($question->getHtmlString($answer));
 
 
+print "<div id=\"".CSS_ID_ANSWER."\">\n";
 print "<h3>Answer</h3>\n";
+
+if ($answer == -1) {print "<p class=\"".CSS_CLASS_SUMMARY_NOTANSWERED."\">Not answered</p>\n";}
+// marked is whether this is correct or not (if answered)
+else
+{
+	// has this been answered correctly
+	if($question->markAnswer($answer))
+	{print "<p class=\"".CSS_CLASS_SUMMARY_CORRECT."\">Correct</p>\n";}
+	else {print "<p class=\"".CSS_CLASS_SUMMARY_INCORRECT."\">Incorrect</p>\n";}
+}
+
+// Display the actual answer text
+print "<p class=\"".CSS_CLASS_ANSWER_REASON."\">\n";
+print $question->getReason();
+print "</p>\n";
+
+// end answer div
+print "</div>\n";
 
 
 
@@ -159,6 +179,9 @@ print "\n</div><!-- ".CSS_ID_NAVIGATION." -->\n";
 
 // end form
 print "</form>\n";
+
+// link back to end of review
+print "<p><a href=\"".END_FILE."\">Back to result summary</a></p>\n";
 
 
 // footer templates
