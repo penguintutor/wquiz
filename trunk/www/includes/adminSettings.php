@@ -69,6 +69,13 @@ $setting_types = array
 		'buttons_navigation_labels',
 		'custom'
 	),
+	array 
+	(
+		'buttons_show_answer_button',
+		'boolean',
+		'Show answer button',
+		'Should we show answer button for the question?'
+	),
 	array
 	(
 		'review_text',
