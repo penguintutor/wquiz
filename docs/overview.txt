@@ -86,6 +86,37 @@ quiz_max_questions (1000) max number of questions in a quiz (num within the actu
 
 
 
+Install script
+--------------
+
+Install script should only be run once. 
+It does however handle a partial run to permit parts to be done manually (eg. if server doesn't have write access to default.cfg file - or database needs to be created through hosting cpanel)
+It will not create new entries if existing is found to prevent this accidently (or maliciously) resetting database settings
+
+Checks performed as follows (note checks are performed prior to asking user confirmation)
+* [cfgfile] Does .cfg file exist 
+	No - ask details then create
+	Yes - move on
+* [database] Does database exist 
+	No - create and move on
+	Yes - "are you sure you want to install into existing" move on
+* [tables] Do tables exist
+	No - create and move on
+	Yes - "are you sure you want to install into existing" move on
+* [settings] Do any settings exist
+	No - ask for admin password and create default entries (settings etc.)
+	Yes - exit - already installed
+* [secure] Change database user?
+	Allows user in cfg file to be changed - then provides option for moving cfg file outside of document_root
+
+*** First run file
+This is in a separate file as we now use standard authentication
+
+	
+
+
+
+
 Special case - default next button
 ------------
 
