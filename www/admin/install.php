@@ -6,14 +6,34 @@
 For version 0.4.0
 ****/
 
-$default_cfg_file = 'default.cfg';
+
+// These must be the same as setup.php
+// This script does not use setup.php, but all others do
+define ("ADMIN_DIR", "admin");	 							// Admin directory
+define ("ADMIN_INSTALL_FILE", ADMIN_DIR."/install.php"); 	// Install / setup script
+
+// relative path to the apps directory (used on url references)
+$rel_path = "../";
+
+//$default_cfg_file = 'default.cfg';
+$default_cfg_file = 'test.cfg';
+
 // action_required holds the next step in the config process
 // 'cfgfile', 'database', 'tables', 'settings', 'secure'
 $action_required = 'cfgfile';
+// If we have a message to give back to the user store in here (eg. "database cannot be left blank")
+$message = '';
+// if we find an error then increment this (eg. missing paramter)
+// only use this for soft errors we want to report later rather than critical errors we just stop on
+$error_found = 0;
+
 
 // get directory
 if (defined('__DIR__')) {$app_dir = __DIR__;}
 else {$app_dir = dirname(__FILE__);}
+
+// strip the admin part of the directory
+$app_dir = preg_replace ("#/".ADMIN_DIR."/?$#", "", $app_dir);
 
 /* Does .cfg file(s) already exist */
 if (file_exists($app_dir.'/'.$default_cfg_file))
@@ -59,11 +79,72 @@ EOT2;
 // Do we have details to create .cfg file - if so create
 else
 {
-	// check all parameters
-	$database_settings_required = array('dbtype', 'username', 'password', 'hostname', 'database', 'tableprefix');
-	if (!isset($_POST['database'] || $POST['action']!='save'
+	// check all parameters (quizname is for filename - rather than a parameter)
+	$database_settings_required = array('quizname', 'dbtype', 'username', 'password', 'hostname', 'database', 'tableprefix');
+	// optional tickbox (create database is not checked here)
+	// not save
+	if (isset($_POST['action']) && $POST['action']=='save')
+	{
+		
+		// check we have all parameters and they are valid
+		foreach ($database_settings_required as $this_setting)
+		{
+			if (!isset($_POST[$this_setting]) || $_POST[$this_setting] == '')
+			{
+				$message .= "$this_setting is a required field<br />\n";
+				$error_found ++;
+			}
+			// check for allowed characters
+			// quite basic - if you need to include other characters then create default.cfg manully
+			elseif (!preg_match ("\w\._-", $_POST[$this_setting]))
+			{
+				$message .= "Invalid character in $this_setting<br />\n";
+			}
+		}
+		// If no errors found - perform validation checks
+		if ($error_found == 0)
+		{
+			/* validate certain fields */
+			//- add this
+			
+			
+			/* create the config files */
+			//- add this
+		}
+		
+	}
 	
 }
+
+// If we are still at status cfgfile - show the database setup form to the customer
+$post_filename = $rel_path.ADMIN_INSTALL_FILE;
+print <<< EOT
+<html>
+<head>
+<title>wQuiz setup</title>
+</head>
+<body>
+<h1>wQuiz setup</h1>
+<p>Please provide the following information for the database setup.
+</p>
+<p>To create the database you will need to provide a username and password with administrator access (eg. create access). This can be changed later if required.</p>
+<p>
+<form action="$post_filename" method="POST">
+<input type="hidden" name="action" value="save" />
+Quizname (short name eg sitename - no spaces): <input type="text" name="quizname" value="" />
+Database type (mysql recommended): <select name="dbtype"><option value="mysql">mysql</option><option value="mssql">MS SQL</option><option value="other">Other</option></select>
+Database username (admin access):  <input type="text" name="username" value="" />
+Database password<input type="password" name="quizname" value="" />
+Hostname: <input type="text" name="hostname" value="" />
+</form>
+
+
+</p>
+</body>
+</html>
+EOT;
+
+
 
 /* Now see what form parameters have been sent */
 
