@@ -5,13 +5,14 @@ $default_cfg_file = 'default.cfg';
 // debug mode - set to true to enable debug messages
 if (!isset ($debug)) {$debug = false;}
 
+define ("ADMIN_DIR", "admin");	 							// Admin directory - must be different from the name of it's parent directory
+
 // Internal links to other pages
 define ("INDEX_FILE", "index.php");
 define ("QUESTION_FILE", "question.php");
 define ("ANSWER_FILE", "answer.php");
 define ("SUMMARY_FILE", "summary.php");
 define ("END_FILE", "end.php");
-define ("FIRST_FILE", "includes/first.php");				// If install not complete
 define ("ADMIN_FILE", "adminindex.php");
 define ("ADMIN_LOGIN_FILE", "adminlogin.php");
 define ("ADMIN_LIST_FILE", "adminlist.php");				// List of questions
@@ -24,7 +25,8 @@ define ("ADMIN_DEL_QUIZ_FILE", "adminquizdel.php"); 		// del quiz
 define ("ADMIN_EDIT_SETTINGS_FILE", "adminsettings.php"); 	// edit settings
 define ("ADMIN_LOGOUT_FILE", "adminlogout.php"); 			// logout
 define ("ADMIN_USER_FILE", "adminuser.php"); 				// user administration (eg. password change)
-
+define ("ADMIN_INSTALL_FILE", ADMIN_DIR."/install.php"); 	// Install / setup script
+define ("FIRST_FILE", "includes/first.php");				// If install not complete
 
 // get directory for includes
 if (defined('__DIR__')) {$app_dir = __DIR__;}
