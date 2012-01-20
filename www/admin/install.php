@@ -10,7 +10,7 @@ For version 0.4.0
 // These must be the same as setup.php
 // This script does not use setup.php, but all others do
 define ("ADMIN_DIR", "admin");	 							// Admin directory
-define ("ADMIN_INSTALL_FILE", ADMIN_DIR."/install.php"); 	// Install / setup script
+//define ("ADMIN_INSTALL_FILE", ADMIN_DIR."/install.php"); 	// Install / setup script
 
 // relative path to the apps directory (used on url references)
 $rel_path = "../";
@@ -18,14 +18,18 @@ $rel_path = "../";
 //$default_cfg_file = 'default.cfg';
 $default_cfg_file = 'test.cfg';
 
+// url link to use in forms - we have hardcoded install.php which must be the name of this file 
+//$post_filename = $rel_path.ADMIN_INSTALL_FILE;
+$post_filename = "install.php";
+
 // action_required holds the next step in the config process
 // 'cfgfile', 'database', 'tables', 'settings', 'secure'
 $action_required = 'cfgfile';
-// If we have a message to give back to the user store in here (eg. "database cannot be left blank")
+/*// If we have a message to give back to the user store in here (eg. "database cannot be left blank")
 $message = '';
 // if we find an error then increment this (eg. missing paramter)
 // only use this for soft errors we want to report later rather than critical errors we just stop on
-$error_found = 0;
+$error_found = 0;*/
 
 
 // get directory
@@ -82,68 +86,102 @@ else
 	// check all parameters (quizname is for filename - rather than a parameter)
 	$database_settings_required = array('quizname', 'dbtype', 'username', 'password', 'hostname', 'database', 'tableprefix');
 	// optional tickbox (create database is not checked here)
-	// not save
-	if (isset($_POST['action']) && $POST['action']=='save')
+	// not save - ask for details
+	if (!isset($_POST['action']) || $_POST['action']!='save')
 	{
-		
-		// check we have all parameters and they are valid
-		foreach ($database_settings_required as $this_setting)
-		{
-			if (!isset($_POST[$this_setting]) || $_POST[$this_setting] == '')
-			{
-				$message .= "$this_setting is a required field<br />\n";
-				$error_found ++;
-			}
-			// check for allowed characters
-			// quite basic - if you need to include other characters then create default.cfg manully
-			elseif (!preg_match ("\w\._-", $_POST[$this_setting]))
-			{
-				$message .= "Invalid character in $this_setting<br />\n";
-			}
-		}
-		// If no errors found - perform validation checks
-		if ($error_found == 0)
-		{
-			/* validate certain fields */
-			//- add this
-			
-			
-			/* create the config files */
-			//- add this
-		}
-		
+		displayForm ($action_required, "");
+		exit (0);
 	}
 	
+	// this must be a save of file	
+	// check we have all parameters as we give a "must not be blank" first
+	foreach ($database_settings_required as $this_setting)
+	{
+		if (!isset($_POST[$this_setting]) || $_POST[$this_setting] == '')
+		{
+			displayForm ($action, "$this_setting is a required field");
+			exit(0);
+		}
+		/*// check for allowed characters
+		// quite basic - if you need to include other characters then create default.cfg manully
+		// eg. mysql password field allows for more non alphanumeric characters
+		elseif (!preg_match ("^[\w\._-]+$", $_POST[$this_setting]))
+		{
+			displayForm ($action, "Invalid character in $this_setting");
+		}*/
+		
+	}
+	// If no errors found - perform detailed validation checks for each field
+	/* validate certain fields */
+	// some of these are more restrictive than mysql - if need to use other charactors not included then can still configure manually in .cfg file.
+	if (!preg_match ("/^[\w-_]+$/", $_POST['quizname']))
+	{
+			displayForm ($action, "Short name contains illegal charactors");
+			exit(0);
+	}
+	// check for dbtype
+	// perform confirm check if not mysql
+	if (!preg_match ("/^[\w-_]+$/", $_POST['dbtype']))
+	{
+			displayForm ($action, "dbtype contains illegal charactors");
+			exit(0);
+	}
+	// known but unsupported
+	elseif ($_POST['dbtype'] == 'mssql')
+	{
+		displayConfirm ("MS Sql is not officially supported - do you wish to continue?", 'dbtype', $_POST);
+		exit (0);
+	}
+	// unknown 
+	elseif ($_POST['dbtype'] != 'mysql')
+	{
+		displayConfirm ("DB type is not supported this will need manual configuration - do you wish to continue?", 'dbtype', $_POST);
+		exit (0);
+	}
+	
+	// basic check for password field - just blocks some ncharacters not allowed by mysql
+	// will still allow some characters not allowed by mysql (eg. accentuated characters, but they are not considered a security risk)
+	// unsure whether " and ' are allowed in mysql, but we don't allow them anyway in case they cause problems
+	if (preg_match ("/[:&+\"\']/", $_POST["password"]))
+	{
+			displayForm ($action, "password contains illegal charactors");
+			exit(0);
+	}
+	// just basic check for username - could check for max 16 chars etc. but leave that for mysql to enforce - as long as we don't allow dangerous characters
+	if (preg_match ("/[:&+\"\'\s]/", $_POST["username"]))
+	{
+			displayForm ($action, "username contains illegal charactors");
+			exit(0);
+	}	
+	// Does not check for valid hostname, just checks for valid characters
+	if (preg_match ("/^[\w\.-_:]+$/", $_POST['hostname']))
+	{
+			displayForm ($action, "hostname contains illegal charactors");
+			exit(0);
+	}
+	// more stringent db table names etc. 
+	// This should work in all normal implementations 
+	// if hosting provider requires something other than allowed then will need to be configured
+	// manually - if so it can be ammended
+	if (!preg_match ("/^[\w-_]+$/", $_POST['database']))
+	{
+			displayForm ($action, "database contains illegal charactors");
+			exit(0);
+	}
+	if (!preg_match ("/^[\w-_]+$/", $_POST['tableprefix']))
+	{
+			displayForm ($action, "table prefix contains illegal charactors");
+			exit(0);
+	}		
+	
+			
+	/* create the config files */
+	//- add this
+	
+		
+	
+	
 }
-
-// If we are still at status cfgfile - show the database setup form to the customer
-$post_filename = $rel_path.ADMIN_INSTALL_FILE;
-print <<< EOT
-<html>
-<head>
-<title>wQuiz setup</title>
-</head>
-<body>
-<h1>wQuiz setup</h1>
-<p>Please provide the following information for the database setup.
-</p>
-<p>To create the database you will need to provide a username and password with administrator access (eg. create access). This can be changed later if required.</p>
-<p>
-<form action="$post_filename" method="POST">
-<input type="hidden" name="action" value="save" />
-Quizname (short name eg sitename - no spaces): <input type="text" name="quizname" value="" />
-Database type (mysql recommended): <select name="dbtype"><option value="mysql">mysql</option><option value="mssql">MS SQL</option><option value="other">Other</option></select>
-Database username (admin access):  <input type="text" name="username" value="" />
-Database password<input type="password" name="quizname" value="" />
-Hostname: <input type="text" name="hostname" value="" />
-</form>
-
-
-</p>
-</body>
-</html>
-EOT;
-
 
 
 /* Now see what form parameters have been sent */
@@ -366,8 +404,11 @@ EOF;
 */
 
 
-function displayForm ($action)
+//action is current stage
+//$message is displayed to user (eg. Fill in field ___)
+function displayForm ($action, $message)
 {
+	global $post_filename;
 	print <<< EOT
 <html>
 <head>
@@ -376,8 +417,9 @@ function displayForm ($action)
 <body>
 <h1>Install wquiz</h1>
 <p>Please provide the following details to install and configure wQuiz.</p>
+<p><strong>$message</strong></p>
 <p>
-<form method="post" action="install.php">
+<form method="post" action=$post_filename>
 <input type="hidden" name="action" value="save" />
 </p>
 EOT;
@@ -389,22 +431,76 @@ EOT;
 Provide the information required to administer the database. This must have admin access to allow the install to create the appropriate database tables (if not already defined). The username can be changed to one with lower privilages later.
 </p>
 <p>
-Short title (spaces / special characters ignored) <input type="text" name="shortname" /><br />
+Short title (spaces / special characters ignored) <input type="text" name="quizname" /><br />
 Database type (recommend mysql) <input type="text" name="dbtype" value="mysql" /><br />
 Database hostname (or ipaddress) <input type="text" name="database" value="" /><br />
-Database username (admin access required) <input type="text" name="username" /><br />
-Database password <input type="password" name="password" /><br />
-Database Table prefix (if required) <input type="text" name="tableprefix" />
+Database username (admin access required) <input type="text" name="username" value="" /><br />
+Database password <input type="password" name="password" value="" /><br />
+Database Table prefix (if required) <input type="text" name="tableprefix" value="" />
 </p>
 EOTCFG;
 	}
 
 
 print <<< EOTLAST
+<input type="submit" />
+</form>
+</p>
 </body>
 </html>
 EOTLAST;
 	exit (0);	
+	
+}
+
+// Used to display yes / no before proceeding
+// field is used to add an additional hidden field that we have validated this
+// eg. dbtype becomes confirmdbtype="yes|no"
+// uses 2 forms (one yes, one for no)
+// $parameters should normally be set to $_POST so that the previous form is resubmitted 
+function displayConfirm ($message, $field, $parameters)
+{
+	global $post_filename;
+	print <<< EOT
+<html>
+<head>
+<title>Install wquiz</title>
+</head>
+<body>
+<h1>Are you sure?</h1>
+<p><strong>$message</strong></p>
+<p>
+<form method="post" action=$post_filename>
+EOT;
+
+print "<input type=\"hidden\" name=\"confirm$field\" value=\"yes\" />\n";
+
+foreach ($parameters as $key=>$value)
+{
+	print "<input type=\"hidden\" name=\"key\" value=\"$value\" />\n";	
+}
+
+print <<< EOT2
+<input type="submit" value="yes" />
+<form method="post" action=$post_filename>
+EOT2;
+
+print "<input type=\"hidden\" name=\"confirm$field\" value=\"no\" />\n";
+
+foreach ($parameters as $key=>$value)
+{
+	print "<input type=\"hidden\" name=\"key\" value=\"$value\" />\n";	
+}
+
+print <<< EOT3
+<input type="submit" value="no" />
+</form>
+</p>
+</body>
+</html>
+EOT3;
+	exit (0);	
+	
 	
 }
 

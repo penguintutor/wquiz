@@ -1,8 +1,10 @@
 concepts
+---------
 
 Emphasis is on this being in PHP / Ajax
 Whilst it would be possible to push more to client side (Javascript handle questions etc)
-for simplicity 
+this keeps consistancy at the moment. 
+Perhaps more can be pushed client-side in future
 
 
 Main pages 
@@ -60,7 +62,7 @@ default.cfg - normally points to a file outside of the DOCUMENT_ROOT
 
 the actual config file contains an array
 
-dbtype = database - only mysql is supported
+dbtype = database - only mysql is official (mssql is only alternative at moment - untested)
 username 
 password
 hostname
@@ -89,9 +91,11 @@ quiz_max_questions (1000) max number of questions in a quiz (num within the actu
 Install script
 --------------
 
-Install script should only be run once. 
-It does however handle a partial run to permit parts to be done manually (eg. if server doesn't have write access to default.cfg file - or database needs to be created through hosting cpanel)
+Install script should only be required once - it is accessed as a page and will call itself as many times as required until configuration is complete 
+It does handle a partial run to permit parts to be done manually (eg. if server doesn't have write access to default.cfg file - or database needs to be created through hosting cpanel)
 It will not create new entries if existing is found to prevent this accidently (or maliciously) resetting database settings
+
+It is strict on certain charactors - if other charactors are required then the configuration can be done manually.
 
 Checks performed as follows (note checks are performed prior to asking user confirmation)
 * [cfgfile] Does .cfg file exist 
