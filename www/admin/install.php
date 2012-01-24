@@ -32,6 +32,7 @@ $message = '';
 $error_found = 0;*/
 
 
+
 // get directory
 if (defined('__DIR__')) {$app_dir = __DIR__;}
 else {$app_dir = dirname(__FILE__);}
@@ -89,7 +90,7 @@ else
 	// not save - ask for details
 	if (!isset($_POST['action']) || $_POST['action']!='save')
 	{
-		displayForm ($action_required, "");
+		displayInitialForm ("");
 		exit (0);
 	}
 	
@@ -99,7 +100,7 @@ else
 	{
 		if (!isset($_POST[$this_setting]) || $_POST[$this_setting] == '')
 		{
-			displayForm ($action, "$this_setting is a required field");
+			displayInitialForm ("$this_setting is a required field");
 			exit(0);
 		}
 		/*// check for allowed characters
@@ -107,23 +108,26 @@ else
 		// eg. mysql password field allows for more non alphanumeric characters
 		elseif (!preg_match ("^[\w\._-]+$", $_POST[$this_setting]))
 		{
-			displayForm ($action, "Invalid character in $this_setting");
+			displayInitialForm ("Invalid character in $this_setting");
 		}*/
 		
 	}
 	// If no errors found - perform detailed validation checks for each field
 	/* validate certain fields */
 	// some of these are more restrictive than mysql - if need to use other charactors not included then can still configure manually in .cfg file.
-	if (!preg_match ("/^[\w-_]+$/", $_POST['quizname']))
+	
+	// quizname is slightly different in that we just remove any special characters to get the filename
+	$quizname = preg_replace ("/[^\w]/g", '', $_POST['quizname']);
+	if ($quizname == '')	// make sure it isn't blank
 	{
-			displayForm ($action, "Short name contains illegal charactors");
+			displayInitialForm ("Short name invalid");
 			exit(0);
 	}
 	// check for dbtype
 	// perform confirm check if not mysql
 	if (!preg_match ("/^[\w-_]+$/", $_POST['dbtype']))
 	{
-			displayForm ($action, "dbtype contains illegal charactors");
+			displayInitialForm ("dbtype contains illegal charactors");
 			exit(0);
 	}
 	// known but unsupported
@@ -144,19 +148,19 @@ else
 	// unsure whether " and ' are allowed in mysql, but we don't allow them anyway in case they cause problems
 	if (preg_match ("/[:&+\"\']/", $_POST["password"]))
 	{
-			displayForm ($action, "password contains illegal charactors");
+			displayInitialForm ("password contains illegal charactors");
 			exit(0);
 	}
 	// just basic check for username - could check for max 16 chars etc. but leave that for mysql to enforce - as long as we don't allow dangerous characters
 	if (preg_match ("/[:&+\"\'\s]/", $_POST["username"]))
 	{
-			displayForm ($action, "username contains illegal charactors");
+			displayInitialForm ("username contains illegal charactors");
 			exit(0);
 	}	
 	// Does not check for valid hostname, just checks for valid characters
 	if (preg_match ("/^[\w\.-_:]+$/", $_POST['hostname']))
 	{
-			displayForm ($action, "hostname contains illegal charactors");
+			displayInitialForm ("hostname contains illegal charactors");
 			exit(0);
 	}
 	// more stringent db table names etc. 
@@ -165,17 +169,23 @@ else
 	// manually - if so it can be ammended
 	if (!preg_match ("/^[\w-_]+$/", $_POST['database']))
 	{
-			displayForm ($action, "database contains illegal charactors");
+			displayInitialForm ("database contains illegal charactors");
 			exit(0);
 	}
 	if (!preg_match ("/^[\w-_]+$/", $_POST['tableprefix']))
 	{
-			displayForm ($action, "table prefix contains illegal charactors");
+			displayInitialForm ("table prefix contains illegal charactors");
 			exit(0);
 	}		
 	
 			
 	/* create the config files */
+	// Create the secondary config file (if this fails then our initial test fails)
+	$second_config_file = $app_dir."/".$quizname.".cfg";
+	// First check if it exists
+	print "Creating file";
+	if (file_exists($second_config_file)) {print "<br />\n\n$second_config_file exists<br />\n\n";}
+	else {print "<br />\n\n$second_config_file does not exist<br />\n\n";}
 	//- add this
 	
 		
@@ -404,9 +414,9 @@ EOF;
 */
 
 
-//action is current stage
+// Displays the initial form regarding database information
 //$message is displayed to user (eg. Fill in field ___)
-function displayForm ($action, $message)
+function displayInitialForm ($message)
 {
 	global $post_filename;
 	print <<< EOT
@@ -422,10 +432,6 @@ function displayForm ($action, $message)
 <form method="post" action=$post_filename>
 <input type="hidden" name="action" value="save" />
 </p>
-EOT;
-	if ($action == '' || $action == 'cfgfile')
-	{
-	print <<< EOTCFG
 <h2>Database information</h2>	
 <p>
 Provide the information required to administer the database. This must have admin access to allow the install to create the appropriate database tables (if not already defined). The username can be changed to one with lower privilages later.
@@ -433,22 +439,19 @@ Provide the information required to administer the database. This must have admi
 <p>
 Short title (spaces / special characters ignored) <input type="text" name="quizname" /><br />
 Database type (recommend mysql) <input type="text" name="dbtype" value="mysql" /><br />
-Database hostname (or ipaddress) <input type="text" name="database" value="" /><br />
+Database hostname (or ipaddress) <input type="text" name="hostname" value="" /><br />
 Database username (admin access required) <input type="text" name="username" value="" /><br />
 Database password <input type="password" name="password" value="" /><br />
+Database name <input type="text" name="database" value="" /><br />
 Database Table prefix (if required) <input type="text" name="tableprefix" value="" />
 </p>
-EOTCFG;
-	}
 
-
-print <<< EOTLAST
 <input type="submit" />
 </form>
 </p>
 </body>
 </html>
-EOTLAST;
+EOT;
 	exit (0);	
 	
 }
