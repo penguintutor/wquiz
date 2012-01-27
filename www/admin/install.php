@@ -117,27 +117,35 @@ else
 	// some of these are more restrictive than mysql - if need to use other charactors not included then can still configure manually in .cfg file.
 	
 	// quizname is slightly different in that we just remove any special characters to get the filename
-	$quizname = preg_replace ("/[^\w]/g", '', $_POST['quizname']);
+	$quizname = $_POST['quizname'];
+	preg_replace ("/[^\w]/g", '', $quizname);
 	if ($quizname == '')	// make sure it isn't blank
 	{
 			displayInitialForm ("Short name invalid");
 			exit(0);
 	}
 	// check for dbtype
+	// if we have clicked no on continue then we reissue the form
+	if (isset($_POST['confirmdbtype']) && $_POST['confirmdbtype'] != 'yes')
+	{
+			displayInitialForm ("Please select a different database type (mysql recommended)");
+			exit(0);	
+	}
+	
 	// perform confirm check if not mysql
 	if (!preg_match ("/^[\w-_]+$/", $_POST['dbtype']))
 	{
 			displayInitialForm ("dbtype contains illegal charactors");
 			exit(0);
 	}
-	// known but unsupported
-	elseif ($_POST['dbtype'] == 'mssql')
+	// known but unsupported 
+	elseif ($_POST['dbtype'] == 'mssql' && (!isset($_POST['confirmdbtype']) || $_POST['confirmdbtype'] != 'yes') )
 	{
 		displayConfirm ("MS Sql is not officially supported - do you wish to continue?", 'dbtype', $_POST);
 		exit (0);
 	}
 	// unknown 
-	elseif ($_POST['dbtype'] != 'mysql')
+	elseif ($_POST['dbtype'] != 'mysql' && (!isset($_POST['confirmdbtype']) || $_POST['confirmdbtype'] != 'yes') )
 	{
 		displayConfirm ("DB type is not supported this will need manual configuration - do you wish to continue?", 'dbtype', $_POST);
 		exit (0);
@@ -158,7 +166,7 @@ else
 			exit(0);
 	}	
 	// Does not check for valid hostname, just checks for valid characters
-	if (preg_match ("/^[\w\.-_:]+$/", $_POST['hostname']))
+	if (!preg_match ("/^[\w\.-_:]+$/", $_POST['hostname']))
 	{
 			displayInitialForm ("hostname contains illegal charactors");
 			exit(0);
@@ -183,9 +191,38 @@ else
 	// Create the secondary config file (if this fails then our initial test fails)
 	$second_config_file = $app_dir."/".$quizname.".cfg";
 	// First check if it exists
-	print "Creating file";
-	if (file_exists($second_config_file)) {print "<br />\n\n$second_config_file exists<br />\n\n";}
-	else {print "<br />\n\n$second_config_file does not exist<br />\n\n";}
+	if (file_exists($second_config_file)) {print "<br />\n\n$second_config_file already exists <br />\n\n";}
+	else 
+	{
+		//print "Creating $second_config_file<br />\n";
+		
+		$second_config_text = "<?php\n//wQuiz configuration file\n//Database details\n\$dbsettings = array(\n";
+		$second_config_text .= "'dbtype' => '".$_POST['dbtype']."',\n";
+		$second_config_text .= "'username' => '".$_POST['username']."',\n";
+		$second_config_text .= "'password' => '".$_POST['password']."',\n";
+		$second_config_text .= "'hostname' => '".$_POST['hostname']."',\n";
+		$second_config_text .= "'database' => '".$_POST['database']."',\n";
+		$second_config_text .= "'tableprefix' => '".$_POST['tableprefix']."'\n";
+		$second_config_text .= ");\n?>\n";
+		
+		$fh = fopen($second_config_file, 'w');
+		if ($fh)
+		{
+			fwrite ($fh, $second_config_text);
+			fclose ($fh);
+		}
+		else
+		{
+			displayManualConfig("Unable to write to $second_config_file", $second_config_text);
+			exit (0);
+		}
+		
+		
+		
+		
+	}
+	//print "Creating $app_dir/$default_cfg_file";
+	
 	//- add this
 	
 		
@@ -474,13 +511,14 @@ function displayConfirm ($message, $field, $parameters)
 <p><strong>$message</strong></p>
 <p>
 <form method="post" action=$post_filename>
+
 EOT;
 
 print "<input type=\"hidden\" name=\"confirm$field\" value=\"yes\" />\n";
 
 foreach ($parameters as $key=>$value)
 {
-	print "<input type=\"hidden\" name=\"key\" value=\"$value\" />\n";	
+	print "<input type=\"hidden\" name=\"$key\" value=\"$value\" />\n";	
 }
 
 print <<< EOT2
@@ -492,7 +530,7 @@ print "<input type=\"hidden\" name=\"confirm$field\" value=\"no\" />\n";
 
 foreach ($parameters as $key=>$value)
 {
-	print "<input type=\"hidden\" name=\"key\" value=\"$value\" />\n";	
+	print "<input type=\"hidden\" name=\"$key\" value=\"$value\" />\n";	
 }
 
 print <<< EOT3
@@ -503,6 +541,43 @@ print <<< EOT3
 </html>
 EOT3;
 	exit (0);	
+	
+	
+}
+
+function displayManualConfig ($message, $config_text)
+{
+	// convert html special characters (eg. < becomes &lt;
+	$config_text = htmlspecialchars($config_text);
+	// replace \n with html break
+	$config_text = preg_replace ('/\\n/', '<br />', $config_text);  
+	// we don't use a post - by using GET this will start the test process from start
+	global $post_filename;
+	print <<< EOT
+<html>
+<head>
+<title>Install wquiz</title>
+</head>
+<body>
+<h1>File creattion failed</h1>
+<p>Unable to create the configuration file</p>
+<p><strong>$message</strong></p>
+<p>Copy and paste below into new file</p>
+<hr />
+<p><code>$config_text</code></p>
+<hr />
+<p>
+<ul>
+<li><a href="$post_filename">Continue / Retry</a></li>
+</ul>
+</p>
+
+</body>
+</html>
+EOT;
+	exit (0);	
+	
+
 	
 	
 }
