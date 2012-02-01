@@ -183,6 +183,12 @@ form input[type=submit]:hover {
 }
 
 
+Added a new database field
+--------------------------
+audio 
+This is for future use (perhaps html5 only version) to allow a audio file to be placed in addition / instead of text. Entry should be a url (same as the way image is used)
+There is currently no way of editing this field and it is ignored by the current version
+
 
 
 <form action="http://www.google.com/search" method="get">
