@@ -25,6 +25,9 @@ $post_filename = "install.php";
 // action_required holds the next step in the config process
 // 'cfgfile', 'database', 'tables', 'settings', 'secure'
 $action_required = 'cfgfile';
+
+// Use status_msg to track status of install process
+$status_msg = "";
 /*// If we have a message to give back to the user store in here (eg. "database cannot be left blank")
 $message = '';
 // if we find an error then increment this (eg. missing paramter)
@@ -40,11 +43,13 @@ else {$app_dir = dirname(__FILE__);}
 // strip the admin part of the directory
 $app_dir = preg_replace ("#/".ADMIN_DIR."/?$#", "", $app_dir);
 
+$first_config_file = $app_dir."/".$default_cfg_file; 
+
 /* Does .cfg file(s) already exist */
-if (file_exists($app_dir.'/'.$default_cfg_file))
+if (file_exists($first_config_file))
 {
 	// try loading it
-	@include ($app_dir."/".$default_cfg_file);
+	@include ($first_config_file);
 	// do we now have a secondary cfg file - if so load that as well
 	if (isset($cfgfile) && $cfgfile!='')
 	{
@@ -100,16 +105,11 @@ else
 	{
 		if (!isset($_POST[$this_setting]) || $_POST[$this_setting] == '')
 		{
+			// this is optional
+			if ($this_setting == 'tableprefix') {continue;} 
 			displayInitialForm ("$this_setting is a required field");
 			exit(0);
 		}
-		/*// check for allowed characters
-		// quite basic - if you need to include other characters then create default.cfg manully
-		// eg. mysql password field allows for more non alphanumeric characters
-		elseif (!preg_match ("^[\w\._-]+$", $_POST[$this_setting]))
-		{
-			displayInitialForm ("Invalid character in $this_setting");
-		}*/
 		
 	}
 	// If no errors found - perform detailed validation checks for each field
@@ -180,7 +180,7 @@ else
 			displayInitialForm ("database contains illegal charactors");
 			exit(0);
 	}
-	if (!preg_match ("/^[\w-_]+$/", $_POST['tableprefix']))
+	if (isset($_POST['tableprefix']) && $_POST['tableprefix'] != '' && !preg_match ("/^[\w-_]+$/", $_POST['tableprefix']))
 	{
 			displayInitialForm ("table prefix contains illegal charactors");
 			exit(0);
@@ -191,7 +191,7 @@ else
 	// Create the secondary config file (if this fails then our initial test fails)
 	$second_config_file = $app_dir."/".$quizname.".cfg";
 	// First check if it exists
-	if (file_exists($second_config_file)) {print "<br />\n\n$second_config_file already exists <br />\n\n";}
+	if (file_exists($second_config_file)) {$status_msg .= "\n\n$second_config_file already exists <br />\n\n";}
 	else 
 	{
 		//print "Creating $second_config_file<br />\n";
@@ -216,28 +216,53 @@ else
 			displayManualConfig("Unable to write to $second_config_file", $second_config_text);
 			exit (0);
 		}
-		
-		
-		
-		
+		// finally check that it was created (don't do a checksum or anything special)
+		if (!file_exists($second_config_file)) 
+		{
+			displayManualConfig("Error creating $second_config_file", $second_config_text);
+			exit (0);
+		}
+		else
+		{
+			$status_msg .= "\n\nNew configuration created $second_config_file<br />\n\n";
+		}
+
 	}
-	//print "Creating $app_dir/$default_cfg_file";
+	// Already checked that the file doesn't exist so now create
+	//print "Creating $first_config_file";
+	$first_config_text = "<?php\n//wQuiz configuration file\n//Do not edit this directly\n//Link to custom config file\n\$cfgfile = '$second_config_file';\n?>\n";
 	
-	//- add this
-	
-		
-	
+	$fh = fopen($first_config_file, 'w');
+	if ($fh)
+	{
+		fwrite ($fh, $first_config_text);
+		fclose ($fh);
+	}
+	else
+	{
+		displayManualConfig("Unable to write to $first_config_file", $first_config_text);
+		exit (0);
+	}
+	// finally check that it was created (don't do a checksum or anything special)
+	if (!file_exists($first_config_file)) 
+	{
+		displayManualConfig("Error creating $first_config_file", $first_config_text);
+		exit (0);
+	}
+	else
+	{
+		$status_msg .= "\n\nNew configuration created $first_config_file<br />\n\n";
+	}
+
 	
 }
 
+/* Config files exist so now try creating database skeleton */
 
-/* Now see what form parameters have been sent */
-
-
-
+print $status_msg;
 
 
-/* If we have database name check if database already exists */
+/* Check if database already exists */
 	
 
 
