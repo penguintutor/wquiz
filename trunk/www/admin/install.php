@@ -59,28 +59,9 @@ if (file_exists($first_config_file))
 	// If we don't have the database details here then either corrupt or not pointing to correct secondary file
 	if (!isset($dbsettings))
 	{
-		print <<< EOT
-<html>
-<head>
-<title>Install error</title>
-</head>
-<body>
-<h1>Install error - Error in config file</h1>
-<p>There is an error in the configuration file.<br />
-Default configuration file: $default_cfg_file<br />
-EOT;
-		if (isset($cfgfile) && $cfgfile!='')
-		{
-			print "Secondary configuration file: $cfgfile\n";
-		}
-		print <<< EOT2
-</p>
-<p>Please check that the configuration files exist and are not corrupt.</p>
-<p>To restart install then the above configuration files can be deleted.</p>
-</body>
-</html>
-EOT2;
-		exit (0);		
+		$second_cfg_file = (isset($cfgfile)) ? $cfgfile : "";
+		displayConfigError($default_cfg_file, $second_cfg_file);	
+		exit (0);
 	}
 	// If we have database settings we can proceed with creating database etc
 	else {$action_required = 'database';}
@@ -257,9 +238,47 @@ else
 	
 }
 
+$action_required = 'database';
+print $status_msg;
+$status_msg = "";
+
+/* If not already loaded load the relevant config files */
+if (!isset($dbsettings))
+{
+	@include ($first_config_file);
+	// do we now have a secondary cfg file - if so load that as well
+	if (isset($cfgfile) && $cfgfile!='')
+	{
+		@include ($cfgfile);
+	}
+}
+
+// check that settings loaded OK
+// If didn't load then something has gone wrong 
+// corrupt file / write failed part way through
+if (!isset($dbsettings))
+{
+	$second_cfg_file = (isset($cfgfile)) ? $cfgfile : "";
+	displayConfigError($default_cfg_file, $second_cfg_file);
+	exit (0);
+}
+
+
+
+
 /* Config files exist so now try creating database skeleton */
 
-print $status_msg;
+
+/* Setup database connection */
+// Uses Database class directly (not QuizDB as is used by main code)
+require_once ($app_dir."/includes/Database.php");
+$db = new Database($dbsettings);
+if ($db->getStatus() != 1) 
+{
+	displayDBError ("Unable to connect to the database");
+	exit (0);
+}
+
 
 
 /* Check if database already exists */
@@ -275,16 +294,6 @@ $action = "normal";
 foreach ($dbtables as $thistable)
 {
 	$dbtables_p[] = $tableprefix.$thistable;
-}
-
-
-// handle url arguments - do we have an action 
-if (isset ($_GET['action']))
-{
-	// need to validate - note we will check later that this is valid
-    	$tempArray = checkAlphaNum ($_GET['action'], 'Action');
-    	if ($tempArray[0] == 1) {$action = $tempArray[1];}
-    	else {$errors->errorMsg($tempArray[1]);}
 }
 
 
@@ -475,6 +484,61 @@ print <<< EOF
 EOF;
 */
 
+
+
+// Displays error message and exits
+function displayDBError ($message)
+{
+	print <<< EOT
+<html>
+<head>
+<title>Install error</title>
+</head>
+<body>
+<h1>Install error - Database</h1>
+<p>
+An error has when trying to update the database. Please check your database settings.
+</p>
+<p>
+$message
+</p>
+</body>
+</html>
+EOT2;
+		exit (0);	
+}
+		
+
+
+
+// Displays error message and exits
+function displayConfigError ($first_config_file, $second_config_file)
+{
+	print <<< EOT
+<html>
+<head>
+<title>Install error</title>
+</head>
+<body>
+<h1>Install error - Error in config file</h1>
+<p>There is an error in the configuration file.<br />
+Default configuration file: $first_config_file<br />
+EOT;
+		if (isset($second_config_file) && $second_config_file!='')
+		{
+			print "Secondary configuration file: $second_config_file\n";
+		}
+		print <<< EOT2
+</p>
+<p>Please check that the configuration files exist and are not corrupt.</p>
+<p>To restart install then the above configuration files can be deleted.</p>
+</body>
+</html>
+EOT2;
+		exit (0);	
+}
+		
+		
 
 // Displays the initial form regarding database information
 //$message is displayed to user (eg. Fill in field ___)
