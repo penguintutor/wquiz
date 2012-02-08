@@ -18,7 +18,8 @@ else
 	$db_file = "Database_".$dbsettings['dbtype'].".php";
 }
 
-require_once("includes/".$db_file);
+if (isset ($app_dir)) {require_once($app_dir."/includes/".$db_file);}
+else {require_once("includes/".$db_file);}
 
 
 ?>

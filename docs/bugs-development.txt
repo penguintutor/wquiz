@@ -9,7 +9,10 @@ Add GPLv3 headers to source code
 remove test folder
 add logout button
 
-
+*** Future features ***
+Improve install script
+	Add security feature to move second config file into a safe directory
+	
 
 
 *** Limitations ***

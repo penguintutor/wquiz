@@ -28,12 +28,14 @@ $action_required = 'cfgfile';
 
 // Use status_msg to track status of install process
 $status_msg = "";
-/*// If we have a message to give back to the user store in here (eg. "database cannot be left blank")
-$message = '';
-// if we find an error then increment this (eg. missing paramter)
-// only use this for soft errors we want to report later rather than critical errors we just stop on
-$error_found = 0;*/
 
+$quiz_tables = array 
+( 
+   	'quizzes' => 'quiz_quiz',
+   	'questions' => 'quiz_questions',
+   	'rel' => 'quiz_questionrel',
+   	'settings' => 'quiz_settings'
+);
 
 
 // get directory
@@ -59,8 +61,8 @@ if (file_exists($first_config_file))
 	// If we don't have the database details here then either corrupt or not pointing to correct secondary file
 	if (!isset($dbsettings))
 	{
-		$second_cfg_file = (isset($cfgfile)) ? $cfgfile : "";
-		displayConfigError($default_cfg_file, $second_cfg_file);	
+		$second_config_file = (isset($cfgfile)) ? $cfgfile : "";
+		displayConfigError($first_config_file, $second_config_file);	
 		exit (0);
 	}
 	// If we have database settings we can proceed with creating database etc
@@ -105,6 +107,7 @@ else
 			displayInitialForm ("Short name invalid");
 			exit(0);
 	}
+	
 	// check for dbtype
 	// if we have clicked no on continue then we reissue the form
 	if (isset($_POST['confirmdbtype']) && $_POST['confirmdbtype'] != 'yes')
@@ -258,11 +261,10 @@ if (!isset($dbsettings))
 // corrupt file / write failed part way through
 if (!isset($dbsettings))
 {
-	$second_cfg_file = (isset($cfgfile)) ? $cfgfile : "";
-	displayConfigError($default_cfg_file, $second_cfg_file);
+	$second_config_file = (isset($cfgfile)) ? $cfgfile : "";
+	displayConfigError($first_config_file, $second_config_file);
 	exit (0);
 }
-
 
 
 
@@ -273,221 +275,161 @@ if (!isset($dbsettings))
 // Uses Database class directly (not QuizDB as is used by main code)
 require_once ($app_dir."/includes/Database.php");
 $db = new Database($dbsettings);
-if ($db->getStatus() != 1) 
+// Connected
+if ($db->getStatus() == 1)
 {
-	displayDBError ("Unable to connect to the database");
+	// status = 1 - means that we have connected to database and the database exists (use db)
+	
+	// we are not asking user to confirm that they are installing into these database
+	// in many cases the database will need to be created outside of the install script so don't 
+	// want to impose too many "are you sure?" questions
+	// we will still not overwrite as we check tables don't exist before creating
+	
+		$action_required = 'tables';
+}
+// Connected to db server, but not to specific database (eg. database does not exist)
+elseif ($db->getStatus() == -2)
+{
+	// We can only create db if we are on mysql (in this version)
+	if ($dbsettings['dbtype'] == 'mysql') 
+	{
+		// Try creating database
+		if (!$db->createDb($dbsettings['database'])) 
+		{
+			// unable to create database - most likely permissions - hosted accounts may need to create
+			// the database using the hosting cpanel etc.
+			
+			displayDbError ("Unable to create new database ".$dbsettings['database']." <br />\nThis is normally due to insufficient permissions. If using a hosting account on a shared server you may need to use cpanel or ask your hosting provider for how to create a database<br />\nPlease read the install documentation for more details and then create the database manually before reloading this page.\n");
+			exit (0);
+		}
+		else 
+		{
+			// now connect to the new database 
+			if (!db->connectDb($dbsettings['database']))
+			{
+				// shouldn't get this as if we have permission to create the database we should be able to connect to it. Perhaps we have lost our network connection 
+				$error_msg = $db->getError();
+				displayDbError ("Unable to connect to the new database ".$dbsettings['database']." <br />\nError $error_msg.\n");
+				exit (0);
+			}
+			else
+			{
+				$action_required = 'tables';
+			}
+		}
+	}
+	else
+	{
+		$error_msg = $db->getError();
+		displayDbError ("Unable to connect to the database ".$error_msg."\n<br />If not using mysql then you will need to create the database manually. Please read the install documenation for more details\n");
+	}
+	
+}
+// Otherwise if connection fails completely
+else
+{
+	$error_msg = $db->getError();
+	displayDbError ("Unable to connect to the database ".$error_msg."\n<br />\n");
 	exit (0);
 }
 
 
-
-/* Check if database already exists */
-	
-
-
-
-/* **** - this is not install code for this program ****
-*******  This is work in progress
-$action = "normal";
+/* connected to DB */
+// If there is another error we didn't catch
+if ($action_required != 'tables') {displayInternalError("Invalid status returned after DB connect"); exit(0);}
 
 
-foreach ($dbtables as $thistable)
+// Make sure tables don't already exist
+// if they do we stop - as we don't allow tables to be overridden (security risk)
+$existing_tables = $db->getTables();
+if (!empty($existing_tables))
 {
-	$dbtables_p[] = $tableprefix.$thistable;
-}
-
-
-// Connect to the Database - we need to do this regardless of the action
-$db = mysql_connect ($dbhost, $dbuser, $dbpass);
-if (!$db) {$errors->errorMsg("Error connecting to the database");}
-
-if ($action == 'normal')
-{
-	// check that the database doesn't exist already
-	if (mysql_select_db($dbname, $db) ) 
+	foreach ($quiz_tables as $this_table)
 	{
-		print <<< EOQ
-<html>
-<head><title>Database setup - check</title></head>
-<body>
-<h1>Setup Check</h1>
-<p>Database $dbname already exists.</p>
-<p>
-EOQ;
-		// Also check to see if the tables already exist - in which case we cancel
-		// otherwise we ask if want to install in existing database
-		$result = mysql_query("show tables");
-		$tablefound = false;
-		while ($row = mysql_fetch_row($result))
+		// add the prefix
+		$test_table = $dbsettings['prefix'].$this_table;
+		if (in_array ($test_table, $existing_tables))
 		{
-			if (in_array($row[0], $dbtables_p))
-			{
-				$tablefound = true;
-				print "Table ".$row[0]." already exists.</p>\n";
-			}
-		}
-
-		// if we found a table we just end the html here
-		if ($tablefound)
-		{
-			print "</p>\n";
-			print "<p><strong>Go to <a href=\"../index.php\">admin login</a> to finish setup</strong></p>\n";
-			print "<p>or remove tables before running this again.</p>\n";
-			print "</body></html>\n";
+			displayDbError ("Table $test_table already exists. Unable to continue with install<br />\nYou will need to delete the tables manually to re-run the install or install manually based on the install documentation.");
 			exit (0);
 		}
-		else
-		{
-			print "</p>\n";
-			print "<p><a href=\"createdb.php?action=addtables\">Click here to continue adding tables</a></p>\n";
-			print "<p>Or delete the table manually to start again.</p>\n";
-			print "</body></html>\n";
-			exit (0);
-		}
-		
-
 	}
-	// Get here then the database does not already exist so we can create database
-	if (!mysql_query("CREATE DATABASE $dbname", $db)) {$errors->errorMsg("Unable to create database $dbname<br />\nDo you have sufficient permissions<br />\nTry creating the table manually and running again.<br />\nMySql:<br />$sql<br />\nMySql Error:<br />".mysql_error()."\n");}
-	mysql_select_db($dbname, $db);
+}
+
+
+/* Create the tables */
+
+$create_table_sql = array(
+	'quizzes' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['quizzes']."' ('quizname' varchar(255) NOT NULL, 'title' varchar(255) NOT NULL, 'numquestions' int(11) NOT NULL default '0', 'numquestionsoffline' int(11) NOT NULL default '0', 'quizintro' text NOT NULL, 'priority' int(11) NOT NULL default '1', 'enableonline' tinyint(1) NOT NULL default '0', 'enableoffline' tinyint(1) NOT NULL default '0', PRIMARY KEY  ('quizname'))",
 	
-}
-elseif ($action == 'addtables')
+	'questions' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['questions']."' ('questionid' int(11) NOT NULL auto_increment, 'section' varchar(254) NOT NULL default '', 'intro' text NOT NULL, 'input' text NOT NULL, 'type' varchar(10) NOT NULL default '', 'answer' varchar(100) NOT NULL default '', 'reason' text NOT NULL, 'reference' varchar(100) NOT NULL default '', 'hint' varchar(254) NOT NULL default '', 'image' varchar(200) NOT NULL default '', 'audio' varchar(200) NOT NULL default '', 'comments' varchar(200) NOT NULL default '', 'qfrom' varchar(50) NOT NULL default '', 'email' varchar(50) NOT NULL default '', 'created' date NOT NULL default '0000-00-00', 'reviewed' date NOT NULL default '0000-00-00', PRIMARY KEY  ('questionid'))",
+	
+	'rel' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['rel']."' ('relid' int(11) NOT NULL auto_increment,'quizname' varchar(255) NOT NULL,'questionid' int(11) NOT NULL,PRIMARY KEY ('relid'))",
+	
+	'settings' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['settings']."' ('settings_key' varchar(50) NOT NULL, 'settings_value' varchar(255) NOT NULL, PRIMARY KEY  ('settings_key'))"
+);
+
+foreach ($create_table_sql as $this_table=>$this_sql)
 {
-	// check tables don't already exist (shouldn't get this as we prevent adding tables on first pass - but in case someone tries to bypass or hits reload
-	mysql_select_db($dbname, $db);
-	//$result = mysql_query("SHOW TABLES IN $dbname");
-	$result = mysql_query("show tables");
-	while ($row = mysql_fetch_row($result))
-		{
-			if (in_array($row[0], $dbtables_p))
-			{
-				$tablefound = true;
-				print "Table ".$row[0]." already exists.</p>\n";
-			}
-		}
-
-		// if we found a table we just end the html here
-		if ($tablefound)
-		{
-			print "</p>\n";
-			print "</p>\n";
-			print "<p><strong>Go to <a href=\"../index.php\">admin login</a> to finish setup</strong></p>\n";
-			print "<p>or remove tables before running this again.</p>\n";
-			print "</body></html>\n";
-			exit (0);
-		}	
+	if ($db->query($this_sql) != 0) 
+	{
+		$error_msg = $db->getError();
+		displayDbError ("Unable to create table $this_table<br />\nPlease check permissions or create the tables manually<br />\nError msg: $error_msg");
+		exit (0);
+	}
 }
-else {$errors->errorMsg("Invalid option");}
 
-// get here then ready to create tables and add content
-// Add tables 
-// Gallery Category
-$sql = "CREATE TABLE IF NOT EXISTS `".$tableprefix."category` (";
-$sql .= "`category_id` int(11) NOT NULL AUTO_INCREMENT, ";
-$sql .= "`category_slug` varchar(30) NOT NULL, ";
-$sql .= "`category_title` varchar(255) NOT NULL, ";
-$sql .= "`category_text1` longtext NOT NULL, ";
-$sql .= "`category_text2` longtext NOT NULL, ";
-$sql .= "`category_keywords` varchar(255) NOT NULL, ";
-$sql .= "PRIMARY KEY (`category_id`), ";
-$sql .= "UNIQUE KEY `slug` (`category_slug`) ";
-$sql .= ")";
-
-if (!mysql_query($sql, $db)) {$errors->errorMsg("Error creating table ".$tableprefix."category<br />\nMySql:<br />$sql<br />\nMySql Error:<br />".mysql_error()."\n");}
-
-// Gallery Album
-$sql = "CREATE TABLE IF NOT EXISTS `".$tableprefix."album` (";
-$sql .= "`album_id` int(11) NOT NULL AUTO_INCREMENT, "; 
-$sql .= "`album_slug` varchar(30) NOT NULL, ";
-$sql .= "`album_title` varchar(255) NOT NULL, ";
-$sql .= "`album_directory` varchar(255) NOT NULL, ";
-$sql .= "`album_text1` longtext NOT NULL, ";
-$sql .= "`album_text2` longtext NOT NULL, ";
-$sql .= "`album_keywords` varchar(255) NOT NULL, ";
-$sql .= "PRIMARY KEY (`album_id`), ";
-$sql .= "UNIQUE KEY `album_slug` (`album_slug`) ";
-$sql .= ")";
-
-if (!mysql_query($sql, $db)) {$errors->errorMsg("Error creating table ".$tableprefix."album<br />\nMySql:<br />$sql<br />\nMySql Error:<br />".mysql_error()."\n");}
-
-// Gallery Index
-$sql = "CREATE TABLE IF NOT EXISTS `".$tableprefix."index` (";
-$sql .= "`gallery_index_id` int(11) NOT NULL AUTO_INCREMENT, ";
-$sql .= "`category_id` int(11) NOT NULL, ";
-$sql .= "`album_id` int(11) NOT NULL, ";
-$sql .= "`priority` int(11) NOT NULL DEFAULT '0', ";
-$sql .= "PRIMARY KEY (`gallery_index_id`) ";
-$sql .= ")";
-
-if (!mysql_query($sql, $db)) {$errors->errorMsg("Error creating table ".$tableprefix."index<br />\nMySql:<br />$sql<br />\nMySql Error:<br />".mysql_error()."\n");}
+/** Reach this point we have successfully installed the basic layout **/
+//- In future add additional security to move second config file somewhere safer
+// This needs to be done manually following instructions in the user manual
 
 
-// Gallery Photo
-$sql = "CREATE TABLE IF NOT EXISTS `".$tableprefix."photo` (";
-$sql .= "`photo_id` int(11) NOT NULL AUTO_INCREMENT, ";
-$sql .= "`album_id` int(11) NOT NULL, ";
-$sql .= "`photo_filename` varchar(255) NOT NULL, ";
-$sql .= "`photo_title` varchar(255) NOT NULL, ";
-$sql .= "`photo_summary` varchar(255) NOT NULL, ";
-$sql .= "`photo_text` longtext NOT NULL, ";
-$sql .= "`photo_keywords` varchar(255) NOT NULL, ";
-$sql .= "PRIMARY KEY (`photo_id`) ";
-$sql .= ")";
-
-if (!mysql_query($sql, $db)) {$errors->errorMsg("Error creating table ".$tableprefix."photo<br />\nMySql:<br />$sql<br />\nMySql Error:<br />".mysql_error()."\n");}
-
-// Gallery settings
-$sql = "CREATE TABLE IF NOT EXISTS `".$tableprefix."settings` (";
-$sql .= "`settings_key` varchar(50) NOT NULL, ";
-$sql .= "`settings_value` varchar(255) NOT NULL, ";
-$sql .= "PRIMARY KEY (`settings_key`) ";
-$sql .= ")";
-
-if (!mysql_query($sql, $db)) {$errors->errorMsg("Error creating table ".$tableprefix."settings<br />\nMySql:<br />$sql<br />\nMySql Error:<br />".mysql_error()."\n");}
-
-// Insert initial content
-
-// Gallery Category - All
-$sql = "INSERT INTO `".$tableprefix."category` (`category_id`, `category_slug`, `category_title`, `category_text1`, `category_text2`) VALUES (1, 'index', 'Gallery Index', '', '')";
-
-if (!mysql_query($sql, $db)) {$errors->errorMsg("Error adding default content to ".$tableprefix."category<br />\nMySql:<br />$sql<br />\nMySql Error:<br />".mysql_error()."\n");}
-
-// Gallery settings
-$sql = "INSERT INTO `".$tableprefix."settings` (`settings_key`, `settings_value`) VALUES ";
-$sql .= "('imagedir', '/gallery/'), ";
-$sql .= "('showtitle', '0'), ";
-$sql .= "('slideshowdelay', '10'), ";
-$sql .= "('slideshowautorepeat', '1'), ";
-$sql .= "('categorypreviewnum', '3'), ";
-$sql .= "('buttondir', '/images/gallerybuttons/'), ";
-$sql .= "('login_expiry', '3600'), ";
-$sql .= "('gallerypreviewnum', '3'), ";
-$sql .= "('installdir', '/penguingallery/'), ";
-$sql .= "('excludefiles', ''), ";
-$sql .= "('adminuser', 'admin'), ";
-$sql .= "('adminpass', 'fd1c707534cbe38b354d5716d01a49ec'), ";
-$sql .= "('defaultcategory', '')";
-
-if (!mysql_query($sql, $db)) {$errors->errorMsg("Error adding default content to ".$tableprefix."settings");}
-
-
-
-print <<< EOF
+	print <<< EOT
 <html>
-<head><title>Database setup - complete</title></head>
+<head>
+<title>Install complete</title>
+</head>
 <body>
-<h1>Setup Complete</h1>
-<p>Database $dbname setup complete.</p>
-<p>Please <a href="../index.php">login now</a> to change your password.</p>
+<h1>Install complete</h1>
 <p>
-EOF;
-*/
+Now edit the settings and add your questions. 
+</p>
+</body>
+</html>
+EOT;
+exit(0);
+
+
 
 
 
 // Displays error message and exits
-function displayDBError ($message)
+// use this if the others are not more appropriate
+function displayInternelError ($message)
+{
+	print <<< EOT
+<html>
+<head>
+<title>Install error</title>
+</head>
+<body>
+<h1>Install error - Internal error</h1>
+<p>
+An internal error has occurred.
+</p>
+<p>
+$message
+</p>
+</body>
+</html>
+EOT;
+		exit (0);	
+}
+
+
+
+// Displays error message and exits
+function displayDbError ($message)
 {
 	print <<< EOT
 <html>
@@ -504,7 +446,7 @@ $message
 </p>
 </body>
 </html>
-EOT2;
+EOT;
 		exit (0);	
 }
 		
