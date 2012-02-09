@@ -305,7 +305,7 @@ elseif ($db->getStatus() == -2)
 		else 
 		{
 			// now connect to the new database 
-			if (!db->connectDb($dbsettings['database']))
+			if (!$db->connectDb($dbsettings['database']))
 			{
 				// shouldn't get this as if we have permission to create the database we should be able to connect to it. Perhaps we have lost our network connection 
 				$error_msg = $db->getError();
@@ -347,7 +347,7 @@ if (!empty($existing_tables))
 	foreach ($quiz_tables as $this_table)
 	{
 		// add the prefix
-		$test_table = $dbsettings['prefix'].$this_table;
+		$test_table = $dbsettings['tableprefix'].$this_table;
 		if (in_array ($test_table, $existing_tables))
 		{
 			displayDbError ("Table $test_table already exists. Unable to continue with install<br />\nYou will need to delete the tables manually to re-run the install or install manually based on the install documentation.");
@@ -360,13 +360,13 @@ if (!empty($existing_tables))
 /* Create the tables */
 
 $create_table_sql = array(
-	'quizzes' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['quizzes']."' ('quizname' varchar(255) NOT NULL, 'title' varchar(255) NOT NULL, 'numquestions' int(11) NOT NULL default '0', 'numquestionsoffline' int(11) NOT NULL default '0', 'quizintro' text NOT NULL, 'priority' int(11) NOT NULL default '1', 'enableonline' tinyint(1) NOT NULL default '0', 'enableoffline' tinyint(1) NOT NULL default '0', PRIMARY KEY  ('quizname'))",
+	'quizzes' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['quizzes']." (quizname varchar(255) NOT NULL, title varchar(255) NOT NULL, numquestions int(11) NOT NULL default '0', numquestionsoffline int(11) NOT NULL default '0', quizintro text NOT NULL, priority int(11) NOT NULL default 1, enableonline tinyint(1) NOT NULL default '0', enableoffline tinyint(1) NOT NULL default '0', PRIMARY KEY  (quizname))",
 	
-	'questions' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['questions']."' ('questionid' int(11) NOT NULL auto_increment, 'section' varchar(254) NOT NULL default '', 'intro' text NOT NULL, 'input' text NOT NULL, 'type' varchar(10) NOT NULL default '', 'answer' varchar(100) NOT NULL default '', 'reason' text NOT NULL, 'reference' varchar(100) NOT NULL default '', 'hint' varchar(254) NOT NULL default '', 'image' varchar(200) NOT NULL default '', 'audio' varchar(200) NOT NULL default '', 'comments' varchar(200) NOT NULL default '', 'qfrom' varchar(50) NOT NULL default '', 'email' varchar(50) NOT NULL default '', 'created' date NOT NULL default '0000-00-00', 'reviewed' date NOT NULL default '0000-00-00', PRIMARY KEY  ('questionid'))",
+	'questions' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['questions']." (questionid int(11) NOT NULL auto_increment, section varchar(254) NOT NULL default '', intro text NOT NULL, input text NOT NULL, type varchar(10) NOT NULL default '', answer varchar(100) NOT NULL default '', reason text NOT NULL, reference varchar(100) NOT NULL default '', hint varchar(254) NOT NULL default '', image varchar(200) NOT NULL default '', audio varchar(200) NOT NULL default '', comments varchar(200) NOT NULL default '', qfrom varchar(50) NOT NULL default '', email varchar(50) NOT NULL default '', created date NOT NULL default '0000-00-00', reviewed date NOT NULL default '0000-00-00', PRIMARY KEY  (questionid))",
 	
-	'rel' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['rel']."' ('relid' int(11) NOT NULL auto_increment,'quizname' varchar(255) NOT NULL,'questionid' int(11) NOT NULL,PRIMARY KEY ('relid'))",
+	'rel' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['rel']." (relid int(11) NOT NULL auto_increment,quizname varchar(255) NOT NULL,questionid int(11) NOT NULL,PRIMARY KEY (relid))",
 	
-	'settings' => "CREATE TABLE IF NOT EXISTS '".$dbsettings['prefix'].$quiz_tables['settings']."' ('settings_key' varchar(50) NOT NULL, 'settings_value' varchar(255) NOT NULL, PRIMARY KEY  ('settings_key'))"
+	'settings' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['settings']." (settings_key varchar(50) NOT NULL, settings_value varchar(255) NOT NULL, PRIMARY KEY  (settings_key))"
 );
 
 foreach ($create_table_sql as $this_table=>$this_sql)
@@ -374,7 +374,7 @@ foreach ($create_table_sql as $this_table=>$this_sql)
 	if ($db->query($this_sql) != 0) 
 	{
 		$error_msg = $db->getError();
-		displayDbError ("Unable to create table $this_table<br />\nPlease check permissions or create the tables manually<br />\nError msg: $error_msg");
+		displayDbError ("Unable to create table $this_table<br />\nPlease check permissions or create the tables manually<br />\nError msg: $error_msg</p><p>$this_sql");
 		exit (0);
 	}
 }
