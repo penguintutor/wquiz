@@ -5,7 +5,7 @@ Appropriate database file is loaded based on Database.php */
 
 /*** OOP wrapper around old mysql functions
 Use this because some hosting providers do not support mysqli
-In future this will be replaced with mysqli functions
+Also add some additional functions to simplify database creation etc.
 ***/
 
 

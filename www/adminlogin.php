@@ -29,7 +29,7 @@ $auth = new SimpleAuth ($settings->getSetting('admin_login_username'), $settings
 if (isset($_POST['username']) && isset($_POST['password']))
 {
 	// check that they are only using valid characters
-	if ($auth->securityCheck('username', $_POST['username']) && $auth->securityCheck('password', $_POST['username']))
+	if ($auth->securityCheck('username', $_POST['username']) && $auth->securityCheck('password', $_POST['password']))
 	{
 		//check login is correct
 		if ($auth->loginNow($_POST['username'], $_POST['password']))

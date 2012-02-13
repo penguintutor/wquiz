@@ -379,11 +379,69 @@ foreach ($create_table_sql as $this_table=>$this_sql)
 	}
 }
 
+/* Check if we have entries in the settings (specifically the password which is mandatory) and if 
+not then create them */
+// load existing settings
+$qdb = new QuizDB($db);
+$settings = Settings::getInstance();
+$settings->loadSettings ($qdb);
+
+// Does the password setting have an entry
+if ($settings->getSetting('admin_login_password')!='') 
+{
+	displayComplete ($status_msg);
+	exit (0);
+}
+	
+// If not then are we saving existing post
+if (isset($_POST['savesettings']))
+{
+	// do passwords match
+	if ($_POST['password'] != $_POST['passwordrepeat']) 
+	{
+		displaySettingsForm ("Passwords don't match");
+		exit (0);
+	}
+	// we use the SimpleAuth class, but note we are creating with dummy username & password
+	require_once($app_dir."includes/SimpleAuth.php");
+	$auth = new SimpleAuth ('', '', 3600);
+	// run username & password through security / valid char checks
+	if ($auth->securityCheck('username', $_POST['username']) && $auth->securityCheck('password', $_POST['username']))
+	{
+		// now add details
+		// we do this manually as we also add the rest of the default settings
+		print "Adding entries\n";
+		exit (0);
+	}
+	else
+	{
+		displaySettingsForm ("Invalid characters used in the username or password");
+		exit (0);
+	}
+	
+}
+else
+{
+	// if not saving then ask user for username / password and set defaults
+	displaySettingsForm ("");
+	exit (0);
+}
+
 /** Reach this point we have successfully installed the basic layout **/
 //- In future add additional security to move second config file somewhere safer
 // This needs to be done manually following instructions in the user manual
 
+displayComplete ($status_msg);
 
+
+/*******************************************************************************
+* Functions                                                                    *
+*******************************************************************************/
+
+
+
+function displayComplete ($message)
+{
 	print <<< EOT
 <html>
 <head>
@@ -398,6 +456,7 @@ Now edit the settings and add your questions.
 </html>
 EOT;
 exit(0);
+}
 
 
 
@@ -479,7 +538,45 @@ EOT;
 EOT2;
 		exit (0);	
 }
-		
+
+
+// get username / password etc.
+function displaySettingsForm ($message)
+{
+	global $post_filename;
+	print <<< EOT
+<html>
+<head>
+<title>Install wquiz</title>
+</head>
+<body>
+<h1>Install wquiz</h1>
+<p>Please provide the following details to install and configure wQuiz.</p>
+<p><strong>$message</strong></p>
+<p>
+<form method="post" action=$post_filename>
+<input type="hidden" name="action" value="savesettings" />
+</p>
+<h2>Admin user</h2>	
+<p>
+Provide a new username and password to administer the questions.
+</p>
+<p>
+Admin username (new) <input type="text" name="username" value="" /><br />
+Admin password <input type="password" name="password" value="" /><br />
+Repeat password <input type="password" name="passwordrepeat" value="" /><br />
+</p>
+
+<input type="submit" />
+</form>
+</p>
+</body>
+</html>
+EOT;
+	exit (0);	
+	
+}
+
 		
 
 // Displays the initial form regarding database information
