@@ -9,9 +9,9 @@ ini_set('display_errors', true);
 //eg. if we get here from an expired session
 $message = '';
 
-require_once("includes/setup.php");
+require_once ("adminsetup.php");
 // Authentication class required for admin functions
-require_once("includes/SimpleAuth.php");
+require_once($include_dir."SimpleAuth.php");
 
 
 // Array of valid goto / location entries

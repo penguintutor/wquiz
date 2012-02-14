@@ -22,9 +22,10 @@ $admin_menu = 'home';
 // have we successfully changed (if so don't show password change option 
 $password_changed = false;
 
-require_once("includes/setup.php");
+// adminsetup is within the admin directory - this will load the main setup.php as well 
+require_once ("adminsetup.php");
 // Authentication class required for admin functions
-require_once("includes/SimpleAuth.php");
+require_once($include_dir."SimpleAuth.php");;
 
 /*** Authentication ***/
 // user must be logged in for any admin functions

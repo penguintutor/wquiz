@@ -4,6 +4,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
+require_once ("adminsetup.php");
+
 // must add this before we require the menu 
 $admin_menu = 'list';
 //$debug = true;
@@ -12,9 +14,9 @@ $admin_menu = 'list';
 //eg. if we get here from an expired session
 $message = '';
 
-require_once("includes/setup.php");
+//require_once("includes/setup.php");
 // Authentication class required for admin functions
-require_once("includes/SimpleAuth.php");
+require_once($include_dir."SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 

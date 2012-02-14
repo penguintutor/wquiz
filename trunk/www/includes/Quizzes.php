@@ -38,6 +38,7 @@ class Quizzes
     
     public function count ()
     {
+    	if (empty($this->quiz_objects)) {return 0;}
     	return (count($this->quiz_objects));	
     }
     
@@ -50,6 +51,8 @@ class Quizzes
     // use to order objects - if required (eg menu)
     private function _sort()
     {
+    	// if no quizzes return
+    	if ($this->count() == 0) {return;}
     	usort ($this->quiz_objects, array("Quiz", "cmpObj"));
     }
     
@@ -63,15 +66,17 @@ class Quizzes
     	}
 	}
 	
-	// Returns has array
+	// Returns hash array
 	// key = quizname (db unique entry)
 	// value = title
 	public function getQuizNameArray()
 	{
+		$return_array = array();
+		// if empty then just return null array
+		if ($this->count() == 0) {return $return_array;}
 		// sort first
 		$this->_sort();
 		
-		$return_array = array();
 		foreach ($this->quiz_objects as $this_object)
     	{
     		$return_array[$this_object->getQuizname()] = $this_object->getTitle();

@@ -28,11 +28,12 @@ $message = '';
 $action = '';
 $quizname = '';
 
-require_once("includes/setup.php");
+// adminsetup is within the admin directory - this will load the main setup.php as well 
+require_once ("adminsetup.php");
 // Authentication class required for admin functions
-require_once("includes/SimpleAuth.php");
+require_once($include_dir."SimpleAuth.php");
 // Details of the settings
-require_once("includes/adminSettings.php");
+require_once($include_dir."adminSettings.php");
 
 /*** Authentication ***/
 // user must be logged in for any admin functions
@@ -53,7 +54,8 @@ $sessionUsername = $auth->getUser();
 
 // header template
 $templates->includeTemplate('header', 'admin');
-
+require_once ($include_dir."adminmenu.php");
+print "<h2>Settings</h2>\n";
 
 /** Save **/
 // save - otherwise we just go to view/edit

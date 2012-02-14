@@ -5,7 +5,10 @@ $default_cfg_file = 'default.cfg';
 // debug mode - set to true to enable debug messages
 if (!isset ($debug)) {$debug = false;}
 
-define ("ADMIN_DIR", "admin");	 							// Admin directory - must be different from the name of it's parent directory
+if (!defined("ADMIN_DIR")) {define ("ADMIN_DIR", "admin");} // Admin directory - must be different from the name of it's parent directory
+// ADMIN_DIR must be defined the same in the adminsetup.php file
+// This cannot be the same as it's parent directory - so /quiz/quiz - is not a valid directory for the admin files
+// normally this can be left as admin - but can be changed for tighter security
 
 // Internal links to other pages
 define ("INDEX_FILE", "index.php");
@@ -13,22 +16,10 @@ define ("QUESTION_FILE", "question.php");
 define ("ANSWER_FILE", "answer.php");
 define ("SUMMARY_FILE", "summary.php");
 define ("END_FILE", "end.php");
-define ("ADMIN_FILE", "adminindex.php");
-define ("ADMIN_LOGIN_FILE", "adminlogin.php");
-define ("ADMIN_LIST_FILE", "adminlist.php");				// List of questions
-define ("ADMIN_Q_FILE", "adminquestions.php"); 				// view / test question
-define ("ADMIN_EDIT_FILE", "adminedit.php"); 				// edit question
-define ("ADMIN_QUIZZES_FILE", "adminquizzes.php");			// List of quizzes
-define ("ADMIN_EDIT_QUIZ_FILE", "adminquizedit.php"); 		// edit quiz
-define ("ADMIN_DEL_Q_FILE", "adminquestiondel.php"); 		// del question
-define ("ADMIN_DEL_QUIZ_FILE", "adminquizdel.php"); 		// del quiz
-define ("ADMIN_EDIT_SETTINGS_FILE", "adminsettings.php"); 	// edit settings
-define ("ADMIN_LOGOUT_FILE", "adminlogout.php"); 			// logout
-define ("ADMIN_USER_FILE", "adminuser.php"); 				// user administration (eg. password change)
-define ("ADMIN_INSTALL_FILE", ADMIN_DIR."/install.php"); 	// Install / setup script
+
 define ("FIRST_FILE", "includes/first.php");				// If install not complete
 
-// get directory for includes
+// get directory for includes - gets directory of this file (which is in the includes directory)
 if (defined('__DIR__')) {$app_dir = __DIR__;}
 else {$app_dir = dirname(__FILE__);}
 $include_dir = $app_dir."/";
