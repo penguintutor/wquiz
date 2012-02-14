@@ -4,16 +4,18 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-
 //$debug = true;
+
+// adminsetup is within the admin directory - this will load the main setup.php as well 
+require_once ("adminsetup.php");
 
 // message is used to provide feedback to the user
 //eg. if we get here from an expired session
 $message = '';
 
-require_once("includes/setup.php");
+
 // Authentication class required for admin functions
-require_once("includes/SimpleAuth.php");
+require_once($include_dir."SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 

@@ -11,10 +11,11 @@ ini_set('display_errors', true);
 //eg. if we get here from an expired session
 $message = '';
 
-require_once("includes/setup.php");
+// adminsetup is within the admin directory - this will load the main setup.php as well 
+require_once ("adminsetup.php");
 // Authentication class required for admin functions
-require_once("includes/SimpleAuth.php");
-require_once("includes/QuestionNavigation.php");	// used later for navigation buttons
+require_once($include_dir."SimpleAuth.php");;
+require_once($include_dir."QuestionNavigation.php");	// used later for navigation buttons
 
 
 /*** Authentication ***/
@@ -142,7 +143,7 @@ $templates->includeTemplate('header', 'normal');
 
 // start form
 // Form starts at the top
-print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".ADMIN_TEST_Q_FILE."\">\n";
+print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".ADMIN_Q_FILE."\">\n";
 
 print "<input type=\"hidden\" name=\"question\" value=\"$questionid\" />\n";
 

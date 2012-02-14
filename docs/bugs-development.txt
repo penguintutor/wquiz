@@ -3,13 +3,16 @@
 *** Important things that must be completed before next release ***
 
 The following are important issues that must be handled correctly before a public
-release is made or before this is used on a production system.
+release (beta or higher) is made or before this is used on a production system.
 
 Add GPLv3 headers to source code
-remove test folder
-add logout button
+Add save confirmation to admin pages
+Add status information to install script
+Check on handling of the answer field - and that we don't allow invalid answer fields to be created
+
 
 *** Future features ***
+Additional checking using Javascript (eg. admin save)
 Improve install script
 	Add security feature to move second config file into a safe directory
 	
@@ -25,10 +28,9 @@ See: http://dev.mysql.com/doc/refman/5.0/en/char.html for mysql information
 
 
 
-
-
-
-
 *** Known bugs ***
 
 N/A - still under active development
+
+
+

@@ -14,7 +14,7 @@ $setting_types = array
 		'template_directory', 
 		'directory', 
 		'Template directory', 
-		'full path within the server pointing to the templates<br />eg. /var/www/templates'
+		'full path within the server pointing to the templates\neg. /var/www/templates'
 	),
 	array
 	(

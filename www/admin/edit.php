@@ -18,9 +18,10 @@ $admin_menu = 'edit';
 $message = '';
 $questionid = -1;
 
-require_once("includes/setup.php");
+// adminsetup is within the admin directory - this will load the main setup.php as well 
+require_once ("adminsetup.php");
 // Authentication class required for admin functions
-require_once("includes/SimpleAuth.php");
+require_once($include_dir."SimpleAuth.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 
@@ -83,7 +84,6 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 				$post_quizzes[] = $_POST["quiz_".$i];
 				if ($debug) {print $_POST["quiz_".$i]." ";}
 			}
-			
 		}
 	}
 	if ($debug) {print "\n";}
@@ -369,6 +369,10 @@ foreach ($quiz_array as $short_quizname=>$long_quizname)
 	$quiz_count++;
 }
 print "</ul>\n\n";
+if ($quiz_count == 0) 
+{
+	print "<p><strong>No quizzes defined!</strong></p>\n\n";
+}
 
 
 // Intro

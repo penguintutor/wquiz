@@ -1,16 +1,14 @@
 <?php
-
-
-
 /** Create new DB (if required) 
 For version 0.4.0
 ****/
 
+/* For security reasons this script will not override existing settings
+There is no validation of username etc.
+In case of unexpected condition we exit and install will need to be done manually
+*/
 
-// These must be the same as setup.php
-// This script does not use setup.php, but all others do
-define ("ADMIN_DIR", "admin");	 							// Admin directory
-//define ("ADMIN_INSTALL_FILE", ADMIN_DIR."/install.php"); 	// Install / setup script
+require_once ("adminsetup.php");
 
 // relative path to the apps directory (used on url references)
 $rel_path = "../";
@@ -20,7 +18,7 @@ $default_cfg_file = 'test.cfg';
 
 // url link to use in forms - we have hardcoded install.php which must be the name of this file 
 //$post_filename = $rel_path.ADMIN_INSTALL_FILE;
-$post_filename = "install.php";
+//$post_filename = "install.php";
 
 // action_required holds the next step in the config process
 // 'cfgfile', 'database', 'tables', 'settings', 'secure'
@@ -37,13 +35,35 @@ $quiz_tables = array
    	'settings' => 'quiz_settings'
 );
 
+// Does not include username / password (that is determined by user)
+$quiz_settings = array
+(
+	'template_directory' => $app_dir.'/samples/',
+	'template_normal_header' => 'startdoc.php',
+	'template_normal_footer' => 'enddoc.php',
+	'template_iframe_header' => '',
+	'template_iframe_footer' => '',
+	'buttons_navigation_enabled' => 'a:5:{i:0;s:5:"first";i:1;s:8:"previous";i:2;s:4:"next";i:3;s:4:"last";i:4;s:6:"review";}',  //serialised array
+	'buttons_navigation_lables' => 'a:5:{s:4:"next";s:2:">>";s:5:"first";s:3:"|<<";s:8:"previous";s:2:"<<";s:4:"last";s:3:">>|";i:0;b:0;}',
+	'review_text' => '<p>Quiz complete.</p><p>Would you like to review your answers before submitting?</p>',
+	'review_show_unanswered' => 'true',
+	'review_enable' => 'true',
+	'answer_view_enable' => 'true',
+	'answer_summary_enable' => 'true',
+	'admin_login_expirytime' => '3600',
+	'template_admin_header' => 'adminstart.php',
+	'template_admin_footer' => 'adminend.php',
+	'quiz_max_questions' => '1000',
+	'summary_length' => '45',
+	'buttons_show_answer_button' => 'false'
+);
 
-// get directory
+
+/*// get directory
 if (defined('__DIR__')) {$app_dir = __DIR__;}
 else {$app_dir = dirname(__FILE__);}
-
 // strip the admin part of the directory
-$app_dir = preg_replace ("#/".ADMIN_DIR."/?$#", "", $app_dir);
+$app_dir = preg_replace ("#/".ADMIN_DIR."/?$#", "", $app_dir);*/
 
 $first_config_file = $app_dir."/".$default_cfg_file; 
 
@@ -273,6 +293,7 @@ if (!isset($dbsettings))
 
 /* Setup database connection */
 // Uses Database class directly (not QuizDB as is used by main code)
+// Use Quizdb later once we have created the database
 require_once ($app_dir."/includes/Database.php");
 $db = new Database($dbsettings);
 // Connected
@@ -339,9 +360,11 @@ else
 if ($action_required != 'tables') {displayInternalError("Invalid status returned after DB connect"); exit(0);}
 
 
-// Make sure tables don't already exist
-// if they do we stop - as we don't allow tables to be overridden (security risk)
+// Make sure tables don't already exist in which case create
+// or that they all exist in which case we continue to check / add the details
+// we don't allow tables to be overridden (security risk)
 $existing_tables = $db->getTables();
+$table_count = 0;	// Count number of matching tables - make sure it matches number of required
 if (!empty($existing_tables))
 {
 	foreach ($quiz_tables as $this_table)
@@ -350,38 +373,47 @@ if (!empty($existing_tables))
 		$test_table = $dbsettings['tableprefix'].$this_table;
 		if (in_array ($test_table, $existing_tables))
 		{
-			displayDbError ("Table $test_table already exists. Unable to continue with install<br />\nYou will need to delete the tables manually to re-run the install or install manually based on the install documentation.");
-			exit (0);
+			$table_count ++;
 		}
 	}
 }
 
-
-/* Create the tables */
-
-$create_table_sql = array(
-	'quizzes' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['quizzes']." (quizname varchar(255) NOT NULL, title varchar(255) NOT NULL, numquestions int(11) NOT NULL default '0', numquestionsoffline int(11) NOT NULL default '0', quizintro text NOT NULL, priority int(11) NOT NULL default 1, enableonline tinyint(1) NOT NULL default '0', enableoffline tinyint(1) NOT NULL default '0', PRIMARY KEY  (quizname))",
-	
-	'questions' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['questions']." (questionid int(11) NOT NULL auto_increment, section varchar(254) NOT NULL default '', intro text NOT NULL, input text NOT NULL, type varchar(10) NOT NULL default '', answer varchar(100) NOT NULL default '', reason text NOT NULL, reference varchar(100) NOT NULL default '', hint varchar(254) NOT NULL default '', image varchar(200) NOT NULL default '', audio varchar(200) NOT NULL default '', comments varchar(200) NOT NULL default '', qfrom varchar(50) NOT NULL default '', email varchar(50) NOT NULL default '', created date NOT NULL default '0000-00-00', reviewed date NOT NULL default '0000-00-00', PRIMARY KEY  (questionid))",
-	
-	'rel' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['rel']." (relid int(11) NOT NULL auto_increment,quizname varchar(255) NOT NULL,questionid int(11) NOT NULL,PRIMARY KEY (relid))",
-	
-	'settings' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['settings']." (settings_key varchar(50) NOT NULL, settings_value varchar(255) NOT NULL, PRIMARY KEY  (settings_key))"
-);
-
-foreach ($create_table_sql as $this_table=>$this_sql)
+if ($table_count > 0 && $table_count < count($table_count))
 {
-	if ($db->query($this_sql) != 0) 
+	displayDbError ("Some but not all tables already exists. Unable to continue with install<br />\nYou will need to delete the tables manually to re-run the install or install manually based on the install documentation.");
+	exit (0);
+}
+// if no tables exist create
+elseif ($table_count == 0)
+{
+	/* Create the tables */
+	
+	$create_table_sql = array(
+		'quizzes' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['quizzes']." (quizname varchar(255) NOT NULL, title varchar(255) NOT NULL, numquestions int(11) NOT NULL default '0', numquestionsoffline int(11) NOT NULL default '0', quizintro text NOT NULL, priority int(11) NOT NULL default 1, enableonline tinyint(1) NOT NULL default '0', enableoffline tinyint(1) NOT NULL default '0', PRIMARY KEY  (quizname))",
+		
+		'questions' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['questions']." (questionid int(11) NOT NULL auto_increment, section varchar(254) NOT NULL default '', intro text NOT NULL, input text NOT NULL, type varchar(10) NOT NULL default '', answer varchar(100) NOT NULL default '', reason text NOT NULL, reference varchar(100) NOT NULL default '', hint varchar(254) NOT NULL default '', image varchar(200) NOT NULL default '', audio varchar(200) NOT NULL default '', comments varchar(200) NOT NULL default '', qfrom varchar(50) NOT NULL default '', email varchar(50) NOT NULL default '', created date NOT NULL default '0000-00-00', reviewed date NOT NULL default '0000-00-00', PRIMARY KEY  (questionid))",
+		
+		'rel' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['rel']." (relid int(11) NOT NULL auto_increment,quizname varchar(255) NOT NULL,questionid int(11) NOT NULL,PRIMARY KEY (relid))",
+		
+		'settings' => "CREATE TABLE IF NOT EXISTS ".$dbsettings['tableprefix'].$quiz_tables['settings']." (settings_key varchar(50) NOT NULL, settings_value varchar(255) NOT NULL, PRIMARY KEY  (settings_key))"
+	);
+	
+	foreach ($create_table_sql as $this_table=>$this_sql)
 	{
-		$error_msg = $db->getError();
-		displayDbError ("Unable to create table $this_table<br />\nPlease check permissions or create the tables manually<br />\nError msg: $error_msg</p><p>$this_sql");
-		exit (0);
+		if ($db->query($this_sql) != 0) 
+		{
+			$error_msg = $db->getError();
+			displayDbError ("Unable to create table $this_table<br />\nPlease check permissions or create the tables manually<br />\nError msg: $error_msg</p><p>$this_sql");
+			exit (0);
+		}
 	}
 }
 
 /* Check if we have entries in the settings (specifically the password which is mandatory) and if 
 not then create them */
 // load existing settings
+require_once ($app_dir."/includes/QuizDB.php");
+require_once ($app_dir."/includes/Settings.php");
 $qdb = new QuizDB($db);
 $settings = Settings::getInstance();
 $settings->loadSettings ($qdb);
@@ -394,7 +426,7 @@ if ($settings->getSetting('admin_login_password')!='')
 }
 	
 // If not then are we saving existing post
-if (isset($_POST['savesettings']))
+if (isset($_POST['action']) && $_POST['action'] == 'savesettings')
 {
 	// do passwords match
 	if ($_POST['password'] != $_POST['passwordrepeat']) 
@@ -403,15 +435,25 @@ if (isset($_POST['savesettings']))
 		exit (0);
 	}
 	// we use the SimpleAuth class, but note we are creating with dummy username & password
-	require_once($app_dir."includes/SimpleAuth.php");
+	require_once($app_dir."/includes/SimpleAuth.php");
 	$auth = new SimpleAuth ('', '', 3600);
 	// run username & password through security / valid char checks
 	if ($auth->securityCheck('username', $_POST['username']) && $auth->securityCheck('password', $_POST['username']))
 	{
-		// now add details
-		// we do this manually as we also add the rest of the default settings
-		print "Adding entries\n";
-		exit (0);
+		// add details
+		// add login / password to the settings array
+		$quiz_settings['admin_login_username'] = $_POST['username'];
+		$quiz_settings['admin_login_password'] = md5($_POST['password']);
+		
+		foreach ($quiz_settings as $key=>$value)
+		{
+			if (!$qdb->insertSetting ($key, $value))
+			{
+				displayDbError ("Error adding setting $key");
+				exit (0);
+			}
+		}
+		
 	}
 	else
 	{
@@ -450,7 +492,10 @@ function displayComplete ($message)
 <body>
 <h1>Install complete</h1>
 <p>
-Now edit the settings and add your questions. 
+Now edit the settings and add your questions.
+</p>
+<p>
+<ul><li><a href="index.php">Index page</a></li></ul>
 </p>
 </body>
 </html>
@@ -543,7 +588,7 @@ EOT2;
 // get username / password etc.
 function displaySettingsForm ($message)
 {
-	global $post_filename;
+	//global $post_filename;
 	print <<< EOT
 <html>
 <head>
@@ -554,7 +599,7 @@ function displaySettingsForm ($message)
 <p>Please provide the following details to install and configure wQuiz.</p>
 <p><strong>$message</strong></p>
 <p>
-<form method="post" action=$post_filename>
+<form method="post" action="">
 <input type="hidden" name="action" value="savesettings" />
 </p>
 <h2>Admin user</h2>	
@@ -583,7 +628,7 @@ EOT;
 //$message is displayed to user (eg. Fill in field ___)
 function displayInitialForm ($message)
 {
-	global $post_filename;
+	//global $post_filename;
 	print <<< EOT
 <html>
 <head>
@@ -594,7 +639,7 @@ function displayInitialForm ($message)
 <p>Please provide the following details to install and configure wQuiz.</p>
 <p><strong>$message</strong></p>
 <p>
-<form method="post" action=$post_filename>
+<form method="post" action="">
 <input type="hidden" name="action" value="save" />
 </p>
 <h2>Database information</h2>	
@@ -628,7 +673,7 @@ EOT;
 // $parameters should normally be set to $_POST so that the previous form is resubmitted 
 function displayConfirm ($message, $field, $parameters)
 {
-	global $post_filename;
+	//global $post_filename;
 	print <<< EOT
 <html>
 <head>
@@ -638,7 +683,7 @@ function displayConfirm ($message, $field, $parameters)
 <h1>Are you sure?</h1>
 <p><strong>$message</strong></p>
 <p>
-<form method="post" action=$post_filename>
+<form method="post" action="">
 
 EOT;
 
@@ -651,7 +696,7 @@ foreach ($parameters as $key=>$value)
 
 print <<< EOT2
 <input type="submit" value="yes" />
-<form method="post" action=$post_filename>
+<form method="post" action="">
 EOT2;
 
 print "<input type=\"hidden\" name=\"confirm$field\" value=\"no\" />\n";
@@ -680,7 +725,7 @@ function displayManualConfig ($message, $config_text)
 	// replace \n with html break
 	$config_text = preg_replace ('/\\n/', '<br />', $config_text);  
 	// we don't use a post - by using GET this will start the test process from start
-	global $post_filename;
+	//global $post_filename;
 	print <<< EOT
 <html>
 <head>
