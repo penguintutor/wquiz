@@ -13,6 +13,8 @@
 </head>
 
 <body>
+<img src="../images/headerlogo.png" alt="wQuiz logo">
+
 <h1>Quiz administration</h1>
 
 

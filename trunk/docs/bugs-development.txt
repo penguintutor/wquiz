@@ -8,6 +8,7 @@ release (beta or higher) is made or before this is used on a production system.
 Add GPLv3 headers to source code
 Add save confirmation to admin pages
 Add status information to install script
+Add import from older version
 Check on handling of the answer field - and that we don't allow invalid answer fields to be created
 
 
