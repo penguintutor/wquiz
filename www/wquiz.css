@@ -57,6 +57,27 @@ p.wquiz-questionmessage
 }
 
 
+#wquiz-footer
+{
+	margin-top: 60px;
+}
+
+
+#wquiz-adminfooter
+{
+	margin-top: 60px;
+}
+
+
+p.wquiz-createdby
+{
+	font-size: small;
+}
+
+p.wquiz-createdby a 
+{
+	text-decoration: none;
+}
 
 div#wquizheader {
 	height: 180px;

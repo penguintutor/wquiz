@@ -14,3 +14,5 @@
 <body>
 <div id="internal">
 
+<img src="images/headerlogo.png" alt="wQuiz logo">
+
