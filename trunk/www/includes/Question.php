@@ -242,7 +242,12 @@ class Question
     
     private function formatImageString ()
     {
-     	return ("<img src=\"$this->image\" class=\"".CSS_CLASS_IMAGE."\" alt=\"Question Image\"/>\n");
+    	// If image is blank then we don't return anything - if rather use a dummy image then that should be added to each question.
+    	if ($this->image == '') {return "";}
+    	else
+    	{
+    		return ("<img src=\"$this->image\" class=\"".CSS_CLASS_IMAGE."\" alt=\"Question Image\"/>\n");
+    	}
     }
     
     // answer is the current value

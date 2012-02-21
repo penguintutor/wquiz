@@ -175,13 +175,28 @@ if ($action != 'display')
 	// otherwise not changed so no need to save
 }
 
+
+// We have already saved so we can now move to the next requested page
+// what is next action based on which button pressed
 if ($debug) {print "Action is $action";}
-// Handle change in page (eg. Finish / trying to go past first) 
 if ($action == 'first') {$question_num = 1;}
 else if ($action == 'previous') {$question_num--;}
 else if ($action == 'next') {$question_num ++;}
-else if ($action == 'last') {$question_num = $num_questions;}
+// special case with last button - if we are on last page then it goes to review (same as next button)
+else if ($action == 'last') 
+{
+	if ($question_num >= $num_questions) 
+	{
+		header ("Location: ".END_FILE);
+		exit (0);
+	}
+	else
+	{
+		$question_num = $num_questions;
+	}
+}
 
+// Handle change in page (eg. Finish / trying to go past first) 
 if ($question_num < 1) {$question_num = 1;}
 if ($question_num > $num_questions || $action == 'review')
 {
