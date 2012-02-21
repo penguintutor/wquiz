@@ -8,7 +8,7 @@
 
 <title>Sample quiz</title>
 
-<link href="wquiz.css" rel="stylesheet" type="text/css" />
+<link href="samples/wquiz.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>

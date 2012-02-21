@@ -8,7 +8,7 @@
 
 <title>WQuiz - quiz administration</title>
 
-<link href="../wquiz.css" rel="stylesheet" type="text/css" />
+<link href="../samples/wquiz.css" rel="stylesheet" type="text/css" />
 <script src="../admin.js" type="text/javascript"></script>
 </head>
 

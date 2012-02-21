@@ -58,9 +58,7 @@ else {$num_questions = count($questions_array);}
 
 $answers_array = $quiz_session->getAnswers();
 
-// todo -here work down update as neccessary
-
-$response_text .= "<ul >\n";
+$detailed_result_text = "<ul >\n";
 
 // Create output / overview
 $score = 0;
@@ -71,24 +69,26 @@ for ($i=0; $i<$num_questions; $i++)
 	if ($this_question->markAnswer($answers_array[$i]) == true) 
 	{
 		$score ++;
-		$response_text .= "<li class=\"".CSS_CLASS_SUMMARY_CORRECT."\"><a href=\"".ANSWER_FILE."?question=".($i+1)."\">".($i+1)." - correct</a></li>\n";
+		$detailed_result_text .= "<li class=\"".CSS_CLASS_SUMMARY_CORRECT."\"><a href=\"".ANSWER_FILE."?question=".($i+1)."\">".($i+1)." - correct</a></li>\n";
 	}
 	else if ($answers_array[$i] == -1)
 	{
-		$response_text .= "<li class=\"".CSS_CLASS_SUMMARY_NOTANSWERED."\"><a href=\"".ANSWER_FILE."?question=".($i+1)."\">".($i+1)." - not answered</a></li>\n";
+		$detailed_result_text .= "<li class=\"".CSS_CLASS_SUMMARY_NOTANSWERED."\"><a href=\"".ANSWER_FILE."?question=".($i+1)."\">".($i+1)." - not answered</a></li>\n";
 	}
 	else
 	{
-		$response_text .= "<li class=\"".CSS_CLASS_SUMMARY_INCORRECT."\"><a href=\"".ANSWER_FILE."?question=".($i+1)."\">".($i+1)." - incorrect</a></li>\n";
+		$detailed_result_text .= "<li class=\"".CSS_CLASS_SUMMARY_INCORRECT."\"><a href=\"".ANSWER_FILE."?question=".($i+1)."\">".($i+1)." - incorrect</a></li>\n";
 	}
 	
 }
-$response_text .= "</ul>\n";
+$detailed_result_text .= "</ul>\n";
+
+
 // todo customise - css and/or text
-$response_text .= "<h3>Score</h3>\n<p>$score out of $num_questions</p>";
+$response_text .= "<h2>Score</h2>\n<p>$score out of $num_questions</p>";
 $percentage = round($score * 100 / $num_questions);
 $response_text .= "<p>$percentage %</p>";
-
+$response_text .= "<h3>Result breakdown</h3>\n<p>$detailed_result_text</p>";
 
 	
 /*** Create the html ***/
