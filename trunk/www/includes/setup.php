@@ -1,6 +1,6 @@
 <?php 
 // This is the only option not held externally - you need to know where to load config from
-$default_cfg_file = 'default.cfg';
+$default_cfg_file = 'wquiz.cfg';
 
 // debug mode - set to true to enable debug messages
 if (!isset ($debug)) {$debug = false;}

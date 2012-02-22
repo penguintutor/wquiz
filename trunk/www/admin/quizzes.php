@@ -52,15 +52,19 @@ $templates->includeTemplate('header', 'admin');
 
 require_once ($include_dir."adminmenu.php");
 
+print "<div id=\"".CSS_ID_ADMIN_MAIN."\">\n";
+
 print "<h1>Questions</h1>";
 // question = 0 used for create new
-print "<a href=\"".ADMIN_EDIT_QUIZ_FILE."?action=new\">Add new quiz</a><br />\n";
+print "<form method=\"get\" action=\"".ADMIN_EDIT_QUIZ_FILE."\">\n";
+print "<input type=\"hidden\" name=\"action\" value=\"new\" />\n";
+print "<input type=\"submit\" value=\"Add new quiz\">\n";
+print "</form>\n";
 
-
+print "<table class=\"".CSS_CLASS_ADMIN_TABLE."\">\n";
 print <<< EOT
-<table>
 <tr>
-	<th>quizname</th>
+	<th>Quiz name</th>
 	<th>Title</th>
 	<th></th>
 </tr>
@@ -79,6 +83,7 @@ foreach ($all_quizzes->getQuizNameArray() as $this_quizname=>$this_title)
 }
 
 print "</table>\n";
+print "</div>\n";
 
 
 // footer template

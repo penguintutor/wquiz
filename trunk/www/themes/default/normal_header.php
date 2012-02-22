@@ -14,5 +14,5 @@
 <body>
 <div id="internal">
 
-<img src="images/headerlogo.png" alt="wQuiz logo">
+<img src="<?=$template_directory?>images/headerlogo.png" alt="wQuiz logo">
 

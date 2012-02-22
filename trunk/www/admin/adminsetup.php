@@ -7,7 +7,8 @@ if (defined('__DIR__')) {$app_dir = __DIR__;}
 else {$app_dir = dirname(__FILE__);}
 // strip the admin part of the directory
 $app_dir = preg_replace ("#/".ADMIN_DIR."/?$#", "", $app_dir);
-require_once($app_dir."/includes/setup.php");
+// loading setup.php will fail if this is initial install
+if (!isset($status) || $status != 'install') {require_once($app_dir."/includes/setup.php");}
 
 // Note that these are in the ADMIN_DIR
 // Normally we only call pages on urls within the same heirarchy

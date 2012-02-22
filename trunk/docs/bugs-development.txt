@@ -6,10 +6,13 @@ The following are important issues that must be handled correctly before a publi
 release (beta or higher) is made or before this is used on a production system.
 
 Add GPLv3 headers to source code
-Add save confirmation to admin pages
 Add status information to install script
-Add import from older version
+Add upgrade from older version
 Check on handling of the answer field - and that we don't allow invalid answer fields to be created
+Clean out old entries from sample css file
+Add offline quiz option
+Add iframe (at least for the start page)
+Add documentation
 
 
 *** Future features ***

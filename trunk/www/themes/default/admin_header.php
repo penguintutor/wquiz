@@ -6,14 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta name="description" content="WQuiz - quiz administration" />
 
-<title>WQuiz - quiz administration</title>
+<title>wQuiz - quiz administration</title>
 
-<link href="../samples/wquiz.css" rel="stylesheet" type="text/css" />
+<link href="<?=$template_directory?>wquiz.css" rel="stylesheet" type="text/css" />
 <script src="../admin.js" type="text/javascript"></script>
 </head>
 
 <body>
-<img src="../images/headerlogo.png" alt="wQuiz logo">
+<img src="<?=$template_directory?>images/headerlogo.png" alt="wQuiz logo">
 
 <h1>Quiz administration</h1>
 

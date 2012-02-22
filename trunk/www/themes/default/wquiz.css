@@ -157,3 +157,46 @@ p.createdby {
 }
 
 
+/* Admin pages */
+#wquiz-admin-menu {
+	
+}
+
+#wquiz-admin-menu a {
+	padding: 5px;
+	background: #b7c5f4;
+	text-decoration: none;	
+	font-family: sans-serif;
+	color: white;
+}
+
+#wquiz-admin-main {
+	
+}
+
+#wquiz-admin-main a {
+	text-decoration: none;
+	color: blue;
+}
+
+table.wquiz-admin-table {
+	margin-top: 20px;
+}
+
+table.wquiz-admin-table td {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+table.wquiz-admin-table th {
+	padding-left: 5px;
+	padding-right: 5px;
+	text-align: left;
+}
+
+p.wquiz-admin-edit-message {
+	font-weight: bold;
+	
+}
+
+
