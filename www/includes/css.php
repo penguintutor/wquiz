@@ -27,25 +27,18 @@ define ("CSS_ID_MENU", "wquiz-quizmenu");
 define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
 define ("CSS_ID_FORM", "wquiz-form");
-<<<<<<< .mine
-define ("CSS_ID_REVIEW", "wquiz-review-yes");				// div - review = yes
-define ("CSS_ID_ANSWER", "wquiz-answer");								// div - answer part of answer.php
-define ("CSS_ID_SUMMARY", "wquiz-summary");					// ul for summary restults
-define ("CSS_ID_MARK", "wquiz-review-mark");				// div - review = answer
-define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");				// div - for main direction buttons etc.
-define ("CSS_ID_BUTTON_ANSWER", "wquiz-quiz-answer-button");		// div - for answer button (within main direction buttons)
-define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit");			// prefix for navigation buttons (followed by previous, next etc.	
-=======
 define ("CSS_ID_REVIEW", "wquiz-review-yes");							// div - review = yes
 define ("CSS_ID_ANSWER", "wquiz-answer");								// div - answer part of answer.php
 define ("CSS_ID_SUMMARY", "wquiz-summary");								// ul for summary restults
 define ("CSS_ID_MARK", "wquiz-review-mark");							// div - review = answer
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");							// div - for main direction buttons etc.
 define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit");							// prefix for navigation buttons (followed by previous, next etc.	
->>>>>>> .r55
 define ("CSS_ID_EDIT_HINT_ANSWER", "wquiz-edit-hint-answer");			// hint in edit on answer field - admin.js uses this value
-
-
+// Admin entries
+define ("CSS_ID_ADMIN_MENU", "wquiz-admin-menu");						// Top menu division
+define ("CSS_ID_ADMIN_MAIN", "wquiz-admin-main");						// main division
+define ("CSS_CLASS_ADMIN_TABLE", "wquiz-admin-table");					// tables for question list / quiz list
+define ("CSS_CLASS_ADMIN_EDIT_MESSAGE", "wquiz-admin-edit-message");	// edit saved / created message
 
 
 // classless function - test to see if we have paragraph or similar html code

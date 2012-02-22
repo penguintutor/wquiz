@@ -51,7 +51,10 @@ $quizzes = ADMIN_QUIZZES_FILE;
 $questions = ADMIN_LIST_FILE;
 $settings_file = ADMIN_EDIT_SETTINGS_FILE;
 $pwchange_file = ADMIN_USER_FILE;
+$main_css = CSS_ID_ADMIN_MAIN;
+
 print <<< EOT
+<div id="$main_css">
 <h1>Administration</h1>
 <h2>Tasks</h2>
 <ul>
@@ -62,7 +65,7 @@ print <<< EOT
 <li><a href="$settings_file">Settings</a></li>
 <li><a href="$pwchange_file">Change password</a></li>
 </ul>
-
+</div>
 EOT;
 
 

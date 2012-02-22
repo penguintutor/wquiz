@@ -69,13 +69,16 @@ foreach ($all_rel as $this_rel)
 // Show menu
 require_once ($include_dir."adminmenu.php");
 
+print "<div id=\"".CSS_ID_ADMIN_MAIN."\">\n";
 print "<h1>Questions</h1>";
 // question = 0 used for create new
-print "<a href=\"".ADMIN_EDIT_FILE."?question=0\">Add new question</a><br />\n";
+print "<form method=\"get\" action=\"".ADMIN_EDIT_FILE."\">\n";
+print "<input type=\"hidden\" name=\"question\" value=\"0\" />\n";
+print "<input type=\"submit\" value=\"Add new question\">\n";
+print "</form>\n";
 
-
+print "<table class=\"".CSS_CLASS_ADMIN_TABLE."\">\n";
 print <<< EOT
-<table>
 <tr>
 	<th>Question</th>
 	<th>Summary</th>
@@ -113,7 +116,7 @@ foreach ($all_questions as $this_question_entry)
 }
 
 print "</table>\n";
-
+print "</div>\n";
 
 if (isset($debug) && $debug) 
 	{

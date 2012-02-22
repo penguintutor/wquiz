@@ -50,6 +50,8 @@ $sessionUsername = $auth->getUser();
 $templates->includeTemplate('header', 'admin');
 require_once ($include_dir."adminmenu.php");
 
+print "<div id=\"".CSS_ID_ADMIN_MAIN."\">\n";
+
 print "<h1>User administration - admin user</h1>\n";
 
 
@@ -119,6 +121,7 @@ print "Repeat password:<br />\n<input type=\"password\" name=\"newpassword2\" va
 print "<input type=\"submit\" value=\"Change password\" />\n";
 print "</form>\n";
 
+print "</div>\n";
 
 // footer template
 $templates->includeTemplate('footer', 'admin');

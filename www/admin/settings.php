@@ -149,6 +149,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'save')
 			exit (0);
 		}
 	}
+	
+	$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">Changes saved</p>";
 }
 
 // Now display settings regardless of whether we changed or not
@@ -199,6 +201,7 @@ $formendprint = "<input type=\"submit\" value=\"Save\" />\n</form>\n";
 
 
 print <<< MAINFORM
+$message
 $formstartprint
 $hiddenprint
 $fieldprint

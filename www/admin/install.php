@@ -8,13 +8,15 @@ There is no validation of username etc.
 In case of unexpected condition we exit and install will need to be done manually
 */
 
+// status is used by adminsetup to make sure we don't try and load setup.php if the config file doesn't exist yet
+$status = 'install';
+
 require_once ("adminsetup.php");
 
 // relative path to the apps directory (used on url references)
 $rel_path = "../";
 
-//$default_cfg_file = 'default.cfg';
-$default_cfg_file = 'test.cfg';
+$default_cfg_file = 'wquiz.cfg';
 
 // url link to use in forms - we have hardcoded install.php which must be the name of this file 
 //$post_filename = $rel_path.ADMIN_INSTALL_FILE;
@@ -38,11 +40,9 @@ $quiz_tables = array
 // Does not include username / password (that is determined by user)
 $quiz_settings = array
 (
-	'template_directory' => $app_dir.'/samples/',
-	'template_normal_header' => 'startdoc.php',
-	'template_normal_footer' => 'enddoc.php',
-	'template_iframe_header' => '',
-	'template_iframe_footer' => '',
+	'theme_directory' => $app_dir.'/themes/',
+	'theme_quiz' => 'default',
+	'theme_admin' => 'default',
 	'buttons_navigation_enabled' => 'a:5:{i:0;s:5:"first";i:1;s:8:"previous";i:2;s:4:"next";i:3;s:4:"last";i:4;s:6:"review";}',  //serialised array
 	'buttons_navigation_labels' => 'a:5:{s:4:"next";s:2:">>";s:5:"first";s:3:"|<<";s:8:"previous";s:2:"<<";s:4:"last";s:3:">>|";i:0;b:0;}',
 	'review_text' => '<p>Quiz complete.</p><p>Would you like to review your answers before submitting?</p>',
@@ -51,8 +51,6 @@ $quiz_settings = array
 	'answer_view_enable' => 'true',
 	'answer_summary_enable' => 'true',
 	'admin_login_expirytime' => '3600',
-	'template_admin_header' => 'adminstart.php',
-	'template_admin_footer' => 'adminend.php',
 	'quiz_max_questions' => '1000',
 	'summary_length' => '45',
 	'buttons_show_answer_button' => 'false'
@@ -122,7 +120,7 @@ else
 	// quizname is slightly different in that we just remove any special characters to get the filename
 	$quizname = $_POST['quizname'];
 	preg_replace ("/[^\w]/g", '', $quizname);
-	if ($quizname == '')	// make sure it isn't blank
+	if ($quizname == '' || $quizname == 'wquiz')	// make sure it isn't blank - or not allowed
 	{
 			displayInitialForm ("Short name invalid");
 			exit(0);

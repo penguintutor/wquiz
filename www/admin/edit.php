@@ -261,14 +261,20 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 	// *** read through all parameters now perform save / update
 	
 	// then set $questionid so that we go back to editing this entry 
-	if ($questionid == 0) {$questionid = $qdb->addQuestion($post_details);}
+	if ($questionid == 0) 
+	{
+		$questionid = $qdb->addQuestion($post_details);
+		$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">New question saved</p>";
+	}
 	else 
 	{
 		// we save even if no changes - more work for sql, but less checking within PHP
 		// add questionid to array
 		$post_details['questionid'] = $questionid;
 		$qdb->updateQuestion($post_details);
+		$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">Changes saved</p>";
 	}
+	
 	
 	
 	if ($debug) {print "\nSave completed - questionid is $questionid\n";}
@@ -343,6 +349,7 @@ require_once ($include_dir."adminmenu.php");
 
 
 print "<h2>Edit Question</h2>\n";
+print $message."\n";
 print "<p>Do NOT use apostrophes etc, instead use their html equivelant.<br />(e.g. &amp;quot; = &quot;  &amp;amp;=&amp;)</p>\n";
 print "<form action=\"".ADMIN_EDIT_FILE."\" method=\"post\">\n";
 if ($questionid == 0) {print "<h3>New question</h3>\n";}

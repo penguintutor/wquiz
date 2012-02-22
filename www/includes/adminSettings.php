@@ -11,52 +11,26 @@ $setting_types = array
 (
 	array 
 	(
-		'template_directory', 
+		'theme_directory', 
 		'directory', 
 		'Template directory', 
-		'full path within the server pointing to the templates\neg. /var/www/templates'
+		'Path the the themes from the document root\neg. /quiz/themes'
 	),
+
 	array
 	(
-		'template_normal_header',
+		'theme_admin',
 		'text',
-		'Template normal header',
-		'Normal header template filename'
+		'Admin theme',
+		'Theme to use for admin functions'
 	),
+	
 	array
 	(
-		'template_normal_footer',
+		'theme_quiz',
 		'text',
-		'Template normal footer',
-		'Normal footer template filename'
-	),
-	array
-	(
-		'template_iframe_header',
-		'text',
-		'Template iframe header',
-		'Iframe header template filename'
-	),
-	array
-	(
-		'template_iframe_footer',
-		'text',
-		'Template iframe footer',
-		'Iframe footer template filename'
-	),
-	array
-	(
-		'template_admin_header',
-		'text',
-		'Template admin header',
-		'Admin header template filename'
-	),
-	array
-	(
-		'template_admin_footer',
-		'text',
-		'Template admin footer',
-		'Admin footer template filename'
+		'Quiz theme',
+		'Theme to use for quiz functions'
 	),
 
 	array 

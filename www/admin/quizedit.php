@@ -238,15 +238,17 @@ if (isset($_POST['action']))
 	
 	
 	if ($debug) {print "\nSave completed - quiznname is $quizname\n";}
+	
 
 	// if it's a new one we have just created now change to edit and add this quiz
 	if ($action=='new')
 	{
 		$action = 'edit';
-		// load this quiz and add to the all quiz
-		// Not needed (we don't use all_quiz again (just load the current quiz)
-		//$new_quiz = $qdb->getQuiz($quizname);
-		//$all_quizzes->addQuiz(new Quiz($new_quiz));
+		$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">New quiz saved</p>";
+	}
+	else
+	{
+		$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">Changes saved</p>";
 	}
 	
 }
@@ -307,8 +309,9 @@ else
 /* At this point we have loaded the current quiz - (or it's a new) so display form */
 require_once ($include_dir."adminmenu.php");
 
-
+print "<div id=\"".CSS_ID_ADMIN_MAIN."\">\n";
 print "<h2>Edit Quiz</h2>\n";
+print $message;
 print "<p>Do NOT use apostrophes etc, instead use their html equivelant.<br />(e.g. &amp;quot; = &quot;  &amp;amp;=&amp;)</p>\n";
 print "<form action=\"".ADMIN_EDIT_QUIZ_FILE."\" method=\"post\">\n";
 if ($action == 'new') {print "<h3>New quiz</h3>\n";}
@@ -406,6 +409,8 @@ print "<form action=\"".ADMIN_DEL_QUIZ_FILE."\" method=\"post\">\n";
 print "<input type=\"hidden\" name=\"quizname\" value=\"".$quizname."\" />\n";
 print "<input type=\"submit\" value=\"Delete\" />\n";
 print "</form>\n";
+
+print "</div>\n";
 
 
 // footer template
