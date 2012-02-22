@@ -346,13 +346,13 @@ class Question
     	}
     	elseif ($this->type == 'text')
     	{
-    		if (preg_match('/'.$this->answer.'/i', $answer)) {return true;}
+    		if (preg_match('/^'.$this->answer.'$/i', $answer)) {return true;}
     		else {return false;}
     	}
     	// as text, but without ignore case
     	elseif ($this->type == 'TEXT')
     	{
-    		if (preg_match('/'.$this->answer.'/', $answer)) {return true;}
+    		if (preg_match('/^'.$this->answer.'$/', $answer)) {return true;}
     		else {return false;}
     	}
     	// invalid type
