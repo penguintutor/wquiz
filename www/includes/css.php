@@ -5,6 +5,13 @@
 * Not used by admin pages
 *****************************************/
 
+/** The following are hardcoded into Javascript as well as this file 
+
+CSS_ID_FORM
+CSS_ID_OFFLINE_START
+
+**/
+
 // css tags that the customer should use in css file
 // Whenever an entry is added - add this to css-entities
 define ("CSS_ID_QUESTION", "wquiz-questionintro");
@@ -20,9 +27,11 @@ define ("CSS_CLASS_ANSWER_CORRECT", "wquiz-answer-correct");			// used on answer
 define ("CSS_CLASS_ANSWER_INCORRECT", "wquiz-answer-incorrect");
 define ("CSS_CLASS_ANSWER_NOTANSWERED", "wquiz-answer-notanswered");
 define ("CSS_CLASS_ANSWER_REASON", "wquiz-answer-reason");				// reason for answer (eg. "answer 1 was the correct answer")
+define ("CSS_CLASS_OFFLINE_QUESTION_ANSWER", "wquiz-offline-question-answer");		// blank or default - normally we want to underline this or similar - on question page rather than answer page
 define ("CSS_CLASS_MESSAGE", "wquiz-questionmessage"); 					// p - used for message to user eg. answer invalid
 define ("CSS_CLASS_STATUS", "wquiz-questionstatus");					// position in quiz (eg. 1 of 10)
 define ("CSS_ID_NAVIGATION", "wquiz-questionnavigation");				// div
+define ("CSS_ID_OFFLINE_NAVIGATION", "wquiz-offlinenavigation");		// div
 define ("CSS_ID_MENU", "wquiz-quizmenu");
 define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
@@ -32,13 +41,15 @@ define ("CSS_ID_ANSWER", "wquiz-answer");								// div - answer part of answer.
 define ("CSS_ID_SUMMARY", "wquiz-summary");								// ul for summary restults
 define ("CSS_ID_MARK", "wquiz-review-mark");							// div - review = answer
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");							// div - for main direction buttons etc.
-define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit");							// prefix for navigation buttons (followed by previous, next etc.	
+define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit");							// prefix for navigation buttons (followed by previous, next etc.
+define ("CSS_ID_OFFLINE_START", "wquiz-offlinestart");					// div for buttons to print offline buttons
 define ("CSS_ID_EDIT_HINT_ANSWER", "wquiz-edit-hint-answer");			// hint in edit on answer field - admin.js uses this value
 // Admin entries
 define ("CSS_ID_ADMIN_MENU", "wquiz-admin-menu");						// Top menu division
 define ("CSS_ID_ADMIN_MAIN", "wquiz-admin-main");						// main division
 define ("CSS_CLASS_ADMIN_TABLE", "wquiz-admin-table");					// tables for question list / quiz list
 define ("CSS_CLASS_ADMIN_EDIT_MESSAGE", "wquiz-admin-edit-message");	// edit saved / created message
+
 
 
 // classless function - test to see if we have paragraph or similar html code

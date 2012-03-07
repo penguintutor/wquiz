@@ -16,6 +16,11 @@ define ("QUESTION_FILE", "question.php");
 define ("ANSWER_FILE", "answer.php");
 define ("SUMMARY_FILE", "summary.php");
 define ("END_FILE", "end.php");
+define ("OFFLINE_FILE", "offline.php");
+
+// entries OFFLINE_QUESTION_FILE and OFFLINE_ANSWER_FILE are also in Javascript
+define ("OFFLINE_QUESTION_FILE", "offlinequestion.php");
+define ("OFFLINE_ANSWER_FILE", "offlineanswer.php");
 
 define ("FIRST_FILE", "includes/first.php");				// If install not complete
 

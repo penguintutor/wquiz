@@ -51,6 +51,23 @@ class QuizSession extends PHPSession
 		$this->setValue('status', $new_status);
     }
     
+    public function setQuizName ($quiz_name)
+    {
+		$this->setValue('quizname', $quiz_name);
+    }
+    
+    
+    // returns offline session_id
+    public function getOfflineId ()
+    {
+    	return $this->getValue('offlineid');
+    }
+
+    // returns offline session_id
+    public function setOfflineId ($id)
+    {
+    	return $this->setValue('offlineid', $id);
+    }
     
     // returns array from serialized values
     public function getQuestions () 

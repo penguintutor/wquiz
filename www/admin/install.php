@@ -40,7 +40,6 @@ $quiz_tables = array
 // Does not include username / password (that is determined by user)
 $quiz_settings = array
 (
-	'theme_directory' => $app_dir.'/themes/',
 	'theme_quiz' => 'default',
 	'theme_admin' => 'default',
 	'buttons_navigation_enabled' => 'a:5:{i:0;s:5:"first";i:1;s:8:"previous";i:2;s:4:"next";i:3;s:4:"last";i:4;s:6:"review";}',  //serialised array
@@ -56,12 +55,6 @@ $quiz_settings = array
 	'buttons_show_answer_button' => 'false'
 );
 
-
-/*// get directory
-if (defined('__DIR__')) {$app_dir = __DIR__;}
-else {$app_dir = dirname(__FILE__);}
-// strip the admin part of the directory
-$app_dir = preg_replace ("#/".ADMIN_DIR."/?$#", "", $app_dir);*/
 
 $first_config_file = $app_dir."/".$default_cfg_file; 
 

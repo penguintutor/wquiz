@@ -18,8 +18,6 @@ class QuizDB
     	'quizzes' => 'quiz_quiz',
     	'questions' => 'quiz_questions',
     	'rel' => 'quiz_questionrel',
-    	//'active' => 'quiz_active',
-    	//'session' => 'quiz_session',
     	'settings' => 'quiz_settings'
     );
     
