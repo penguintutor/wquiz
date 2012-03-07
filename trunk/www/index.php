@@ -56,7 +56,11 @@ if (array_key_exists('quizname', $_POST))
 	}
 	// default is online - changed by post value
 	$quiz_type = 'online';
-	if (array_key_exists('offline', $_POST) && ($_POST == 'yes')) {$quiz_type = 'offline';}
+	// moved offline to a seperate file
+	// if we want to allow offline option from main page (as a checkbox)
+	// then we can instead repost to OFFLINE_FILE
+	// not implemented
+	//if (array_key_exists('offline', $_POST) && ($_POST == 'yes')) {$quiz_type = 'offline';}
 	
 
 	//check that this is a valid quizname
@@ -120,10 +124,11 @@ if (array_key_exists('quizname', $_POST))
 				// store questions into session
 				$quiz_session->setQuestions ($random_questions);
 				$quiz_session->setAnswers ($answers);
+				$quiz_session->setQuizName ($quiz);
 				$quiz_session->setStatus (SESSION_STATUS_ACTIVE);
 				
 				// Form starts at the top as future pages use options within form
-				print "<form id=\"wquiz-form\" method=\"post\" action=\"question.php\">\n";
+				print "<form id=\"CSS_ID_FORM\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
 				
 
 				print "<div id=\"".CSS_ID_QUIZ_INTRO."\">\n";
@@ -191,8 +196,8 @@ function printMenu ($quiz_object)
 <input name="style" value="default" type="hidden">
 
 
-<p><label for="name">Please enter your name:</label>
-<input id="name" name="name" type="text"></p>
+<!-- <p><label for="name">Please enter your name:</label>
+<input id="name" name="name" type="text"></p> -->
 <p><label for="quiz">Please select a quiz:</label>
 EOT;
 	print $quiz_object->htmlSelect('online');

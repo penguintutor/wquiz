@@ -1,5 +1,32 @@
 How the quiz works
 
+Templates are parsed before use
+
+Variables are not case sensitive
+
+
+%%HeaderJavascript%%
+- allows inline javascript to be included
+- include this entry in all header templates as it will be ignored if not required
+- should normally be the last entry before </head>
+
+%%ThemeDirectory%%
+Include this anywhwere that the path to the theme directory is required (trailing / is included)
+
+
+Note that php includes can be used as long as enabled using setting
+template_allow_include = true in the settings
+They must be entered as <?php include('____');?> - must be on a single line
+// only one include can be included on a single line, but other text or html can be included in the same line
+require / require_once are not supported
+
+The %% Variables are parsed prior to any php tags.
+Therefore it is possible to include Variables within the include statement
+
+... more variables will be added in future
+
+
+
 Sessions
 --------
 Users do not need to login, but Facebook logins will be added in future version (for social network features) 

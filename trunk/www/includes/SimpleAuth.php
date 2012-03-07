@@ -2,6 +2,9 @@
 // basic authentication - single user / password (passed in constructor - from settings)
 // note session_start needs to be called before this is included
 
+// This uses MD5 - this is quick, but not particularly secure (sufficient for this though)
+// May want to consider crypt - CRYPT_BLOWFISH in future
+
 class SimpleAuth
 {
 

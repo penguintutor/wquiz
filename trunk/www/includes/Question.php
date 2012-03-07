@@ -81,6 +81,25 @@ class Question
     }
 
 
+    // same as HTML String, but returns it in a format for offline viewing
+    public function getOfflineHtmlString () 
+    {
+    	print "<div id=\"".CSS_ID_QUESTION."\">\n\t<p class=\"".CSS_CLASS_QUESTION_P."\">\n\t\t";
+    	// Image is placed at the start of the text (can be moved using CSS)
+    	print $this->formatImageString ();
+    	print $this->intro;
+    	print "</p>\n";
+    	// hidden entry with this question number
+    	print "<p id=\"".CSS_ID_QUESTION_INPUT."\">\n";
+    	// question number is added in navigation as it's navigation position - not the sql question id
+    	//print "<input type=\"hidden\" name=\"question\" value=\"".$this->questionid."\" />\n";
+    	// handle appropriate format depending upon question
+    	print $this->formatOfflineQuestion();  
+    	print "\n</p>\n</div>\n";
+
+    }
+    
+    
     
     // gives a brief summary based on the introduction text (truncated)
     // if > $summary_length chars then return trunc ...
@@ -254,7 +273,6 @@ class Question
     private function formatQuestion ($answer)
     {
     	$formatted = '';
-    	//- also need to add number and checkbox
     	switch ($this->type)
     	{
     		case 'radio':  	$formatted = $this->createFormRadio ($answer);
@@ -271,6 +289,40 @@ class Question
     	}
     	return $formatted;
     }
+
+
+    private function formatOfflineQuestion ()
+    {
+    	$formatted = '';
+    	switch ($this->type)
+    	{
+    		case 'radio':  	
+    		case 'checkbox':
+    			$formatted .= "<ul>\n";
+    			$options = explode (",", $this->input);
+    			for ($i=0; $i<count($options); $i++)
+    			{
+    				$formatted .= "<li>$i</li>\n";
+    			}
+    			$formatted .= "</ul>\n";
+    			break;
+    		case 'number':
+    		case 'text':   	
+    		case 'TEXT':	
+    			$formatted .= "<ul><li>";
+    			$options = explode (",", $this->input);
+    			// if blank replace with number of spaces
+    			// normally css should set it to underline or similar
+    			if ($options[1] == '') {$options[1] = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";}
+				$formatted .=  $options[0]." <span class=\"".CSS_CLASS_OFFLINE_QUESTION_ANSWER."\">".$options[1]."</span> ".$options[2]."</li></ul>\n"; 			
+    			break;
+			default:	// unknown question - this is a warning level - don't break, but 
+							$err =  Errors::getInstance();
+    						$err->errorEvent(WARNING_QUESTION, "Warning, unknown question type for $this->questionid");
+    	}
+    	return $formatted;
+    }
+
     
     
     private function createFormRadio ($answer)

@@ -199,4 +199,8 @@ p.wquiz-admin-edit-message {
 	
 }
 
+span.wquiz-offline-question-answer {
+	text-decoration: underline;
+}
+
 

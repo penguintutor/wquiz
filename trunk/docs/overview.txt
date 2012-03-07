@@ -26,6 +26,12 @@ endquiz.php
 - clicking on link will reload page with results 
 
 
+index.php vs offline.php
+- Note that at the moment index and offline are completely separate
+- This means it needs a separate link to the appropriate page to be added later
+- May it be useful to allow tickbox on index.php to redirect to offline.php
+	This could be done by either adding GET support and using location or by changing to have a single index.php file pulling in appropriate index.php vs offline.php as appropriate
+
 
 
 Templates

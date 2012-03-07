@@ -4,20 +4,17 @@
 <head>
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<meta name="description" content="WQuiz - quiz administration" />
+<meta name="description" content="wQuiz sample file" />
 
-<title>wQuiz - quiz administration</title>
+<title>Sample quiz</title>
 
 <link href="%%ThemeDirectory%%wquiz.css" rel="stylesheet" type="text/css" />
-<script src="../admin.js" type="text/javascript"></script>
-<!-- Important to allow javascript include following javascript entry -->
+<link href="wquiz.js" type="text/javascript"></script>
 %%HeaderJavascript%%
 </head>
 
 <body>
+<div id="internal">
+
 <img src="%%ThemeDirectory%%images/headerlogo.png" alt="wQuiz logo">
-
-<h1>Quiz administration</h1>
-
-
 
