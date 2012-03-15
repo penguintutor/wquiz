@@ -1,4 +1,22 @@
 <?php
+/** Copyright Information (GPL 3)
+Copyright Stewart Watkiss 2012
+
+This file is part of wQuiz.
+
+wQuiz is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+wQuiz is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
+**/
 
 // Enable debugging
 error_reporting(E_ALL);
@@ -15,6 +33,7 @@ require_once("includes/setup.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
 
+// debug will prevent javascript being included in headers
 if ($debug) {print "Loading Quizzes \n";}
 // get all the quizzes and add to object
 $all_quizzes = new Quizzes();
@@ -28,8 +47,10 @@ foreach ($quiz_array as $this_quiz_array)
 // No quizzes found - most likely not setup
 if ($all_quizzes->count() < 1) {header("Location: ".FIRST_FILE); exit(0);}
 
-// header template
-$templates->includeTemplate('header', 'normal');
+// header template - moved to later to allow embed javascript
+// still use normal header / footer
+// it's the javascript print option where we use offline headers instead 
+//$templates->includeTemplate('header', 'normal');
 
 if ($debug) {print "Reading parameters \n";}
 // first look for url get as expired (indicates question.php send us here due to an expired entry)
@@ -52,7 +73,8 @@ if (array_key_exists('quizname', $_POST))
 	if (!ctype_alnum($quiz)) 
 	{
 		$err =  Errors::getInstance();
-		$err->errorEvent(ERROR_SECURITY, "Error security violation - quizname is invalid"); 
+		$err->errorEvent(ERROR_SECURITY, "Error security violation - quizname is invalid");
+		exit (0);
 	}
 	// set quiztype to offline
 	$quiz_type = 'offline';
@@ -63,11 +85,15 @@ if (array_key_exists('quizname', $_POST))
 	// this is not a security event, but is still wrong
 	if (!$all_quizzes->validateQuizname($quiz))
 	{
+		// include header for menu / error display
+		$templates->includeTemplate('header', 'normal');
 		// we handle error in more user friendly way than if we suspect attempt to hack
 		$err =  Errors::getInstance();
 		$err->errorEvent(WARNING_PARAMETER, "Warning parameter incorrect - quizname is invalid");
-		//--todo we don't give an error just show menu
+		print "<h3>Invalid quizname specified</h3>\n";
 		printMenu($all_quizzes);
+		$templates->includeTemplate('footer', 'normal');
+		exit (0);
 	}
 	else
 	{
@@ -77,11 +103,15 @@ if (array_key_exists('quizname', $_POST))
 		// check this quiz is enabled in this mode - and is set to at least 1 question
 		if ($this_quiz->isEnabled($quiz_type) == false || $this_quiz->getNumQuestions($quiz_type) < 1)
 		{
+			// include header for this error / menu display
+			$templates->includeTemplate('header', 'normal');
 			// quiz is disabled
 			print "<h3>Selected quiz is disabled for $quiz_type use</h3>\n";
 			$err =  Errors::getInstance();
 			$err->errorEvent(INFO_QUIZSTATUS, "quiz $quiz is disabled for $quiz_type use");
 			printMenu($all_quizzes);
+			$templates->includeTemplate('footer', 'normal');
+			exit (0);
 		}
 		else
 		{
@@ -95,14 +125,19 @@ if (array_key_exists('quizname', $_POST))
 			// check we have sufficient questions
 			if (count($question_array) <= $this_quiz->getNumQuestions($quiz_type)) 
 			{
+				$templates->includeTemplate('header', 'normal');
 				print "<h3>Insufficient questions in selected quiz</h3>\n";
 				$err =  Errors::getInstance();
 				$err->errorEvent(WARNING_QUIZQUESTIONS, "insufficient questions in $quiz, requires: "+$this_quiz->getNumQuestions($quiz_type)+" - has "+count($question_array));
 				printMenu($all_quizzes);
-			
+				$templates->includeTemplate('footer', 'normal');
+				exit (0);
 			}
 			else
 			{
+				// to allow header javascript we defer all printing by instead saving into $print_text;
+				$print_text = '';
+				
 				if ($debug) {print "Have sufficient questions \n";}
 				$random_questions = array();
 				$answers = array();
@@ -126,15 +161,15 @@ if (array_key_exists('quizname', $_POST))
 				$quiz_session->setOfflineId ($offline_id);
 				// $quiz_session->getOfflineId()
 				
-				print "<div id=\"".CSS_ID_QUIZ_INTRO."\">\n";
-				print "<h3 id=\"".CSS_ID_QUIZ_TITLE."\">".$this_quiz->getTitle()."</h3>\n\n";
-				print "<h3>Quiz reference: $offline_id</h3>\n\n";
-				print "<p>Please ensure that you print off both the questions and answers for the above reference number as answers cannot be retrieved at a later date</p>";
+				$print_text .= "<div id=\"".CSS_ID_QUIZ_INTRO."\">\n";
+				$print_text .= "<h3 id=\"".CSS_ID_QUIZ_TITLE."\">".$this_quiz->getTitle()."</h3>\n\n";
+				$print_text .= "<h3>Quiz reference: $offline_id</h3>\n\n";
+				$print_text .= "<p>Please ensure that you print off both the questions and answers for the above reference number as answers cannot be retrieved at a later date</p>";
 				// if this does not already include paragraphs then add
 				$this_intro = $this_quiz->getIntro();
-				if (!isParagraph($this_intro)) {print "<p>\n$this_intro\n</p>\n";}
-				else {print $this_intro;}
-				print "\n</div><!-- ".CSS_ID_QUIZ_INTRO." -->\n";
+				if (!isParagraph($this_intro)) {$print_text .= "<p>\n$this_intro\n</p>\n";}
+				else {$print_text .= $this_intro;}
+				$print_text .= "\n</div><!-- ".CSS_ID_QUIZ_INTRO." -->\n";
 
 				// Provide buttons to print questions and answers
 				// Basic text button here - or replace with graphical buttons using CSS
@@ -153,32 +188,45 @@ if (array_key_exists('quizname', $_POST))
 <input type="hidden" name="type" name="basic" />
 <input type="submit" value="Offline questions" name="start" />
 </form>		
-								
 STATICHTML;
 				
 				
-				print "<div id=\"".CSS_ID_OFFLINE_START."\">";
+				$print_text .= "<div id=\"".CSS_ID_OFFLINE_START."\">";
 				// Form within the div 
-				print $static_html;
+				$print_text .= $static_html;
 				
-				print "</div><!-- ".CSS_ID_OFFLINE_START." -->\n";
+				$print_text .= "</div><!-- ".CSS_ID_OFFLINE_START." -->\n";
 				
 				/* Javascript to change button to popup print buttons */
 				$start_element_id = CSS_ID_OFFLINE_START;
 
+				$offline_file = OFFLINE_FILE;
+				
 				// replacement html
 				$active_html = <<< ACTIVEHTML
 
-<form action=''>
-<input type="button" name="questions" value="Print Questions" onclick="offlinePrint('questions', $question_file)">
-<input type="button" name="answers" value="Print Answers" onclick="offlinePrint('answers', $answer_file)">
+<form action="">
+<input type="button" name="questions" value="Print Questions" onclick="offlinePrint(\'questions\', \'$question_file\')"></input>
+<input type="button" name="answers" value="Print Answers" onclick="offlinePrint(\'answers\', \'$answer_file\')"></input>
 </form>
-
-				
+<form action="$offline_file" method="post">
+<input type="submit" name="restart" value="Start again"></input>
+</form>
 ACTIVEHTML;
 
+				// Javascript for inclusion in header
+				// Pass javascript global variables 
+				$templates->addHeaderJavascript("var page = 'offline';");
+				$templates->addHeaderJavascript("var page_status = 'printquiz';");
+				//$templates->addHeaderJavascript("var start_element = document.getElementById('".CSS_ID_OFFLINE_START."');");
+				$templates->addHeaderJavascript("var start_element_id = '".CSS_ID_OFFLINE_START."';");
+				$templates->addHeaderJavascript("var static_html = '".$templates->textToJavascript($static_html)."';");
+				$templates->addHeaderJavascript("var active_html = '".$templates->textToJavascript($active_html)."';");
+				//$templates->addHeaderJavascript("window.addEventListener(\"load\", eventWindowLoaded, false);");
+				//$templates->addHeaderJavascript("window.onload = offlineEnableActive();");
 
-				print <<< INLINEJS
+
+/*				$print_text .= <<< INLINEJS
 
 <script type="text/javascript">
 
@@ -199,6 +247,11 @@ activeButtons();
 </script>
 				
 INLINEJS;
+*/
+
+				// print here - deferred from before to allow javascript to be included in headers 
+				$templates->includeTemplate('header', 'normal');
+				print $print_text;
 
 			}
 		}
@@ -208,7 +261,9 @@ INLINEJS;
 }
 else 
 {
-
+	// print header here for menu
+	$templates->includeTemplate('header', 'normal');
+	
 	// show message if there is one
 	if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
 	printMenu($all_quizzes);

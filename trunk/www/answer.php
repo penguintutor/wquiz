@@ -1,4 +1,22 @@
 <?php
+/** Copyright Information (GPL 3)
+Copyright Stewart Watkiss 2012
+
+This file is part of wQuiz.
+
+wQuiz is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+wQuiz is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
+**/
 
 // Enable debugging
 error_reporting(E_ALL);
@@ -9,6 +27,8 @@ $debug = false;
 // the question (or first / last question as appropriate) - this is not fed back to the user they just the question
 // look for $action = 'display' to see where we've switched back to default display
 
+/* Will accept GET or POST for question=
+post is used for navigation, but use GET to jump direct if going from summary menu */
 
 require_once("includes/setup.php");
 require_once("includes/QuestionNavigation.php");	// used later for navigation buttons
@@ -91,7 +111,9 @@ if (isset($_POST['nav']))
 // Check that this is a number and that it is within the session questions - otherwise we default to 1st question
 // if we have to change the question number to default then we also change the action to default - for example should not be saving answer if answer was given to out-of-range question
 // note is_int does not work - so using is_numeric instead 
-if (!isset($_POST['question']) || !is_numeric($_POST['question']) || $_POST['question'] < 1)
+// Uses REQUEST to support GET or POST
+// Request will include cookies - but we aren't setting cookies and it's easier for the "user" to manually edit GET than it is for them to edit cookies
+if (!isset($_REQUEST['question']) || !is_numeric($_REQUEST['question']) || $_REQUEST['question'] < 1)
 	{
 		$question_num = 1;
 		// set action to default as we didn't have a valid question number
@@ -99,7 +121,7 @@ if (!isset($_POST['question']) || !is_numeric($_POST['question']) || $_POST['que
 		$err->errorEvent(INFO_PARAMETER, "No question number provided - using default display and question 1");
 		$action == 'display';
 	}
-elseif ($_POST['question'] > $num_questions) 
+elseif ($_REQUEST['question'] > $num_questions) 
 	{
 		$question_num = $num_questions;
 		$err = Errors::getInstance();
@@ -107,7 +129,7 @@ elseif ($_POST['question'] > $num_questions)
 		// set action to default as we didn't have a valid question number
 		$action == 'display';
 	}
-else {$question_num = $_POST['question'];}
+else {$question_num = $_REQUEST['question'];}
 
 
 // what is next action based on which button pressed

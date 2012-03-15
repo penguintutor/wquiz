@@ -8,10 +8,7 @@ release (beta or higher) is made or before this is used on a production system.
 Add GPLv3 headers to source code
 Add status information to install script
 Add upgrade from older version
-***** Broken ***** Check on handling of the answer field - and that we don't allow invalid answer fields to be created
-Clean out old entries from sample css file
-Add offline quiz option
-Add iframe (at least for the start page)
+check for valid html
 Add documentation
 
 
@@ -19,7 +16,11 @@ Add documentation
 Additional checking using Javascript (eg. admin save)
 Improve install script
 	Add security feature to move second config file into a safe directory
-	
+
+Update handling of the answer field - and that we don't allow invalid answer fields to be created
+
+Add iframe 
+
 Easier adding of questions through admin
 eg. when choosing radio it provides multiple fields to add the different options
 
@@ -35,9 +36,6 @@ See: http://dev.mysql.com/doc/refman/5.0/en/char.html for mysql information
 
 
 *** Known bugs ***
-
-answer.php needs to accept GET as well as POST
-
 
 N/A - still under active development
 

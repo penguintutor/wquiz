@@ -6,6 +6,24 @@ user friendly error checking before we get to this page */
 /* This is even more brutal than questions to stop breaking the quiz
 eg. if number is not numeric we break rather than setting to default */
 
+/** Copyright Information (GPL 3)
+Copyright Stewart Watkiss 2012
+
+This file is part of wQuiz.
+
+wQuiz is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+wQuiz is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
+**/
 
 /* We get to here from one of the following
 $action=new		(create new)

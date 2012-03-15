@@ -5,6 +5,25 @@ This pulls in external templates
 eg. header.php / footer.php
 ***/
 
+/** Copyright Information (GPL 3)
+Copyright Stewart Watkiss 2012
+
+This file is part of wQuiz.
+
+wQuiz is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+wQuiz is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 /* The following can be used within the theme files to customise the theme
 eg <?=$template_directory>
 
@@ -29,11 +48,11 @@ class Templates
 		'admin_footer' => 'admin_footer.php',
 		'normal_header' => 'quiz_header.php',
 		'normal_footer' => 'quiz_footer.php',
-		'iframe_header' => 'iframe_header',
-		'iframe_footer' => 'iframe_footer',
+		'iframe_header' => 'iframe_header.php',
+		'iframe_footer' => 'iframe_footer.php',
 		// Note the offline header and footer and only used in popup mode - not in normal mode
-		'offline_header' => 'offline_header',
-		'offline_footer' => 'offline_footer'
+		'offline_header' => 'offline_header.php',
+		'offline_footer' => 'offline_footer.php'
 	);
 	
 	
@@ -63,9 +82,6 @@ class Templates
 		// pull in application directory from original setup / adminsetup
     	global $app_dir;
     	
-    	// $template_dir_local is on local file system (eg. /var/www ...)
-    	// $template_dir_url is a relative directory from application directory (takes into consideration if we are from admin directory
-
 		// the local directory is not dependant upon incoming php file
     	$template_dir_local = $app_dir."/themes/";
     	// the url directory is dependant upon whether we are in admin or not
@@ -73,6 +89,13 @@ class Templates
 		{
 			$template_dir_url = "../themes/";
 			$template_theme_dir = $this->settings->getSetting("theme_admin"). "/";
+		}
+		// special case - test entries are in the admin directory, but use the normal theme
+		elseif ($mode == 'test')
+		{
+			$template_dir_url = "../themes/";
+			$template_theme_dir = $this->settings->getSetting("theme_quiz"). "/";
+			$mode = 'normal';
 		}
 		else 
 		{
@@ -116,7 +139,15 @@ class Templates
 					print $matches[1];
 					// include string
 					// don't check it exists here - perhaps add in future
-					include ($matches[2]);
+					// if not enabled then we ignore - strip out the include and replace with a comment warning
+					if ($this->settings->getSetting('template_allow_include'))
+					{
+						include ($matches[2]);
+					}
+					else 
+					{
+						print "<!-- PHP Includes are disabled in the wquiz settings -->";
+					}
 					// after include
 					print $matches[3];
 				}
@@ -136,6 +167,14 @@ class Templates
     		$err->errorEvent(INFO_EXTERNAL, "Warning, external template not defined - $template_name, $mode");
 			
 		}
+	}
+	
+	
+	public function textToJavascript ($in_text)
+	{
+		$edit_text = trim($in_text);
+		$edit_text = preg_replace ('/\n/', '\\n', $edit_text);
+		return ($edit_text);
 	}
     
     
