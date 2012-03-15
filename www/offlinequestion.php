@@ -1,4 +1,22 @@
 <?php
+/** Copyright Information (GPL 3)
+Copyright Stewart Watkiss 2012
+
+This file is part of wQuiz.
+
+wQuiz is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+wQuiz is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
+**/
 
 // Enable debugging
 error_reporting(E_ALL);
@@ -61,7 +79,7 @@ else {$num_questions = count($questions_array);}
 // get mode from the post - popup we don't show menus - otherwise we do
 // also show offline header / footer for popup - but normal for basic
 // The type can be either on post or get
-if (((isset($_POST['type'])) && ($_POST['type'] == 'popup')) || ((isset($_GET['type'])) && ($_POST['type'] == 'popup')))
+if (((isset($_POST['type'])) && ($_POST['type'] == 'popup')) || ((isset($_GET['type'])) && ($_GET['type'] == 'popup')))
 {
 	$mode = 'popup';
 	$template_mode = 'offline';

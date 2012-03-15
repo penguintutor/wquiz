@@ -15,7 +15,7 @@ Include this anywhwere that the path to the theme directory is required (trailin
 
 
 Note that php includes can be used as long as enabled using setting
-template_allow_include = true in the settings
+template_allow_include = true in the settings (default)
 They must be entered as <?php include('____');?> - must be on a single line
 // only one include can be included on a single line, but other text or html can be included in the same line
 require / require_once are not supported
@@ -24,6 +24,16 @@ The %% Variables are parsed prior to any php tags.
 Therefore it is possible to include Variables within the include statement
 
 ... more variables will be added in future
+
+
+quickstart.php
+--------------
+
+Embed as 
+
+IndexFile is the path and filename of the index.php file (in reference to where it is embedded)
+<?php $IndexFile = "/quiz/index.php"; include("quiz/quickstart.php");?>
+
 
 
 

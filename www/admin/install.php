@@ -3,6 +3,25 @@
 For version 0.4.0
 ****/
 
+/** Copyright Information (GPL 3)
+Copyright Stewart Watkiss 2012
+
+This file is part of wQuiz.
+
+wQuiz is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+wQuiz is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 /* For security reasons this script will not override existing settings
 There is no validation of username etc.
 In case of unexpected condition we exit and install will need to be done manually
@@ -49,6 +68,7 @@ $quiz_settings = array
 	'review_enable' => 'true',
 	'answer_view_enable' => 'true',
 	'answer_summary_enable' => 'true',
+	'template_allow_include' => 'true',
 	'admin_login_expirytime' => '3600',
 	'quiz_max_questions' => '1000',
 	'summary_length' => '45',
