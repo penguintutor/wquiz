@@ -22,10 +22,14 @@ You should have received a copy of the GNU General Public License
 along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+
+
 /* For security reasons this script will not override existing settings
 There is no validation of username etc.
 In case of unexpected condition we exit and install will need to be done manually
 */
+
+//$debug = true;
 
 // status is used by adminsetup to make sure we don't try and load setup.php if the config file doesn't exist yet
 $status = 'install';
@@ -83,10 +87,12 @@ if (file_exists($first_config_file))
 {
 	// try loading it
 	@include ($first_config_file);
+	$status_msg .= "\nInitial config file $first_config_file exists <br />\n\n";
 	// do we now have a secondary cfg file - if so load that as well
 	if (isset($cfgfile) && $cfgfile!='')
 	{
 		@include ($cfgfile);
+		$status_msg .= "\nsecondary config file $cfgfile exists and is loaded<br />\n\n";
 	}
 	
 	// If we don't have the database details here then either corrupt or not pointing to correct secondary file
@@ -132,7 +138,7 @@ else
 	
 	// quizname is slightly different in that we just remove any special characters to get the filename
 	$quizname = $_POST['quizname'];
-	preg_replace ("/[^\w]/g", '', $quizname);
+	preg_replace ("/[^\w]/", '', $quizname);
 	if ($quizname == '' || $quizname == 'wquiz')	// make sure it isn't blank - or not allowed
 	{
 			displayInitialForm ("Short name invalid");
@@ -273,12 +279,13 @@ else
 }
 
 $action_required = 'database';
-print $status_msg;
-$status_msg = "";
+//print $status_msg;
+//$status_msg = "";
 
 /* If not already loaded load the relevant config files */
 if (!isset($dbsettings))
 {
+	$status_msg .= "\nLoading new configuration files <br />\n\n";
 	@include ($first_config_file);
 	// do we now have a secondary cfg file - if so load that as well
 	if (isset($cfgfile) && $cfgfile!='')
@@ -336,6 +343,7 @@ elseif ($db->getStatus() == -2)
 		}
 		else 
 		{
+			$status_msg .= "\nNew database created ".$dbsettings['database']."<br />\n\n";
 			// now connect to the new database 
 			if (!$db->connectDb($dbsettings['database']))
 			{
@@ -346,6 +354,7 @@ elseif ($db->getStatus() == -2)
 			}
 			else
 			{
+				$status_msg .= "\nConnected to the new database <br />\n\n";
 				$action_required = 'tables';
 			}
 		}
@@ -417,6 +426,10 @@ elseif ($table_count == 0)
 			displayDbError ("Unable to create table $this_table<br />\nPlease check permissions or create the tables manually<br />\nError msg: $error_msg</p><p>$this_sql");
 			exit (0);
 		}
+		else
+		{
+			$status_msg .= "\nCreated database table $this_table<br />\n\n";
+		}
 	}
 }
 
@@ -464,6 +477,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'savesettings')
 				exit (0);
 			}
 		}
+		$status_msg .= "\nSettings added to database<br />\n\n";
 		
 	}
 	else
@@ -522,6 +536,7 @@ exit(0);
 // use this if the others are not more appropriate
 function displayInternelError ($message)
 {
+	global $status_msg;
 	print <<< EOT
 <html>
 <head>
@@ -529,6 +544,9 @@ function displayInternelError ($message)
 </head>
 <body>
 <h1>Install error - Internal error</h1>
+<p>
+$status_msg
+</p>
 <p>
 An internal error has occurred.
 </p>
@@ -546,6 +564,8 @@ EOT;
 // Displays error message and exits
 function displayDbError ($message)
 {
+	global $status_msg;
+	
 	print <<< EOT
 <html>
 <head>
@@ -553,6 +573,9 @@ function displayDbError ($message)
 </head>
 <body>
 <h1>Install error - Database</h1>
+<p>
+$status_msg
+</p>
 <p>
 An error has when trying to update the database. Please check your database settings.
 </p>
@@ -571,6 +594,8 @@ EOT;
 // Displays error message and exits
 function displayConfigError ($first_config_file, $second_config_file)
 {
+	global $status_msg;
+	
 	print <<< EOT
 <html>
 <head>
@@ -578,6 +603,9 @@ function displayConfigError ($first_config_file, $second_config_file)
 </head>
 <body>
 <h1>Install error - Error in config file</h1>
+<p>
+$status_msg
+</p>
 <p>There is an error in the configuration file.<br />
 Default configuration file: $first_config_file<br />
 EOT;
@@ -599,7 +627,8 @@ EOT2;
 // get username / password etc.
 function displaySettingsForm ($message)
 {
-	//global $post_filename;
+	global $status_msg;
+
 	print <<< EOT
 <html>
 <head>
@@ -607,6 +636,9 @@ function displaySettingsForm ($message)
 </head>
 <body>
 <h1>Install wquiz</h1>
+<p>
+$status_msg
+</p>
 <p>Please provide the following details to install and configure wQuiz.</p>
 <p><strong>$message</strong></p>
 <p>
@@ -639,7 +671,8 @@ EOT;
 //$message is displayed to user (eg. Fill in field ___)
 function displayInitialForm ($message)
 {
-	//global $post_filename;
+	global $status_msg;
+	
 	print <<< EOT
 <html>
 <head>
@@ -647,6 +680,9 @@ function displayInitialForm ($message)
 </head>
 <body>
 <h1>Install wquiz</h1>
+<p>
+$status_msg
+</p>
 <p>Please provide the following details to install and configure wQuiz.</p>
 <p><strong>$message</strong></p>
 <p>
@@ -731,6 +767,7 @@ EOT3;
 
 function displayManualConfig ($message, $config_text)
 {
+	global $status_msg;
 	// convert html special characters (eg. < becomes &lt;
 	$config_text = htmlspecialchars($config_text);
 	// replace \n with html break
@@ -744,6 +781,9 @@ function displayManualConfig ($message, $config_text)
 </head>
 <body>
 <h1>File creattion failed</h1>
+<p>
+$status_msg
+</p>
 <p>Unable to create the configuration file</p>
 <p><strong>$message</strong></p>
 <p>Copy and paste below into new file</p>
@@ -752,7 +792,7 @@ function displayManualConfig ($message, $config_text)
 <hr />
 <p>
 <ul>
-<li><a href="$post_filename">Continue / Retry</a></li>
+<li><a href="#">Continue / Retry</a></li>
 </ul>
 </p>
 

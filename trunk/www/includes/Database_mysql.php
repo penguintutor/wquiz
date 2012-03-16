@@ -70,13 +70,19 @@ class Database
 	// normally follow by connectDb    
     public function createDb ($db_name)
     {
-    	if (mysql_query("CREATE DATABASE $db_name", $this->db_conn))
+    	global $debug;
+    	
+    	if ($debug) {print "Creating database:\n\nCREATE DATABASE $db_name\n\n";}
+    	
+    	if (mysql_query("CREATE DATABASE `$db_name`", $this->db_conn))
     	{
+    		if ($debug) {print "database created\n\n";}
     		$this->db_status = 1;
     		return 1;
     	}
     	else 
     	{
+    		if ($debug) {print 'Unable to create database '.mysql_error()."\n\n";}
     		$this->db_status = -1; 
     		$this->db_error = 'Unable to create database '.mysql_error();
     		return -1;
@@ -184,10 +190,13 @@ class Database
     {
     	$return_array = array();
     	$result = mysql_query("SHOW TABLES");
-    	while ($row = mysql_fetch_row($result))
-		{
-			$return_array[] = $row[0];
-
+    	if ($result != false)
+    	{
+			while ($row = mysql_fetch_row($result))
+			{
+				$return_array[] = $row[0];
+	
+			}
 		}
 		return $return_array;
     }
