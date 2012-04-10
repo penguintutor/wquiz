@@ -25,6 +25,13 @@ Therefore it is possible to include Variables within the include statement
 
 ... more variables will be added in future
 
+Upgrades
+--------
+Pre-upgrade
+Edit the quiz.cfg file so that all entries are on a single line per variable value pair
+eg. %quizintro needs to be on a single line
+
+
 
 quickstart.php
 --------------

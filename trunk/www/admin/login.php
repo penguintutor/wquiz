@@ -36,7 +36,7 @@ require_once($include_dir."SimpleAuth.php");
 // Array of valid goto / location entries
 // prefixed with a in case we want to use authentication in main quiz in future
 // uses the #define entries - so put after setup
-$locations = array('aindex'=>ADMIN_FILE, 'aquestions'=>ADMIN_Q_FILE);
+$locations = array('aindex'=>ADMIN_FILE, 'aquestions'=>ADMIN_Q_FILE, 'aupgrade'=>ADMIN_UPGRADE_FILE);
 
 // create authentication object
 // this needs to be before we output anything as it uses sessions (cookies)

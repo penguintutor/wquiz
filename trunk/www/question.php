@@ -201,10 +201,14 @@ if ($debug) {print "Action is $action";}
 if ($action == 'first') {$question_num = 1;}
 else if ($action == 'previous') {$question_num--;}
 else if ($action == 'next') {$question_num ++;}
-// special case with last button - if we are on last page then it goes to review (same as next button)
+// last button goes to the "end" page
 else if ($action == 'last') 
 {
-	if ($question_num >= $num_questions) 
+	header ("Location: ".END_FILE);
+	exit (0);
+
+	/*	if ($question_num >= $num_questions) 
+	// old comment // special case with last button - if we are on last page then it goes to review (same as next button)
 	{
 		header ("Location: ".END_FILE);
 		exit (0);
@@ -212,7 +216,7 @@ else if ($action == 'last')
 	else
 	{
 		$question_num = $num_questions;
-	}
+	}*/
 }
 
 // Handle change in page (eg. Finish / trying to go past first) 

@@ -5,21 +5,23 @@
 The following are important issues that must be handled correctly before a public
 release (beta or higher) is made or before this is used on a production system.
 
-Add GPLv3 headers to source code
-Add status information to install script
-Add upgrade from older version
 check for valid html
-Add documentation
+Add documentation (eg. readme files)
 
 
 *** Future features ***
 Additional checking using Javascript (eg. admin save)
 Improve install script
 	Add security feature to move second config file into a safe directory
+	
+Changes required for linear quiz type (ie do not allow backward direction)
+	
+Add alternative options in admin - eg. after creating new question suggest "add another?"
+perhaps use a separate menu with different options
 
-Update handling of the answer field - and that we don't allow invalid answer fields to be created
+Update handling of the answer field in admin - and that we don't allow invalid answer fields to be created
 
-Add iframe 
+Add iframe support
 
 Easier adding of questions through admin
 eg. when choosing radio it provides multiple fields to add the different options
@@ -33,11 +35,37 @@ The max size can be increased by changing the varchar size, but 255 is the maxim
 size prior to MySQL 5.0.3 and will therefore increase the pre-req for mysql
 See: http://dev.mysql.com/doc/refman/5.0/en/char.html for mysql information
 
+When performing an upgrade the old config file must be in a very specific format
+See upgrade instructions
+
+
+
+*** Changes since version 0.3.? ***
+
+templates completely changed - PHP
+	All templates need to be recreated
+New CSS elements created
+text based answers now test for complete string ie. /^<search>$/ - previously did not
+    * Text questions will need to be reviewed *
+Some quizzes may be reenabled through upgrade
+quizzes ordering will be lost with upgrade
+Change to menu navigation - now post based, no longer requires "answer" button
+Online / Offline quizzes can now be enabled on a per quiz basis - and have different number of questions
+
+
 
 
 *** Known bugs ***
 
 N/A - still under active development
+
+
+Error with regular expression match - see question 11
+	What is the medical condition likely
+	Diabetes
+	
+	
+
 
 
 

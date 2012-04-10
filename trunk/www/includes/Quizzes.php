@@ -107,6 +107,8 @@ class Quizzes
    
     public function validateQuizname ($quizname)
     {
+    	// if no quizzes defined then return false
+    	if (empty ($this->quiz_objects)) {return false;}
     	// run through all quizzes and look for quizname matching
     	foreach ($this->quiz_objects as $this_object)
     	{

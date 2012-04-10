@@ -50,6 +50,7 @@ define ("CSS_CLASS_ANSWER_REASON", "wquiz-answer-reason");				// reason for answ
 define ("CSS_CLASS_OFFLINE_QUESTION_ANSWER", "wquiz-offline-question-answer");		// blank or default - normally we want to underline this or similar - on question page rather than answer page
 define ("CSS_CLASS_MESSAGE", "wquiz-questionmessage"); 					// p - used for message to user eg. answer invalid
 define ("CSS_CLASS_STATUS", "wquiz-questionstatus");					// position in quiz (eg. 1 of 10)
+define ("CSS_CLASS_LINK_START", "wquiz-link-start");					// link back to start (eg. start again)
 define ("CSS_ID_NAVIGATION", "wquiz-questionnavigation");				// div
 define ("CSS_ID_OFFLINE_NAVIGATION", "wquiz-offlinenavigation");		// div
 define ("CSS_ID_MENU", "wquiz-quizmenu");
@@ -69,6 +70,7 @@ define ("CSS_ID_ADMIN_MENU", "wquiz-admin-menu");						// Top menu division
 define ("CSS_ID_ADMIN_MAIN", "wquiz-admin-main");						// main division
 define ("CSS_CLASS_ADMIN_TABLE", "wquiz-admin-table");					// tables for question list / quiz list
 define ("CSS_CLASS_ADMIN_EDIT_MESSAGE", "wquiz-admin-edit-message");	// edit saved / created message
+
 
 
 
