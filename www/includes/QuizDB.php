@@ -431,7 +431,9 @@ class QuizDB
     	}
     	
     	// return autoincremented questionid
-    	return mysql_insert_id();
+    	//return mysql_insert_id();
+    	// moved to Database class - so as to link to db connection
+    	return $this->db_object->getInsertID();
     }
     
 

@@ -107,6 +107,7 @@ $response_text .= "<h2>Score</h2>\n<p>$score out of $num_questions</p>";
 $percentage = round($score * 100 / $num_questions);
 $response_text .= "<p>$percentage %</p>";
 $response_text .= "<h3>Result breakdown</h3>\n<p>$detailed_result_text</p>";
+$response_text .= "<p><a href=\"".INDEX_FILE."\" class=\"".CSS_CLASS_LINK_START."\">Start again</a></p>";
 
 	
 /*** Create the html ***/

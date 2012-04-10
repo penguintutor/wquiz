@@ -95,7 +95,7 @@ class Database
     // used by install eg. to create tables
     public function query ($select_string) 
     {
-        if (!$results = mysql_query ($select_string))
+        if (!$results = mysql_query ($select_string, $this->db_conn))
         {
     	    	return -1;
     	    	$this->db_status = -1;
@@ -116,7 +116,7 @@ class Database
     	//print "Updating $select_string\n";
     	
     	$return_array = array();
-        if (!$results = mysql_query ($select_string))
+        if (!$results = mysql_query ($select_string, $this->db_conn))
         {
     	    	$return_array['ERRORS'] = "Error writing to database";
     	    	$this->db_status = -1;
@@ -124,6 +124,14 @@ class Database
     	 }	
     	 return $return_array;
     }     
+    
+    
+    // return autoincrement id (uses db connection)
+    public function getInsertID()
+    {
+    	return mysql_insert_id($this->db_conn);
+    }
+    
     
     // not strictly needed, but maintains consistancy with names as per QuizDB
     public function insertRow ($select_string)
@@ -135,7 +143,7 @@ class Database
     public function getRow ($select_string) 
     {
     	$return_array = array();
-        if (!$results = mysql_query ($select_string))
+        if (!$results = mysql_query ($select_string, $this->db_conn))
         {
     	    	$return_array['ERRORS'] = "Error reading from database";
     	    	$this->db_status = -1;
@@ -150,7 +158,7 @@ class Database
     public function getRowsAll ($select_string) 
     {
     	$return_array = array();
-        if (!$results = mysql_query ($select_string))
+        if (!$results = mysql_query ($select_string, $this->db_conn))
         {
     	    	$return_array['ERRORS'] = "Error reading from database";
     	    	$this->db_status = -1;
@@ -170,7 +178,7 @@ class Database
     public function getKeyValue ($select_string, $key_column, $value_column)
     {
     	$return_array = array();
-        if (!$results = mysql_query ($select_string))
+        if (!$results = mysql_query ($select_string, $this->db_conn))
     	{
     	    	$return_array['ERRORS'] = "Error reading from database";
     	    	$this->db_status = -1;
@@ -189,7 +197,7 @@ class Database
     public function getTables ()
     {
     	$return_array = array();
-    	$result = mysql_query("SHOW TABLES");
+    	$result = mysql_query("SHOW TABLES", $this->db_conn);
     	if ($result != false)
     	{
 			while ($row = mysql_fetch_row($result))

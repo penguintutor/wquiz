@@ -44,5 +44,7 @@ define ("ADMIN_EDIT_SETTINGS_FILE", "settings.php"); 		// edit settings
 define ("ADMIN_LOGOUT_FILE", "logout.php"); 				// logout
 define ("ADMIN_USER_FILE", "user.php"); 					// user administration (eg. password change)
 define ("ADMIN_INSTALL_FILE", "install.php"); 				// Install / setup script
+define ("ADMIN_UPGRADE_FILE", "upgrade.php"); 				// Upgrade
+
 
 ?>
