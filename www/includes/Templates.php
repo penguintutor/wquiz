@@ -106,14 +106,26 @@ class Templates
 		
 		
 		/* Settings that can be used within the template files */
-		// Note use directory in the variable name rather than shortened to dir as we have done for the internal variables
-		// This is the path to the theme directory that can be used in a url (relative to current file)
 		
+		//%%Title%%
+		$template_variables['Title'] = $this->settings->getSetting("html_title");
+		
+		//%%Description%%
+		$template_variables['Description'] = $this->settings->getSetting("html_description");
+		
+		//%%QuizTitle%%
+		$template_variables['QuizTitle'] = $this->settings->getSetting("quiz_title");
+		
+		//%%QuesionNumber%%
+		$template_variables['QuestionNumber'] = $this->settings->getSetting("question_number");
 		
 		//%%HeaderJavascript (created by addHeaderJavascript function)
 		if ($this->header_javascript != '') {$template_variables['HeaderJavascript'] = "<script type=\"text/javascript\">\n".$this->header_javascript."</script>\n";}
 		else {$template_variables['HeaderJavascript'] = '';}
+		
 		//%%ThemeDirectory%%
+		// Note use directory in the variable name rather than shortened to dir as we have done for the internal variables
+		// This is the path to the theme directory that can be used in a url (relative to current file)
 		$template_variables['ThemeDirectory'] = $template_dir_url.$template_theme_dir;
 		
 		// only action if template is set - if blank or not in db then we ignore

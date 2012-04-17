@@ -61,6 +61,7 @@ class QuizSession extends PHPSession
     	}
     	$session_info['status'] = $status;
     	$session_info['quizname'] = $this->getValue('quizname');
+    	$session_info['quiztitle'] = $this->getValue('quiztitle');
     	
     	return ($session_info);
     }
@@ -75,6 +76,11 @@ class QuizSession extends PHPSession
     {
 		$this->setValue('quizname', $quiz_name);
     }
+
+    public function setQuizTitle ($quiz_title)
+    {
+		$this->setValue('quiztitle', $quiz_title);
+    }
     
     
     // returns offline session_id
@@ -83,7 +89,7 @@ class QuizSession extends PHPSession
     	return $this->getValue('offlineid');
     }
 
-    // returns offline session_id
+    // sets offline session_id
     public function setOfflineId ($id)
     {
     	return $this->setValue('offlineid', $id);

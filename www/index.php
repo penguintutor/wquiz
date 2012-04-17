@@ -19,8 +19,8 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 // Enable debugging
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+//error_reporting(E_ALL);
+//ini_set('display_errors', true);
 
 
 //$debug = true;
@@ -40,14 +40,15 @@ $quiz_array = $qdb->getQuizzesAll();
 // add this one to allQuizzes
 foreach ($quiz_array as $this_quiz_array)
 {
+	if ($debug) {print "Adding quiz ".$this_quiz_array['title']."\n";}
 	$all_quizzes->addQuiz(new Quiz($this_quiz_array));
 }
 
 // No quizzes found - most likely not setup
 if ($all_quizzes->count() < 1) {header("Location: ".FIRST_FILE); exit(0);}
 
-// header template
-$templates->includeTemplate('header', 'normal');
+// header template - moved later to allow for quiz variable to be included
+//$templates->includeTemplate('header', 'normal');
 
 if ($debug) {print "Reading parameters \n";}
 // first look for url get as expired (indicates question.php send us here due to an expired entry)
@@ -62,13 +63,11 @@ if (isset($_GET['status']) && ($_GET['status'] == 'expired'))
 // note going to this page outside of quiz can result in rerunning session creation - hence new quiz
 if (array_key_exists('quizname', $_POST))
 {
-	// Very important
-	// todo 
-	// validate field input
 	$quiz = $_POST['quizname'];
 	//first check that this is just a string - no 
 	if (!ctype_alnum($quiz)) 
 	{
+		$templates->includeTemplate('header', 'normal');
 		$err =  Errors::getInstance();
 		$err->errorEvent(ERROR_SECURITY, "Error security violation - quizname is invalid"); 
 	}
@@ -89,7 +88,8 @@ if (array_key_exists('quizname', $_POST))
 		// we handle error in more user friendly way than if we suspect attempt to hack
 		$err =  Errors::getInstance();
 		$err->errorEvent(WARNING_PARAMETER, "Warning parameter incorrect - quizname is invalid");
-		//--todo we don't give an error just show menu
+		// we don't give an error just show menu
+		$templates->includeTemplate('header', 'normal');
 		printMenu($all_quizzes);
 	}
 	else
@@ -101,6 +101,7 @@ if (array_key_exists('quizname', $_POST))
 		if ($this_quiz->isEnabled($quiz_type) == false || $this_quiz->getNumQuestions($quiz_type) < 1)
 		{
 			// quiz is disabled
+			$templates->includeTemplate('header', 'normal');
 			print "<h3>Selected quiz is disabled for $quiz_type use</h3>\n";
 			$err =  Errors::getInstance();
 			$err->errorEvent(INFO_QUIZSTATUS, "quiz $quiz is disabled for $quiz_type use");
@@ -118,6 +119,7 @@ if (array_key_exists('quizname', $_POST))
 			// check we have sufficient questions
 			if (count($question_array) <= $this_quiz->getNumQuestions($quiz_type)) 
 			{
+				$templates->includeTemplate('header', 'normal');
 				print "<h3>Insufficient questions in selected quiz</h3>\n";
 				$err =  Errors::getInstance();
 				$err->errorEvent(WARNING_QUIZQUESTIONS, "insufficient questions in $quiz, requires: "+$this_quiz->getNumQuestions($quiz_type)+" - has "+count($question_array));
@@ -143,7 +145,13 @@ if (array_key_exists('quizname', $_POST))
 				$quiz_session->setQuestions ($random_questions);
 				$quiz_session->setAnswers ($answers);
 				$quiz_session->setQuizName ($quiz);
+				$quiz_session->setQuizTitle ($this_quiz->getTitle());
 				$quiz_session->setStatus (SESSION_STATUS_ACTIVE);
+				
+				// Set the Quiz Title into the settings - used for html templates
+				$settings->setTempSetting ("quiz_title", $this_quiz->getTitle());
+				
+				$templates->includeTemplate('header', 'normal');
 				
 				// Form starts at the top as future pages use options within form
 				print "<form id=\"CSS_ID_FORM\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
@@ -160,7 +168,7 @@ if (array_key_exists('quizname', $_POST))
 				// Add start button
 				// Basic text button here - but replace with graphical buttons using CSS
 				print "<div id=\"".CSS_ID_BUTTONS."\">";
-				print "<input type=\"submit\" value=\"start\" name=\"start\" />\n";
+				print "<input type=\"submit\" value=\"Start\" name=\"start\" />\n";
 				print "</div><!-- ".CSS_ID_BUTTONS." -->\n";
 				
 				
@@ -176,6 +184,7 @@ else
 
 	// show message if there is one
 	if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
+	$templates->includeTemplate('header', 'normal');
 	printMenu($all_quizzes);
 
 }
@@ -209,14 +218,14 @@ function printMenu ($quiz_object)
 	print "<span class=\"".CSS_ID_MENU_TITLE."\"></span>\n";
 	print ("<form method=\"post\" action=\"".INDEX_FILE."\" target=\"_top\">");
 
+	$css_for_id = CSS_ID_OPTION_QUIZ;
 	print <<<EOT
 <fieldset>
 <input name="style" value="default" type="hidden">
 
 
-<!-- <p><label for="name">Please enter your name:</label>
-<input id="name" name="name" type="text"></p> -->
-<p><label for="quiz">Please select a quiz:</label>
+<p><label for="$css_for_id">Please select a quiz:</label>
+
 EOT;
 	print $quiz_object->htmlSelect('online');
 

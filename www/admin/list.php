@@ -111,13 +111,12 @@ EOT;
 
 /** Display questions - could use a table formatter function, but for now coded in this file **/
 
-/* This is very inefficient and results in very slow load times - need to reduce the number of sql queries */
-
 foreach ($all_questions as $this_question_entry)
 {
 	print "<tr>\n";
 	// Allow either q number or summary to be clicked (as summary may be null - eg. picture quiz)
 	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question_entry['questionid']."\">".$this_question_entry['questionid']."</a></td>";
+	// uses local getSummary function - see below
 	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question_entry['questionid']."\">".getSummary($this_question_entry['intro'])."</a></td>";
 	print "<td>".$this_question_entry['type']."</td>";
 	if (isset($quiz_rel[$this_question_entry['questionid']])) 
@@ -160,9 +159,10 @@ function getSummary($intro)
     	$summary_length = $settings->getSetting('summary_length');
     	if (strlen($intro) > $summary_length) 
     	{
-    		return (substr($intro, 0, $summary_length-4)." ...");
+    		$temp_string = strip_tags($intro);
+    		return (substr($temp_string, 0, $summary_length-4)." ...");
     	}
-    	else {return $intro;}
+    	else {return strip_tags($intro);}
     }
 
 

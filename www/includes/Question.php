@@ -125,9 +125,11 @@ class Question
     {
     	if (strlen($this->intro) > $summary_length) 
     	{
-    		return (substr($this->intro, 0, $summary_length-4)." ...");
+    		$temp_string = strip_tags($this->intro);
+    		return (substr($temp_string, 0, $summary_length-4)." ...");
+    		
     	}
-    	else {return $this->intro;}
+    	else {return strip_tags($this->intro);}
     }
 
 

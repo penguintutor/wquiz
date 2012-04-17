@@ -52,6 +52,11 @@ class Quiz
     	return $this->quiz_info['quizname'];
     }
     
+    public function getPriority ()
+    {
+    	return $this->quiz_info['priority'];
+    }
+    
     public function getTitle ()
     {
     	return $this->quiz_info['title'];
@@ -88,16 +93,13 @@ class Quiz
     // objects are never equal as quizname must be unique
     static function cmpObj ($a, $b)
     {
-    	$a_priority = $a->quiz_info['priority'];
-    	$b_priority = $b->quiz_info['priority']; 
     	// if equal priority order by quizname
-    	if ($a_priority == $b_priority) 
+    	if ($a->quiz_info['priority'] != $b->quiz_info['priority']) 
     	{
-    		return ($a_priority > $b_priority) ? +1 : -1;
+    		// sort highest number first so less than
+    		return ($a->quiz_info['priority'] < $b->quiz_info['priority']) ? +1 : -1;
     	}
-    	$a_name = $a->quiz_info['quizname'];
-    	$b_name = $b->quiz_info['quizname'];
-    	return ($a_name > $b_name) ? +1 : -1;
+    	return ($a->quiz_info['quizname'] > $b->quiz_info['quizname']) ? +1 : -1;
     }
     
     

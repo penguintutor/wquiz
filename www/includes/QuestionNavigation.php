@@ -95,7 +95,7 @@ class QuestionNavigation
 		{
 			// show as a normal div 
 			print "<div id=\"".CSS_ID_BUTTON_ANSWER."\">\n";
-			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT."answer\"  value=\"answer\"/>\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT."-answer\"  value=\"answer\"/>\n";
 			print "</div>\n";
 		}
 		// otherwise it's hidden
@@ -103,7 +103,7 @@ class QuestionNavigation
 		{
 			// Note style should override id css code
 			print "<div style=\"height:0px; width:0px; position:absolute; overflow:hidden\">\n";
-			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT."answer\"  value=\"answer\"/>\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT."-answer\"  value=\"answer\"/>\n";
 			print "</div>\n";
 		}
 		
@@ -117,7 +117,7 @@ class QuestionNavigation
 				$err->errorEvent(WARNING_INTERNAL, "No label provided for button $this_button - ignoring");
 				continue;
 			}
-			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT.$this_button."\"  value=\"".$this->labels[$this_button]."\"/>\n";
+			print "<input type=\"submit\" name=\"nav\" id=\"".CSS_ID_NAVSUBMIT."-".$this_button."\"  value=\"".$this->labels[$this_button]."\"/>\n";
 		}
 		
 	}
