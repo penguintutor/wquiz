@@ -20,10 +20,9 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 
 
 // Enable debugging
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+//error_reporting(E_ALL);
+//ini_set('display_errors', true);
 //$debug = false;
-$debug = false;
 
 // this is where we create the html response to the user
 $response_text = '';
@@ -77,17 +76,24 @@ if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enable') =
 	// Link to review answers if enabled
 	if ($settings->getSetting('answer_view_enable') != 'false')
 	{
-		$response_text .= "<p><a href=\"".SUMMARY_FILE."\">Detailed results</a></p>\n";
+		$response_text .= "<div id=\"".CSS_ID_RESULTS_BUTTON."\">\n";
+		$response_text .= "<form method=\"POST\" action=\"".SUMMARY_FILE."\">\n";
+		$response_text .= "<input type=\"submit\" value=\"Detailed results\" />\n";
+		$response_text .= "</form>\n";
+		$response_text .= "</div>\n";
 	}
 	
-	$response_text .= "<p><a href=\"".INDEX_FILE."\">Start again</a></p>\n";
-	
-	
-	
+	$response_text .= "<div id=\"".CSS_ID_RESTART_BUTTON."\">\n";
+	$response_text .= "<form method=\"GET\" action=\"".INDEX_FILE."\">\n";
+	$response_text .= "<input type=\"submit\" value=\"Start again\" />\n";
+	$response_text .= "</form>\n";
+	$response_text .= "</div>\n";
+		
 }
 else
 {
 	// todo - make customisable
+	
 	// ask user if they want to review
 	$response_text .= $settings->getSetting('review_text')."\n";
 	
@@ -100,19 +106,21 @@ else
 		{
 			if ($this_answer == -1) {$num_unanswered++;}
 		}
-		if ($num_unanswered > 0) {$response_text .= "<p>$num_unanswered questions have not been answered.</p>\n";}
+		if ($num_unanswered > 0) {$response_text .= "<p class=\"".CSS_CLASS_END_NOTANSWERED."\">$num_unanswered questions have not been answered.</p>\n";}
 	}
+
+	
 	
 	// add form buttons for answer / review
 	$response_text .= "<div id=\"".CSS_ID_REVIEW."\">\n";
 	$response_text .= "<form method=\"post\" action=\"".QUESTION_FILE."\">\n";
-	$response_text .= "<input type=\"submit\" value=\"Review Answers\" />\n";
+	$response_text .= "<input type=\"submit\" value=\"Review answers\" />\n";
 	$response_text .= "</form>\n</div>\n";
 	$response_text .= "<div id=\"".CSS_ID_MARK."\">\n";
 	$response_text .= "<h3>Finished reviewing?</h3>";
 	$response_text .= "<form method=\"post\" action=\"".END_FILE."\">\n";
 	$response_text .= "<input type=\"hidden\" name=\"reviewcomplete\" />\n";
-	$response_text .= "<input type=\"submit\" value=\"Complete\" />\n";
+	$response_text .= "<input type=\"submit\" value=\"Mark answers\" />\n";
 	$response_text .= "</form>\n</div>\n";
 }
 
@@ -120,6 +128,10 @@ else
 	
 /*** Create the html ***/
 // We reach this point whether we are Query review or actual marked the answer
+
+// Set variables prior to loading template
+$settings->setTempSetting ("quiz_title", $quiz_info['quiztitle']);
+
 // Pull in templates
 $templates->includeTemplate('header', 'normal');
 

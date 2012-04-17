@@ -43,18 +43,6 @@ class Quizzes
     }
     
     
-    // sort based on priority, secondary quizname
-    private function cmpObj($a, $b)
-    {
-    	if ($a->priority == $b->priority) 
-    	{
-    		return ($a->quizname < $b->quizname) ? -1 : 1;
-    	}
-    	return ($a->priority < $b->priority) ? -1 : 1;
-    }
-    
-    
-    
     public function count ()
     {
     	if (empty($this->quiz_objects)) {return 0;}
@@ -73,6 +61,7 @@ class Quizzes
     	// if no quizzes return
     	if ($this->count() == 0) {return;}
     	usort ($this->quiz_objects, array("Quiz", "cmpObj"));
+    	//usort ($this->quiz_objects, "cmpObj");
     }
     
 	// returns a quiz object so that it can be accessed directly through Quiz class
@@ -123,7 +112,7 @@ class Quizzes
     // note that all includes any that are disabled for both online and offline
 	public function htmlSelect ($use)
 	{
-		$return_string = '<select id="'.CSS_ID_OPTION_QUIZ.'" name="quizname">\n';
+		$return_string = '<select id="'.CSS_ID_OPTION_QUIZ.'" name="quizname">'."\n";
 		// sort first
 		$this->_sort();
 		// includes formatting of table input fields - but no other html

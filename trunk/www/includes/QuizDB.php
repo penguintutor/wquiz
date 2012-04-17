@@ -263,7 +263,8 @@ class QuizDB
     //returns array of hash arrays
     public function getQuizzesAll ()
     {
-    	return ($this->db_object->getRowsAll ("Select * from ".$this->table_prefix.$this->quiz_tables['quizzes']));
+    	// haven't included "order by priority desc" as we sort in the Quizzes class
+    	return ($this->db_object->getRowsAll ("Select * from ".$this->table_prefix.$this->quiz_tables['quizzes'] ));
     }
 
 

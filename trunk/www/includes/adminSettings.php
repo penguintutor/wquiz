@@ -30,6 +30,20 @@ $setting_types = array
 (
 	array
 	(
+		'html_title',
+		'text',
+		'Title',
+		'Title for html header'
+	),
+	array
+	(
+		'html_description',
+		'text',
+		'Description',
+		'Description for html header'
+	),
+	array
+	(
 		'theme_admin',
 		'text',
 		'Admin theme',

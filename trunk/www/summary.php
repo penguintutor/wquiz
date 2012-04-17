@@ -76,7 +76,9 @@ else {$num_questions = count($questions_array);}
 
 $answers_array = $quiz_session->getAnswers();
 
-$detailed_result_text = "<ul >\n";
+$detailed_result_text = "<div id=\"".CSS_ID_RESULTS."\">\n<ul>\n";
+
+
 
 // Create output / overview
 $score = 0;
@@ -99,15 +101,23 @@ for ($i=0; $i<$num_questions; $i++)
 	}
 	
 }
-$detailed_result_text .= "</ul>\n";
+$detailed_result_text .= "</ul>\n</div>\n";
 
 
 // todo customise - css and/or text
 $response_text .= "<h2>Score</h2>\n<p>$score out of $num_questions</p>";
 $percentage = round($score * 100 / $num_questions);
 $response_text .= "<p>$percentage %</p>";
-$response_text .= "<h3>Result breakdown</h3>\n<p>$detailed_result_text</p>";
-$response_text .= "<p><a href=\"".INDEX_FILE."\" class=\"".CSS_CLASS_LINK_START."\">Start again</a></p>";
+$response_text .= "<h3>Result breakdown</h3>\n$detailed_result_text";
+
+// dummy div used for formatting
+$response_text .= "<div id=\"".CSS_ID_RESULTS_END."\"></div>\n";
+
+$response_text .= "<div id=\"".CSS_ID_RESTART_BUTTON."\">\n";
+$response_text .= "<form method=\"GET\" action=\"".INDEX_FILE."\">\n";
+$response_text .= "<input type=\"submit\" value=\"Start again\" />\n";
+$response_text .= "</form>\n";
+$response_text .= "</div>\n";
 
 	
 /*** Create the html ***/

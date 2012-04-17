@@ -337,12 +337,12 @@ else {print "<h3>Quiz name: ".$this_quiz['title']." ($quizname)</h3>\n";}
 
 if ($action == 'new')
 {
-	print "<input type=\"hidden\" name=\"action\" value=\"new\" /></h3>\n";
+	print "<input type=\"hidden\" name=\"action\" value=\"new\" />\n";
 }
 else
 {
-	print "<input type=\"hidden\" name=\"quizname\" value=\"".$quizname."\" /></h3>\n";
-	print "<input type=\"hidden\" name=\"action\" value=\"save\" /></h3>\n";
+	print "<input type=\"hidden\" name=\"quizname\" value=\"".$quizname."\" />\n";
+	print "<input type=\"hidden\" name=\"action\" value=\"save\" />\n";
 }
 
 // Short quizname - only if new (cannot edit this field)

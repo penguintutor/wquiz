@@ -87,6 +87,12 @@ class Settings
     	else {return "";}
     }
     
+    // used to provide a setting that is only held for this particular instance
+    public function setTempSetting ($key, $value)
+    {
+    	$this->settings[$key] = $value;
+	}
+    
     // either creates or updates setting depending upon whether it already exists
     public function setSetting($key, $value)
     {

@@ -229,6 +229,11 @@ if ($question_num > $num_questions || $action == 'review')
 
 
 
+// Set variables prior to loading template
+$settings->setTempSetting ("quiz_title", $quiz_info['quiztitle']);
+$settings->setTempSetting ("question_number", $question_num);
+
+
 // Pull in templates
 $templates->includeTemplate('header', 'normal');
 

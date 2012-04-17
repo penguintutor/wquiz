@@ -40,6 +40,7 @@ define ("CSS_ID_QUIZ_INTRO", "wquiz-quizintro");						// div
 define ("CSS_ID_QUIZ_TITLE", "wquiz-quiztitle");						// h3
 define ("CSS_CLASS_IMAGE", "wquiz-questionimage");
 define ("CSS_CLASS_QUESTION_P", "wquiz-questiontext");
+define ("CSS_CLASS_END_NOTANSWERED", "wquiz-end-notanswered");			// used on end page if any questions not answered
 define ("CSS_CLASS_SUMMARY_CORRECT", "wquiz-summary-correct");			// used on summary page
 define ("CSS_CLASS_SUMMARY_INCORRECT", "wquiz-summary-incorrect");
 define ("CSS_CLASS_SUMMARY_NOTANSWERED", "wquiz-summary-notanswered");
@@ -58,10 +59,15 @@ define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
 define ("CSS_ID_FORM", "wquiz-form");
 define ("CSS_ID_REVIEW", "wquiz-review-yes");							// div - review = yes
-define ("CSS_ID_ANSWER", "wquiz-answer");								// div - answer part of answer.php
+define ("CSS_ID_RESULTS", "wquiz-results");								// div - detailed results
+define ("CSS_ID_RESULTS_END", "wquiz-results-end");						// div - end of detailed results
+define ("CSS_ID_RESULTS_BUTTON", "wquiz-results-button");				// div - detailed results button
+define ("CSS_ID_RESTART_BUTTON", "wquiz-restart-button");				// div - start again button
+define ("CSS_ID_ANSWER_BUTTON", "wquiz-answer-button");					// div - answer part of answer.php
 define ("CSS_ID_SUMMARY", "wquiz-summary");								// ul for summary restults
 define ("CSS_ID_MARK", "wquiz-review-mark");							// div - review = answer
 define ("CSS_ID_BUTTONS", "wquiz-quizbuttons");							// div - for main direction buttons etc.
+/* Following will have additional text appended eg. -answer -first -previous */
 define ("CSS_ID_NAVSUBMIT", "wquiz-navsubmit");							// prefix for navigation buttons (followed by previous, next etc.
 define ("CSS_ID_OFFLINE_START", "wquiz-offlinestart");					// div for buttons to print offline buttons
 define ("CSS_ID_EDIT_HINT_ANSWER", "wquiz-edit-hint-answer");			// hint in edit on answer field - admin.js uses this value

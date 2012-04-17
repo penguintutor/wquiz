@@ -1,167 +1,54 @@
-/*
-#wquiz-quizmenu legend
-{
-	font-size: 14pt; 
- 	font-family:sans-serif; 
- 	font-style:normal;
-	margin: 2px;
-	color: #fff;
-	background: #097339;
-	border: 1px solid #781351;
-	padding: 2px 6px;
-}
+/** CSS file for wQuiz default theme **/
 
-#wquiz-quizmenu fieldset
-{
-	border: 1px solid #781351;
-	background-color: rgb(156, 199, 176);
-}
-
-#wquiz-quizmenu p
-{
-	margin: 0px;
-
-}
-
-
-#wquiz-questionintro div
-{
-	margin-left: 30px;
-	margin-right: 20px;
-}
-
-
-img.wquiz-questionimage
-{
- 		 float: right;
-		 padding: 10px;
-		 margin: 20px;
-}
-
-
-p.wquiz-questionmessage
-{
-	color: red;
-}
-
-
-/* re-order the button positions to allow enter to see next button */
-#wquiz-navsubmit-first
-{
-	float:left;
-}
-
-#wquiz-navsubmit-previous
-{
-	float:left;
-}
-
-
+/* default theme */
 #wquiz-footer
 {
 	margin-top: 60px;
 }
 
 
-#wquiz-adminfooter
+p.wquiz-end-notanswered 
 {
-	margin-top: 60px;
+	font-weight: bold;
 }
 
 
-p.wquiz-createdby
+#wquiz-results-button
 {
-	font-size: small;
+	margin-bottom: 20px;
 }
 
-p.wquiz-createdby a 
+/* Clear after showing results - remove columns if on summary page */
+#wquiz-results-end
 {
-	text-decoration: none;
-}
-
-div#wquizheader {
-	height: 180px;
-	width: 700px;
-	background-image: url(/wquiz/headerlogo.png);
-}
-
-#wquizmain a {
-	text-decoration: none;
-}
-
-#wquizmain a:hover {
-	text-decoration: underline;
-}
-
-
-.checkcolumn
-{
-	float: left;
-	margin-left: 20px;
-}
-
-.answered {
-	color: green;
-}
-
-.correct {
-	color: green;
-}
-
-.reviewcorrect {
-	color: green;
-}
-
-.notanswered {
-	color: red;
-}
-
-.reviewnotanswered {
-	color: red;
-}
-
-.wrong {
-	color: red;
-}
-
-.wrongnotanswered {
-	color: black;
-}
-
-.reviewwrong {
-	color: red;
-}
-
-.clearboth {
 	clear: both;
+	height: 20px;
 }
 
-
-div#wquizfooter {
-	position: relative;
-	top: 40px;
+/* css.php */
+img.wquiz-questionimage
+{
+	float:right;
+	margin: 20px;
 }
 
-#wquizfooter a {
-	text-decoration: none;
+/* split results into columns */
+/* this is over 3 times li so allows for 3 columns */
+#wquiz-results
+{
+	width: 35em;
 }
-
-#wquizfooter a:hover {
-	text-decoration: underline;
-}
-
-p.createdby {
+#wquiz-results li
+{
 	float: left;
-	margin-top: 10px;
-	text-decoration: none;
+	width: 10em;
 }
-*/
+
+
 
 /* Admin pages */
-#wquiz-admin-menu {
-	
-}
 
+/* css.php */
 #wquiz-admin-menu a {
 	padding: 5px;
 	background: #b7c5f4;
@@ -170,37 +57,58 @@ p.createdby {
 	color: white;
 }
 
-#wquiz-admin-main {
-	
-}
-
+/* css.php */
 #wquiz-admin-main a {
 	text-decoration: none;
 	color: blue;
 }
 
+/* css.php */
 table.wquiz-admin-table {
 	margin-top: 20px;
 }
 
+/* css.php */
 table.wquiz-admin-table td {
 	padding-left: 5px;
 	padding-right: 5px;
 }
 
+/* css.php */
 table.wquiz-admin-table th {
 	padding-left: 5px;
 	padding-right: 5px;
 	text-align: left;
 }
 
+/* css.php */
 p.wquiz-admin-edit-message {
 	font-weight: bold;
 	
 }
 
+/* css.php */
 span.wquiz-offline-question-answer {
 	text-decoration: underline;
+}
+
+
+/* default theme */
+#wquiz-adminfooter
+{
+	margin-top: 60px;
+}
+
+/* default theme */
+p.wquiz-createdby
+{
+	font-size: small;
+}
+
+/* default theme */
+p.wquiz-createdby a 
+{
+	text-decoration: none;
 }
 
 
