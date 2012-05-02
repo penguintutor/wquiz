@@ -19,9 +19,9 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 // Enable debugging
-error_reporting(E_ALL);
+/*error_reporting(E_ALL);
 ini_set('display_errors', true);
-$debug = false;
+$debug = false;*/
 
 // Note that most of the error checking from form results just makes us switch to display
 // the question (or first / last question as appropriate) - this is not fed back to the user they just the question
@@ -216,7 +216,11 @@ print "\n</div><!-- ".CSS_ID_NAVIGATION." -->\n";
 print "</form>\n";
 
 // link back to end of review
-print "<p><a href=\"".END_FILE."\">Back to result summary</a></p>\n";
+print "<div id=\"".CSS_ID_RETURN_BUTTON."\">\n";
+print "<form method=\"GET\" action=\"".SUMMARY_FILE."\">\n";
+print "<input type=\"submit\" value=\"Back to result summary\" />\n";
+print "</form>\n";
+print "</div>\n";
 
 
 // footer templates

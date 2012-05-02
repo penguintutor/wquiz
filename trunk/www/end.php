@@ -23,6 +23,7 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 //error_reporting(E_ALL);
 //ini_set('display_errors', true);
 //$debug = false;
+//$debug = true;
 
 // this is where we create the html response to the user
 $response_text = '';
@@ -68,9 +69,9 @@ if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enable') =
 		if ($this_question->markAnswer($answers_array[$i]) == true) {$score ++;}
 	}
 	// todo customise - css and/or text
-	$response_text .= "<h3>Score</h3>\n<p>$score out of $num_questions</p>";
+	$response_text .= "<h1>Score</h1>\n<p>$score out of $num_questions</p>";
 	$percentage = round($score * 100 / $num_questions);
-	$response_text .= "<p>$percentage %</p>";
+	$response_text .= "<p>$percentage %</p>\n\n";
 	// todo add some comments about score
 	
 	// Link to review answers if enabled
@@ -83,7 +84,7 @@ if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enable') =
 		$response_text .= "</div>\n";
 	}
 	
-	$response_text .= "<div id=\"".CSS_ID_RESTART_BUTTON."\">\n";
+	$response_text .= "<div id=\"".CSS_ID_RETURN_BUTTON."\">\n";
 	$response_text .= "<form method=\"GET\" action=\"".INDEX_FILE."\">\n";
 	$response_text .= "<input type=\"submit\" value=\"Start again\" />\n";
 	$response_text .= "</form>\n";
@@ -93,6 +94,8 @@ if (isset ($_POST['reviewcomplete']) || $settings->getSetting('review_enable') =
 else
 {
 	// todo - make customisable
+	$response_text .= "<h1>Quiz complete</h1>\n";
+	$response_text .= "<div id=\"".CSS_ID_REVIEW_Q."\">\n";
 	
 	// ask user if they want to review
 	$response_text .= $settings->getSetting('review_text')."\n";
@@ -114,8 +117,10 @@ else
 	// add form buttons for answer / review
 	$response_text .= "<div id=\"".CSS_ID_REVIEW."\">\n";
 	$response_text .= "<form method=\"post\" action=\"".QUESTION_FILE."\">\n";
-	$response_text .= "<input type=\"submit\" value=\"Review answers\" />\n";
+	$response_text .= "<input type=\"submit\" value=\"Review questions\" />\n";
 	$response_text .= "</form>\n</div>\n";
+	$response_text .= "</div>\n";
+	
 	$response_text .= "<div id=\"".CSS_ID_MARK."\">\n";
 	$response_text .= "<h3>Finished reviewing?</h3>";
 	$response_text .= "<form method=\"post\" action=\"".END_FILE."\">\n";

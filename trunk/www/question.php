@@ -166,6 +166,8 @@ if ($action != 'display')
 		if ($question_from->validateAnswer($_POST['answer']))
 		{
 			$answer = $_POST['answer'];
+			// remove magic quotes if applied - so that the regular expression matching works correctly
+			if (get_magic_quotes_gpc()) { $answer = stripslashes($answer); }
 		}
 		else
 		{

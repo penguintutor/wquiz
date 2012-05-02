@@ -34,7 +34,7 @@ if (!isset($status) || $status != 'install') {require_once($app_dir."/includes/s
 define ("ADMIN_FILE", "index.php");
 define ("ADMIN_LOGIN_FILE", "login.php");
 define ("ADMIN_LIST_FILE", "list.php");						// List of questions
-define ("ADMIN_Q_FILE", "questions.php"); 					// view / test question
+define ("ADMIN_Q_FILE", "../test.php"); 				// view / test question
 define ("ADMIN_EDIT_FILE", "edit.php");		 				// edit question
 define ("ADMIN_QUIZZES_FILE", "quizzes.php");				// List of quizzes
 define ("ADMIN_EDIT_QUIZ_FILE", "quizedit.php"); 			// edit quiz

@@ -19,7 +19,12 @@ You should have received a copy of the GNU General Public License
 along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-// Enable debugging
+/* Tests a question - used within admin, but placed in the normal directory level 
+so that it validates against the same templates as normal quiz pages */
+
+
+// Enable debugging - left on intentionally as this is the test page
+// Any errors should be reported to the developer - see http://www.penguinitutor.com/wquiz for details
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
@@ -31,7 +36,7 @@ ini_set('display_errors', true);
 $message = '';
 
 // adminsetup is within the admin directory - this will load the main setup.php as well 
-require_once ("adminsetup.php");
+require_once ("admin/adminsetup.php");
 // Authentication class required for admin functions
 require_once($include_dir."SimpleAuth.php");;
 require_once($include_dir."QuestionNavigation.php");	// used later for navigation buttons
@@ -137,7 +142,9 @@ if ($action != 'display')
 	{
 		if ($question_from->validateAnswer($_POST['answer']))
 		{
-			$answer = $_POST['answer'];
+			$answer = $_POST['answer']; 
+			// remove magic quotes if applied
+			if (get_magic_quotes_gpc()) { $answer = stripslashes($answer); }
 		}
 		else
 		{
@@ -161,8 +168,8 @@ if ($debug) {print "Action is $action";}
 $templates->includeTemplate('header', 'test');
 
 // start form
-// Form starts at the top
-print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".ADMIN_Q_FILE."\">\n";
+// Form starts at the top - action = "" (self - rather than normal link which goes to previous directory)
+print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"\">\n";
 
 print "<input type=\"hidden\" name=\"question\" value=\"$questionid\" />\n";
 

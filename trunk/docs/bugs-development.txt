@@ -5,7 +5,6 @@
 The following are important issues that must be handled correctly before a public
 release (beta or higher) is made or before this is used on a production system.
 
-check for valid html
 Add documentation (eg. readme files)
 
 
@@ -13,13 +12,22 @@ Add documentation (eg. readme files)
 Additional checking using Javascript (eg. admin save)
 Improve install script
 	Add security feature to move second config file into a safe directory
-	
+
+Change session expired message - to be clearer and within main body of index.php
+
 Changes required for linear quiz type (ie do not allow backward direction)
 	
 Add alternative options in admin - eg. after creating new question suggest "add another?"
 perhaps use a separate menu with different options
 
 Update handling of the answer field in admin - and that we don't allow invalid answer fields to be created
+
+Allow messages to be customised eg. Finished reviewing?
+Allow buttons to be customised "start"
+Better way of adding text blocks
+	Should it be in the themes?
+	In a seperate table?
+	As embedded files?
 
 Add iframe support
 
@@ -59,12 +67,6 @@ Online / Offline quizzes can now be enabled on a per quiz basis - and have diffe
 
 N/A - still under active development
 
-
-Error with regular expression match - see question 11
-	What is the medical condition likely
-	Diabetes
-	
-	
 
 
 
