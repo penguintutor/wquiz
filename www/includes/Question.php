@@ -349,12 +349,14 @@ class Question
     {
     	//print "Form button answer is $answer \n";
     	$form_string = "<input type=\"hidden\" name=\"type\" value=\"radio\">\n";
-    	$options = explode (",", $this->input);
+    	// if we have , followed by a new line / space etc. remove the space character
+    	$options = preg_replace ('/,\s/', ',', $this->input);
+    	$options = explode (",", $options);
     	for ($i=0; $i<count($options); $i++)
     	{
     		$form_string .= "<input type=\"radio\" name=\"answer\" value=\"$i\" ";
     		if ($i == $answer) {$form_string.= "checked=\"checked\" ";}
-    		$form_string .= "/>".$options[$i]."<br />\n";
+    		$form_string .= "/> ".$options[$i]."<br />\n";
     	}
     	return $form_string;
     }
@@ -384,7 +386,9 @@ class Question
     	// if answer is -1 set to '' so does not match
     	if ($answer == -1) {$answer = '';}
     	$form_string = "<input type=\"hidden\" name=\"type\" value=\"checkbox\">\n";
-    	$options = explode (",", $this->input);
+    	// if we have , followed by a new line / space etc. remove the space character
+    	$options = preg_replace ('/,\s/', ',', $this->input);
+    	$options = explode (",", $options);
     	for ($i=0; $i<count($options); $i++)
     	{
     		$form_string .= "<input type=\"checkbox\" name=\"answer-$i\" ";
@@ -393,7 +397,7 @@ class Question
     		// if number is in the answer already
     		// use === type comparison as 0 is the first character
     		if (strpos ($answer, $i_string)!==false) {$form_string.= "checked=\"checked\" ";}
-    		$form_string .= "/>".$options[$i]."<br />\n";
+    		$form_string .= "/> ".$options[$i]."<br />\n";
     	}
     	return $form_string;
     }
@@ -403,6 +407,8 @@ class Question
     // returns true (correct) or false
     function markAnswer ($answer)
     {
+	global $debug;
+    	//if ($debug) { print "This answer $answer \n";}
     	// radio / checkbox - answer must be same as 
     	if ($this->type == 'radio' || $this->type == 'checkbox')
     	{
@@ -418,13 +424,18 @@ class Question
     	}
     	elseif ($this->type == 'text')
     	{
-    		if (preg_match('/^'.$this->answer.'$/i', $answer)) {return true;}
+    		// note that ¬ is used instead of / / in the search - otherwise problems with paths in the question (eg. linux quiz)
+    		//$answer_test = stripslashes($this->answer); 
+    		//$answer_test = addslashes($this->answer);
+    		$answer_test = $this->answer;
+    		if (isset($debug) && $debug == true) {print "Test: ".'¬^'.$answer_test.'$¬i'."<br />\n"; print "Answer $answer<br />\n";}
+    		if (preg_match('¬^'.$answer_test.'$¬i', $answer)) {return true;}
     		else {return false;}
     	}
     	// as text, but without ignore case
     	elseif ($this->type == 'TEXT')
     	{
-    		if (preg_match('/^'.$this->answer.'$/', $answer)) {return true;}
+    		if (preg_match('¬^'.$this->answer.'$¬', $answer)) {return true;}
     		else {return false;}
     	}
     	// invalid type

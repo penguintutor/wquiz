@@ -19,10 +19,10 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 // Enable debugging
-error_reporting(E_ALL);
+/*error_reporting(E_ALL);
 ini_set('display_errors', true);
 //$debug = false;
-$debug = false;
+$debug = false;*/
 
 // this is where we create the html response to the user
 $response_text = '';
@@ -105,15 +105,18 @@ $detailed_result_text .= "</ul>\n</div>\n";
 
 
 // todo customise - css and/or text
-$response_text .= "<h2>Score</h2>\n<p>$score out of $num_questions</p>";
+$response_text .= "<h1>Score</h1>\n<p>$score out of $num_questions</p>";
 $percentage = round($score * 100 / $num_questions);
 $response_text .= "<p>$percentage %</p>";
-$response_text .= "<h3>Result breakdown</h3>\n$detailed_result_text";
+$response_text .= "<h2>Result breakdown</h2>\n";
+$response_text .= "<p>Click on the question below to see correct answer</p>\n"; 
+
+$response_text .= $detailed_result_text."\n";
 
 // dummy div used for formatting
 $response_text .= "<div id=\"".CSS_ID_RESULTS_END."\"></div>\n";
 
-$response_text .= "<div id=\"".CSS_ID_RESTART_BUTTON."\">\n";
+$response_text .= "<div id=\"".CSS_ID_RETURN_BUTTON."\">\n";
 $response_text .= "<form method=\"GET\" action=\"".INDEX_FILE."\">\n";
 $response_text .= "<input type=\"submit\" value=\"Start again\" />\n";
 $response_text .= "</form>\n";

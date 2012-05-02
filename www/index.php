@@ -154,7 +154,7 @@ if (array_key_exists('quizname', $_POST))
 				$templates->includeTemplate('header', 'normal');
 				
 				// Form starts at the top as future pages use options within form
-				print "<form id=\"CSS_ID_FORM\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
+				print "<form id=\"".CSS_ID_FORM."\" method=\"post\" action=\"".QUESTION_FILE."\">\n";
 				
 
 				print "<div id=\"".CSS_ID_QUIZ_INTRO."\">\n";
@@ -213,6 +213,9 @@ if (isset($debug) && $debug)
 function printMenu ($quiz_object)
 {
 	
+	// getInstance of settings for later use within the function
+	$settings = Settings::getInstance();
+	
 	// Display menu
 	print "<div id=\"".CSS_ID_MENU."\">\n";
 	print "<span class=\"".CSS_ID_MENU_TITLE."\"></span>\n";
@@ -238,8 +241,18 @@ EOT;
 </div>
 
 EOT;
-}
 
+	// do we have a start_text
+	$start_text_file = $settings->getSetting ('start_text_file');
+	
+	if ($start_text_file != '')
+	{
+		print "<div id=\"".CSS_ID_INTRO_START."\">\n";
+		include ($start_text_file); 
+		print "</div>";
+	
+	}
+}
 
 
 ?>

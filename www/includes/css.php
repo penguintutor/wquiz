@@ -56,13 +56,16 @@ define ("CSS_ID_NAVIGATION", "wquiz-questionnavigation");				// div
 define ("CSS_ID_OFFLINE_NAVIGATION", "wquiz-offlinenavigation");		// div
 define ("CSS_ID_MENU", "wquiz-quizmenu");
 define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
+define ("CSS_ID_INTRO_START", "wquiz-introstart");						// Div used at first page to provide information about the quizzes (after the form)
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
 define ("CSS_ID_FORM", "wquiz-form");
-define ("CSS_ID_REVIEW", "wquiz-review-yes");							// div - review = yes
+define ("CSS_ID_REVIEW_Q", "wquiz-end-review-div");						// DIV for do you want to "Review answers" ID
+define ("CSS_ID_REVIEW", "wquiz-review-yes");							// div - review = yes (just button)
 define ("CSS_ID_RESULTS", "wquiz-results");								// div - detailed results
 define ("CSS_ID_RESULTS_END", "wquiz-results-end");						// div - end of detailed results
 define ("CSS_ID_RESULTS_BUTTON", "wquiz-results-button");				// div - detailed results button
-define ("CSS_ID_RESTART_BUTTON", "wquiz-restart-button");				// div - start again button
+define ("CSS_ID_RETURN_BUTTON", "wquiz-return-button");				// div - start again button / return to results
+define ("CSS_ID_ANSWER", "wquiz-answer");								// div - detailed results
 define ("CSS_ID_ANSWER_BUTTON", "wquiz-answer-button");					// div - answer part of answer.php
 define ("CSS_ID_SUMMARY", "wquiz-summary");								// ul for summary restults
 define ("CSS_ID_MARK", "wquiz-review-mark");							// div - review = answer
@@ -77,6 +80,7 @@ define ("CSS_ID_ADMIN_MAIN", "wquiz-admin-main");						// main division
 define ("CSS_CLASS_ADMIN_TABLE", "wquiz-admin-table");					// tables for question list / quiz list
 define ("CSS_CLASS_ADMIN_EDIT_MESSAGE", "wquiz-admin-edit-message");	// edit saved / created message
 
+// used in default settings / themes
 
 
 

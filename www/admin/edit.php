@@ -71,18 +71,42 @@ if ($status != 1)
 // If we reach here then login was successful
 $sessionUsername = $auth->getUser();
 
+// by default create new - otherwise changes to save
+$action = 'new';
 
 // header template
 $templates->includeTemplate('header', 'admin');
 
 
 /** Edit or Save ? **/
-// if post it's a save
+// if post it's a save (or perhaps a navigation - see $action below)
 if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 {
 	$questionid = $_POST['questionid'];
 	// if questionid is 0 then this is a create instead of an update
 	if ($debug) {print "\nSave on question $questionid\n";}
+	
+	if (isset($_POST['save']))
+	{
+		switch ($_POST['save'])
+		{
+		case 'Save': 
+			$action = 'save';
+			break;
+		case 'Save and next':
+			$action = 'save-next';
+			break;
+		case 'Next (without save)':
+			$action = 'next';
+			break;
+		}
+			
+	}
+	else // default save
+	{
+		$action = 'save';
+	}
+	
 	// we validate all details before storing them into an array (we then use this to save to DB)
 	$post_details = array();
 	// store quizzes seperately as those are not saved in the question table in the DB
@@ -104,6 +128,17 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 		}
 	}
 	if ($debug) {print "\n";}
+	
+	
+	
+	// If this is just a next no save
+	// this will redirect with a header - we do not continue after this point
+	if ($action == 'next')
+	{
+		getNextQuestion($questionid);
+		// exit not really neccessary - makes it obvious we are not continuing
+		exit (0);
+	}
 	
 
 	// Intro
@@ -333,6 +368,14 @@ elseif (isset($_GET['question']) && is_numeric($_GET['question']))
 }
 
 
+// if this is a save & next we go to the next page
+// this will redirect with a header - we do not continue after this point
+if ($action == 'save-next')
+{
+	getNextQuestion($questionid);
+	// exit not really neccessary - makes it obvious we are not continuing
+	exit (0);
+}
 
 // no questionid - error and back to index page
 // 0 is used for new rather than edit
@@ -492,7 +535,7 @@ if ($questionid >0) {$value = $question->getcreated();}
 else {$value = "0000-00-00";}
 print "<input type=\"hidden\" name=\"created\" value=\"$value\"><br />\n";
 
-print "<input type=\"submit\" value=\"Save\" />\n";
+print "<input name=\"save\" type=\"submit\" value=\"Save\" /> <input name=\"save\" type=\"submit\" value=\"Save and next\" /> <input name=\"save\" type=\"submit\" value=\"Next (without save)\" /> \n";
 
 print "</form>\n";
 
@@ -506,6 +549,28 @@ print "</form>\n";
 
 // footer template
 $templates->includeTemplate('footer', 'admin');
+
+
+
+// Redirect to the question after the current one
+// then exit
+function getNextQuestion ($question_id)
+{
+	global $qdb;
+	// load all questions
+	$all_questions = $qdb->getQuestionQuiz();
+	// search through array to find the current position - then identify the next
+	foreach ($all_questions as $this_question)
+	{
+		if ($this_question['questionid'] == $question_id)
+		{
+			// note that in a foreach loop we have already incremented the pointer - so current shows the next entry in the array
+			$next_question = current ($all_questions);
+			// redirect to the next question (note if we have gone past end it will have reinitalised to first entry - so effectively wrap around
+			header("Location: ".ADMIN_EDIT_FILE."?question=".$next_question['questionid']);
+		}
+	}
+}
 
 
 

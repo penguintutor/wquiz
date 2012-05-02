@@ -68,6 +68,13 @@ $setting_types = array
 		'buttons_navigation_labels',
 		'custom'
 	),
+	array
+	(
+		'start_text_file',
+		'text',
+		'Start text file',
+		'File to include (PHP or html)'
+	),
 	array 
 	(
 		'buttons_show_answer_button',

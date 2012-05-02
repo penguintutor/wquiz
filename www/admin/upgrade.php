@@ -20,13 +20,12 @@ You should have received a copy of the GNU General Public License
 along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-$debug = false;
+/*$debug = false;
 
 // Enable debugging
 error_reporting(E_ALL);
-ini_set('display_errors', true);
+ini_set('display_errors', true);*/
 
-//$debug = true;
 
 // adminsetup is within the admin directory - this will load the main setup.php as well 
 require_once ("adminsetup.php");
@@ -77,7 +76,6 @@ if (isset($_POST['oldfile']) && $_POST['oldfile']!="")
 		/* this means $dbname (perl variable) is shown as a string '$dbname' ****/
 		
 		// database (previous version only supported mysql so look for the DBI string)
-		if (preg_match ('/DBI/', $this_line)) {print "DBI string: $this_line\n";}
 		if (preg_match ('/\$dbname\s?\=\s?"DBI:mysql:([\w_-]+):([\.\w_-]+)";/', $this_line, $matches))
 		{
 			// old entries are not used for database access - but are required for validation check

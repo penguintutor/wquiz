@@ -90,11 +90,14 @@ class Templates
 			$template_dir_url = "../themes/";
 			$template_theme_dir = $this->settings->getSetting("theme_admin"). "/";
 		}
-		// special case - test entries are in the admin directory, but use the normal theme
-		elseif ($mode == 'test')
+		
+		// test entries have been moved to the main directory (instead of admin) so that they don't  
+		// break themes where rel directories are used within the theme
+		elseif ($mode == 'test') 
 		{
-			$template_dir_url = "../themes/";
-			$template_theme_dir = $this->settings->getSetting("theme_quiz"). "/";
+			$template_dir_url = "themes/";
+			$template_theme_dir = $this->settings->getSetting("theme_quiz")."/";
+			// set mode to normal so we load the standard headers
 			$mode = 'normal';
 		}
 		else 
@@ -116,7 +119,7 @@ class Templates
 		//%%QuizTitle%%
 		$template_variables['QuizTitle'] = $this->settings->getSetting("quiz_title");
 		
-		//%%QuesionNumber%%
+		//%%QuestionNumber%%
 		$template_variables['QuestionNumber'] = $this->settings->getSetting("question_number");
 		
 		//%%HeaderJavascript (created by addHeaderJavascript function)
@@ -143,7 +146,7 @@ class Templates
 					$this_string = preg_replace ("/%%$this_variable_key%%/i", $this_variable_value, $this_string);
 				}
 				// replaced relevant variables now check for permitted php includes
-				if (preg_match ('/(.*)<\?php include\([\'\"]([\'\"]*)[\'\"]\);\?>(.*)/', $this_string, $matches))
+				if (preg_match ('/(.*)<\?php\s+include\s*\(?[\'\"]([^\'\"]*)[\'\"]\)?\s*;\s*\?>(.*)/', $this_string, $matches))
 				{
 					// print before string - do the include - then print after string
 					// this is why only one per line (could add loop or recursive, but shouldn't need to have more than one include per line - especially as you can include an include etc.)
