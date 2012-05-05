@@ -133,8 +133,10 @@ $templates = new Templates();
 
 // quiz session to maintain session
 // just start session here
-$quiz_session = new QuizSession();
-
+if (!isset ($no_session) || $no_session != true)
+{
+  $quiz_session = new QuizSession();
+}
 
 // array of supported question types
 // key is used in database - value could be more useful reference

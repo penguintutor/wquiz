@@ -19,8 +19,8 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 // Enable debugging
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+/*error_reporting(E_ALL);
+ini_set('display_errors', true);*/
 
 
 /* Quickstart - displays menu then passes on to index.php
@@ -33,9 +33,26 @@ designed to be embedded within a page as a php include */
 //eg. if we get here from an expired session
 $message = '';
 
+$path = '';
+
+// prevent setup creating session (as it will fail when embedded)
+$no_session = true;
 require_once("includes/setup.php");
 // add this here as not required for some pages (which use Quiz.php instead)
 require_once ($include_dir."Quizzes.php");
+
+// parameter for path to quiz - ie. what we add before index.php
+if ($quizpath)
+{
+  // quick check to validate path is validate
+  if (preg_match('#^[\w-_%/]+$#', $quizpath))
+  {
+    $path = $quizpath;
+  }
+
+}
+
+
 
 if ($debug) {print "Loading Quizzes \n";}
 // get all the quizzes and add to object
@@ -48,12 +65,12 @@ foreach ($quiz_array as $this_quiz_array)
 }
 
 // No quizzes found - most likely not setup
-if ($all_quizzes->count() < 1) {header("Location: ".FIRST_FILE); exit(0);}
+if ($all_quizzes->count() < 1) {header("Location: ".$path.FIRST_FILE); exit(0);}
 
 
 if ($debug) {print "Reading parameters \n";}
 
-printMenu($all_quizzes);
+printMenu($path, $all_quizzes);
 
 
 // Debug mode - display any errors / warnings
@@ -73,7 +90,7 @@ if (isset($debug) && $debug)
 /*** Functions ***/
 
 // show here as we will do when we get a warning as well
-function printMenu ($quiz_object)
+function printMenu ($path, $quiz_object)
 {
 	global $IndexFile;
 	
@@ -82,8 +99,8 @@ function printMenu ($quiz_object)
 	
 	// Display menu
 	print "<div id=\"".CSS_ID_MENU."\">\n";
-	print "<span class=\"".CSS_ID_MENU_TITLE."\"></span>\n";
-	print ("<form method=\"post\" action=\"".$index_file."\" target=\"_top\">");
+	print "<span class=\"".CSS_ID_MENU_TITLE."\">Start quiz</span>\n";
+	print ("<form method=\"post\" action=\"".$path.$index_file."\" target=\"_top\">");
 
 	print <<<EOT
 <fieldset>
