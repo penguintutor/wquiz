@@ -170,10 +170,24 @@ if (array_key_exists('quizname', $_POST))
 				print "<div id=\"".CSS_ID_BUTTONS."\">";
 				print "<input type=\"submit\" value=\"Start\" name=\"start\" />\n";
 				print "</div><!-- ".CSS_ID_BUTTONS." -->\n";
-				
-				
+								
 				print "</form>\n";
+				
+				
+				// do we have a start_text
+				$start_text_file = $settings->getSetting ('start_text_file');
+				
+				if ($start_text_file != '')
+				{
+					print "<div id=\"".CSS_ID_INTRO_START."\">\n";
+					include ($start_text_file); 
+					print "</div>";
+				
+				}
+				
+				
 			}
+			
 		}
 		
 	}
@@ -182,9 +196,9 @@ if (array_key_exists('quizname', $_POST))
 else 
 {
 
+	$templates->includeTemplate('header', 'normal');
 	// show message if there is one
 	if ($message != '') {print "<p class=\"".CSS_CLASS_MESSAGE."\">$message</p>\n";}
-	$templates->includeTemplate('header', 'normal');
 	printMenu($all_quizzes);
 
 }
@@ -218,7 +232,7 @@ function printMenu ($quiz_object)
 	
 	// Display menu
 	print "<div id=\"".CSS_ID_MENU."\">\n";
-	print "<span class=\"".CSS_ID_MENU_TITLE."\"></span>\n";
+	print "<span class=\"".CSS_CLASS_MENU_TITLE."\"></span>\n";
 	print ("<form method=\"post\" action=\"".INDEX_FILE."\" target=\"_top\">");
 
 	$css_for_id = CSS_ID_OPTION_QUIZ;
@@ -243,12 +257,12 @@ EOT;
 EOT;
 
 	// do we have a start_text
-	$start_text_file = $settings->getSetting ('start_text_file');
+	$index_text_file = $settings->getSetting ('index_text_file');
 	
-	if ($start_text_file != '')
+	if ($index_text_file != '')
 	{
 		print "<div id=\"".CSS_ID_INTRO_START."\">\n";
-		include ($start_text_file); 
+		include ($index_text_file); 
 		print "</div>";
 	
 	}
