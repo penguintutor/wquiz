@@ -19,10 +19,10 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 // Enable debugging
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+//error_reporting(E_ALL);
+//ini_set('display_errors', true);
 
-//$debug = true;
+//$debug = false;
 
 // adminsetup is within the admin directory - this will load the main setup.php as well 
 require_once ("adminsetup.php");
@@ -41,6 +41,7 @@ require_once ($include_dir."Quizzes.php");
 $admin_menu = 'home';
 
 /*** Authentication ***/
+if (isset($debug) && $debug) {print "\nAuthentication\n";}
 // user must be logged in for any admin functions
 // this needs to be before we output anything as it uses sessions (cookies)
 $auth = new SimpleAuth ($settings->getSetting('admin_login_username'), $settings->getSetting('admin_login_password'), $settings->getSetting('admin_login_expirytime'));

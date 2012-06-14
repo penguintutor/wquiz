@@ -70,6 +70,13 @@ $setting_types = array
 	),
 	array
 	(
+		'index_text_file',
+		'text',
+		'Index text file',
+		'File to include (PHP or html)'
+	),
+	array
+	(
 		'start_text_file',
 		'text',
 		'Start text file',

@@ -98,8 +98,8 @@ function printMenu ($path, $quiz_object)
 	else {$index_file = INDEX_FILE;}
 	
 	// Display menu
-	print "<div id=\"".CSS_ID_MENU."\">\n";
-	print "<span class=\"".CSS_ID_MENU_TITLE."\">Start quiz</span>\n";
+	print "<div id=\"".CSS_ID_QS_MENU."\">\n";
+	print "<span class=\"".CSS_CLASS_QS_MENU_TITLE."\">Start quiz</span>\n";
 	print ("<form method=\"post\" action=\"".$path.$index_file."\" target=\"_top\">");
 
 	print <<<EOT

@@ -1,14 +1,11 @@
 ****** Development *******
 
-*** Important things that must be completed before next release ***
-
-The following are important issues that must be handled correctly before a public
-release (beta or higher) is made or before this is used on a production system.
-
-Add documentation (eg. readme files)
-
 
 *** Future features ***
+Change session to be UK / Europe cookie compliant
+
+Add filter / search function to admin
+
 Additional checking using Javascript (eg. admin save)
 Improve install script
 	Add security feature to move second config file into a safe directory

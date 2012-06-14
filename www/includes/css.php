@@ -55,7 +55,7 @@ define ("CSS_CLASS_LINK_START", "wquiz-link-start");					// link back to start (
 define ("CSS_ID_NAVIGATION", "wquiz-questionnavigation");				// div
 define ("CSS_ID_OFFLINE_NAVIGATION", "wquiz-offlinenavigation");		// div
 define ("CSS_ID_MENU", "wquiz-quizmenu");
-define ("CSS_ID_MENU_TITLE", "wquiz-quizmenutitle");
+define ("CSS_CLASS_MENU_TITLE", "wquiz-quizmenutitle");
 define ("CSS_ID_INTRO_START", "wquiz-introstart");						// Div used at first page to provide information about the quizzes (after the form)
 define ("CSS_ID_OPTION_QUIZ", "wquiz-quizoption");
 define ("CSS_ID_FORM", "wquiz-form");
@@ -80,7 +80,10 @@ define ("CSS_ID_ADMIN_MAIN", "wquiz-admin-main");						// main division
 define ("CSS_CLASS_ADMIN_TABLE", "wquiz-admin-table");					// tables for question list / quiz list
 define ("CSS_CLASS_ADMIN_EDIT_MESSAGE", "wquiz-admin-edit-message");	// edit saved / created message
 
-// used in default settings / themes
+
+// Quick start
+define ("CSS_ID_QS_MENU", "wquiz-quickstart-quizmenu");
+define ("CSS_CLASS_QS_MENU_TITLE", "wquiz-quickstart-quizmenutitle");
 
 
 
