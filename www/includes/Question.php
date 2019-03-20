@@ -424,18 +424,18 @@ class Question
     	}
     	elseif ($this->type == 'text')
     	{
-    		// note that ¬ is used instead of / / in the search - otherwise problems with paths in the question (eg. linux quiz)
+    		// note that ï¿½ is used instead of / / in the search - otherwise problems with paths in the question (eg. linux quiz)
     		//$answer_test = stripslashes($this->answer); 
     		//$answer_test = addslashes($this->answer);
     		$answer_test = $this->answer;
-    		if (isset($debug) && $debug == true) {print "Test: ".'¬^'.$answer_test.'$¬i'."<br />\n"; print "Answer $answer<br />\n";}
-    		if (preg_match('¬^'.$answer_test.'$¬i', $answer)) {return true;}
+    		if (isset($debug) && $debug == true) {print "Test: ".'/^'.$answer_test.'$/i'."<br />\n"; print "Answer $answer<br />\n";}
+    		if (preg_match('/^'.$answer_test.'$/i', $answer)) {return true;}
     		else {return false;}
     	}
     	// as text, but without ignore case
     	elseif ($this->type == 'TEXT')
     	{
-    		if (preg_match('¬^'.$this->answer.'$¬', $answer)) {return true;}
+    		if (preg_match('/^'.$this->answer.'$/', $answer)) {return true;}
     		else {return false;}
     	}
     	// invalid type

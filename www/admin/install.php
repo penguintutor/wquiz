@@ -149,15 +149,21 @@ else
 	// if we have clicked no on continue then we reissue the form
 	if (isset($_POST['confirmdbtype']) && $_POST['confirmdbtype'] != 'yes')
 	{
-			displayInitialForm ("Please select a different database type (mysql recommended)");
+			displayInitialForm ("Please select a different database type (mysqli recommended)");
 			exit(0);	
 	}
 	
-	// perform confirm check if not mysql
+	// perform confirm check if not mysqli
 	if (!preg_match ("/^[\w-_]+$/", $_POST['dbtype']))
 	{
 			displayInitialForm ("dbtype contains illegal charactors");
 			exit(0);
+	}
+	// mysql should now be mysqli
+	elseif ($_POST['dbtype'] == 'mysql' && (!isset($_POST['confirmdbtype']) || $_POST['confirmdbtype'] != 'yes') )
+	{
+		displayConfirm ("DB type mysql is for PHP 5 or earlier. For recent versions of PHP please enter mysqli instead. Do you wish to continue?", 'dbtype', $_POST);
+		exit (0);
 	}
 	// known but unsupported 
 	elseif ($_POST['dbtype'] == 'mssql' && (!isset($_POST['confirmdbtype']) || $_POST['confirmdbtype'] != 'yes') )
@@ -166,7 +172,7 @@ else
 		exit (0);
 	}
 	// unknown 
-	elseif ($_POST['dbtype'] != 'mysql' && (!isset($_POST['confirmdbtype']) || $_POST['confirmdbtype'] != 'yes') )
+	elseif ($_POST['dbtype'] != 'mysqli' && (!isset($_POST['confirmdbtype']) || $_POST['confirmdbtype'] != 'yes') )
 	{
 		displayConfirm ("DB type is not supported this will need manual configuration - do you wish to continue?", 'dbtype', $_POST);
 		exit (0);
@@ -329,8 +335,8 @@ if ($db->getStatus() == 1)
 // Connected to db server, but not to specific database (eg. database does not exist)
 elseif ($db->getStatus() == -2)
 {
-	// We can only create db if we are on mysql (in this version)
-	if ($dbsettings['dbtype'] == 'mysql') 
+	// We can only create db if we are on mysql / mysqli (in this version)
+	if ($dbsettings['dbtype'] == 'mysql' || $dbsettings['dbtype'] == 'mysqli') 
 	{
 		// Try creating database
 		if (!$db->createDb($dbsettings['database'])) 
@@ -362,7 +368,7 @@ elseif ($db->getStatus() == -2)
 	else
 	{
 		$error_msg = $db->getError();
-		displayDbError ("Unable to connect to the database ".$error_msg."\n<br />If not using mysql then you will need to create the database manually. Please read the install documenation for more details\n");
+		displayDbError ("Unable to connect to the database ".$error_msg."\n<br />If not using mysqli then you will need to create the database manually. Please read the install documenation for more details\n");
 	}
 	
 }
@@ -695,7 +701,7 @@ Provide the information required to administer the database. This must have admi
 </p>
 <p>
 Short title (spaces / special characters ignored) <input type="text" name="quizname" /><br />
-Database type (recommend mysql) <input type="text" name="dbtype" value="mysql" /><br />
+Database type (recommend mysqli) <input type="text" name="dbtype" value="mysqli" /><br />
 Database hostname (or ipaddress) <input type="text" name="hostname" value="" /><br />
 Database username (admin access required) <input type="text" name="username" value="" /><br />
 Database password <input type="password" name="password" value="" /><br />

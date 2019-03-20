@@ -18,11 +18,13 @@ You should have received a copy of the GNU General Public License
 along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-// Enable debugging
-//error_reporting(E_ALL);
-//ini_set('display_errors', true);
 
-//$debug = false;
+// Enable debugging
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+//$debug = true;
+
+$debug = false;
 
 // adminsetup is within the admin directory - this will load the main setup.php as well 
 require_once ("adminsetup.php");

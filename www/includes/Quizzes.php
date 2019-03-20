@@ -32,27 +32,31 @@ class Quizzes
 	// These are all named the same as the table fields
 	// defined as static as when we export the object we need
 	// to be able to use it outside of this class without risk of garbage collection
-	private static $quiz_objects;
+	private static $quiz_objects = [];
     
 
 	// empty constructor - we add objects afterwards
     public function __construct () 
     {
 
-
     }
     
     
     public function count ()
     {
-    	if (empty($this->quiz_objects)) {return 0;}
-    	return (count($this->quiz_objects));	
+    	//if (empty($this->quiz_objects)) {return 0;}
+    	//return (count($this->quiz_objects));
+    	if (empty(self::$quiz_objects)) {return 0;}
+    	return (count(self::$quiz_objects));
     }
     
 
     public function addQuiz ($quiz) 
     {
-    	$this->quiz_objects[] = $quiz;
+    	//$this->quiz_objects[] = $quiz;
+    	//$quiz_objects[] = $quiz;
+    	//Quizzes::quiz_objects[] = $quiz;
+    	self::$quiz_objects[] = $quiz;
     }
     
     // use to order objects - if required (eg menu)
@@ -60,7 +64,8 @@ class Quizzes
     {
     	// if no quizzes return
     	if ($this->count() == 0) {return;}
-    	usort ($this->quiz_objects, array("Quiz", "cmpObj"));
+    	//usort ($this->quiz_objects, array("Quiz", "cmpObj"));
+    	usort (self::$quiz_objects, array("Quiz", "cmpObj"));
     	//usort ($this->quiz_objects, "cmpObj");
     }
     
@@ -68,7 +73,8 @@ class Quizzes
 	public function getQuiz ($quizname)
 	{
     	// run through all questions and look for quizname matching
-    	foreach ($this->quiz_objects as $this_object)
+    	//foreach ($this->quiz_objects as $this_object)
+    	foreach (self::$quiz_objects as $this_object)
     	{
     		if ($this_object->getQuizname() == $quizname) {return $this_object;}
     	}
@@ -85,7 +91,8 @@ class Quizzes
 		// sort first
 		$this->_sort();
 		
-		foreach ($this->quiz_objects as $this_object)
+		//foreach ($this->quiz_objects as $this_object)
+		foreach (self::$quiz_objects as $this_object)
     	{
     		$return_array[$this_object->getQuizname()] = $this_object->getTitle();
     	}
@@ -97,9 +104,10 @@ class Quizzes
     public function validateQuizname ($quizname)
     {
     	// if no quizzes defined then return false
-    	if (empty ($this->quiz_objects)) {return false;}
+    	//if (empty ($this->quiz_objects)) {return false;}
     	// run through all quizzes and look for quizname matching
-    	foreach ($this->quiz_objects as $this_object)
+    	//foreach ($this->quiz_objects as $this_object)
+    	foreach (self::$quiz_objects as $this_object)
     	{
     		if ($this_object->getQuizname() == $quizname) {return true;}
     	}
@@ -116,9 +124,11 @@ class Quizzes
 		// sort first
 		$this->_sort();
 		// includes formatting of table input fields - but no other html
-		foreach ($this->quiz_objects as $this_object)
+		//foreach ($this->quiz_objects as $this_object)
+		foreach (self::$quiz_objects as $this_object)
 		{
 			if (!$this_object->isEnabled($use)) {continue;}
+			//$return_string.="\t<option value=\"".$this_object->getQuizname()."\">".$this_object->getTitle()."</option>\n";
 			$return_string.="\t<option value=\"".$this_object->getQuizname()."\">".$this_object->getTitle()."</option>\n";
 		}
 		$return_string .= "</select>\n";

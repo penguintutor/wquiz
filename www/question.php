@@ -22,6 +22,8 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
+//$debug = true;
+
 $debug = false;
 
 // Note that most of the error checking from form results just makes us switch to display
@@ -30,7 +32,7 @@ $debug = false;
 
 
 require_once("includes/setup.php");
-require_once("includes/QuestionNavigation.php");	// used later for navigation buttons
+require_once("includes/QuestionNavigation.php");	// used later for navigation buttons                                                                               
 
 // action is a string based on button pressed - determines how we handle the post
 // default action is to show question
