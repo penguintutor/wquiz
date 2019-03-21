@@ -320,7 +320,7 @@ class QuizDB
     	{
     		$fields .= $comma.$this_element;
     		// if value is not set then we set to a default
-    		if (isset ($post_details[$this_element])) {$values .= $comma."\"".mysql_real_escape_string($post_details[$this_element])."\"";}
+    		if (isset ($post_details[$this_element])) {$values .= $comma."\"".$this->db_object->escapeString($post_details[$this_element])."\"";}
     		else {$values .= $comma."\"\"";}
     		$comma = ',';
     	}
@@ -353,7 +353,7 @@ class QuizDB
     	{
     		// if section not set then we ignore (not same as ='' which we will update with)
     		if (!isset($post_details[$this_element])) {continue;}
-    		$fields .= $comma.$this_element."=\"".mysql_real_escape_string($post_details[$this_element])."\"";
+    		$fields .= $comma.$this_element."=\"".$this->db_object->escapeString($post_details[$this_element])."\"";
     		$comma = ',';
     	}
     	
@@ -414,7 +414,7 @@ class QuizDB
     	{
     		$fields .= $comma.$this_element;
     		// if value is not set then we set to a default
-    		if (isset ($post_details[$this_element])) {$values .= $comma."\"".mysql_real_escape_string($post_details[$this_element])."\"";}
+    		if (isset ($post_details[$this_element])) {$values .= $comma."\"".$this->db_object->escapeString($post_details[$this_element])."\"";}
     		else {$values .= $comma."\"\"";}
     		$comma = ',';
     	}
@@ -452,7 +452,7 @@ class QuizDB
     	{
     		// if section not set then we ignore (not same as ='' which we will update with)
     		if (!isset($post_details[$this_element])) {continue;}
-    		$fields .= $comma.$this_element."=\"".mysql_real_escape_string($post_details[$this_element])."\"";
+    		$fields .= $comma.$this_element."=\"".$this->db_object->escapeString($post_details[$this_element])."\"";
     		$comma = ',';
     	}
     	

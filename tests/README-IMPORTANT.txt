@@ -7,7 +7,7 @@ The scripts in this folder MUST NOT be installed on any production system.
 Doing so would risk the integrity of any production data as well as well as 
 providing a potential security vulnerability.
 
-This is included in the Subversion development code.
+This is included in the development code.
 
 This folder must not be included in any release packages. If this has been inadvertaintly
 left into a shipped package please delete the tests folder and contact the relevant person

@@ -237,6 +237,11 @@ class Database
     }
     
     
+    public function escapeString ($input_string)
+    {
+        return $this->db_conn->real_escape_string($input_string);
+    }
+    
     
 }
 ?>

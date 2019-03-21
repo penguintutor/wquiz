@@ -227,6 +227,10 @@ class Database
     	return $this->db_error;
     }
     
+    public function escapeString ($input_string)
+    {
+        return mysql_real_escape_string($input_string);
+    }
     
     
 }
