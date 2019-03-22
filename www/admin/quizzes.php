@@ -73,7 +73,7 @@ require_once ($include_dir."adminmenu.php");
 
 print "<div id=\"".CSS_ID_ADMIN_MAIN."\">\n";
 
-print "<h1>Questions</h1>";
+print "<h1>Quizzes</h1>";
 // question = 0 used for create new
 print "<form method=\"get\" action=\"".ADMIN_EDIT_QUIZ_FILE."\">\n";
 print "<input type=\"hidden\" name=\"action\" value=\"new\" />\n";

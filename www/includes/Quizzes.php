@@ -32,7 +32,7 @@ class Quizzes
 	// These are all named the same as the table fields
 	// defined as static as when we export the object we need
 	// to be able to use it outside of this class without risk of garbage collection
-	private static $quiz_objects = [];
+	private static $quiz_objects;
     
 
 	// empty constructor - we add objects afterwards
