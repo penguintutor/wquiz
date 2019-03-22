@@ -5,7 +5,7 @@ A web based quiz engine written in PHP. It allows you to run your own quiz insta
 
 It is currently used on [First Aid Quiz](http://www.firstaidquiz.com) and the [PenguinTutor LPI Certification practice exams](http://www.penguintutor.com).
 
-![Screenshot First Aid Quiz](docs/wquiz-sshot-01.png]
+![Screenshot First Aid Quiz](docs/wquiz-sshot-01.png)
 
 See docs folder for install and configuration instructions.
 
