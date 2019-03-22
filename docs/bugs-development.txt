@@ -2,8 +2,6 @@
 
 
 *** Future features ***
-Change session to be UK / Europe cookie compliant
-
 Add filter / search function to admin
 
 Additional checking using Javascript (eg. admin save)
@@ -45,7 +43,7 @@ See upgrade instructions
 
 
 
-*** Changes since version 0.3.? ***
+*** Changes in version 0.4 ***
 
 templates completely changed - PHP
 	All templates need to be recreated
@@ -57,6 +55,10 @@ quizzes ordering will be lost with upgrade
 Change to menu navigation - now post based, no longer requires "answer" button
 Online / Offline quizzes can now be enabled on a per quiz basis - and have different number of questions
 
+
+*** Changes in version 0.5 ***
+
+Updated to allow use of mysqli to support recent versions of PHP 
 
 
 

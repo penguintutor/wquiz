@@ -2,9 +2,7 @@ concepts
 ---------
 
 Emphasis is on this being in PHP / Ajax
-Whilst it would be possible to push more to client side (Javascript handle questions etc)
-this keeps consistancy at the moment. 
-Perhaps more can be pushed client-side in future
+Whilst it would be possible to push more to client side (Javascript handle questions etc) this keeps consistancy. 
 
 
 Main pages 
@@ -122,9 +120,6 @@ Checks performed as follows (note checks are performed prior to asking user conf
 *** First run file
 This is in a separate file as we now use standard authentication
 
-	
-
-
 
 
 Special case - default next button
@@ -145,57 +140,12 @@ Alternative is to set this as true, but hide the div yourself
 
 This method still works without javascript and for screenreaders (who just see the answer button before the navigation buttons)
 
-############ temp scratch area ############
-
-
-form input[type=submit] {
-	background : url("submit.png") no-repeat center center;
-	width : 115px;
-	height :52px;
-	border : none;
-	color : transparent;
-	font-size : 0
-}
-
-
-/*** Hiding buttons using css ***/
-#replacement-1 {
-  width: 100px;
-  height: 55px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent url(SearchGoogle.gif) no-repeat center top;
-  text-indent: -1000em;
-  cursor: pointer; /* hand-shaped cursor */
-  cursor: hand; /* for IE 5.x */
-}
-
-
-or 
-form input[type=submit] {
-	background : url("submit.png") no-repeat center center;
-	width : 115px;
-	height :52px;
-	border : none;
-	color : transparent;
-	font-size : 0
-}
-
-It's easy to change the image on the hover state:
-
-form input[type=submit]:hover {
-	background : url("submit-hover.png") no-repeat center center;
-}
-
 
 Added a new database field
 --------------------------
 audio 
 This is for future use (perhaps html5 only version) to allow a audio file to be placed in addition / instead of text. Entry should be a url (same as the way image is used)
 There is currently no way of editing this field and it is ignored by the current version
-
-
 
 <form action="http://www.google.com/search" method="get">
   <input name="q" size="45" type="Text">
@@ -209,26 +159,3 @@ See:
 http://www.ampsoft.net/webdesign-l/image-button.html
 
 
-
-/**** Locking the table ****/
-// previously used for offline quiz
-
-# Can we do this using PHP Sessions instead?
-
-// note this is perl - need to change to PHP
-$dbh->do("lock tables $dbsettingstable write");
-$dbh->do("unlock tables");
-
-Note just lock whilst we update the count - then unlock. Once we've updated
-the count we have blocked others from starting a housekeeping
-
-
-// Not needed?
-/*	$url = $settings->getSetting('site_url_path');
-	if ($url == '')
-	{
-		$url = $_SERVER['REQUEST_URI'];
-		// strip out this page part (ie. everything from last /)
-		$url = substring (0, strrchr ($url, '/')+1);
-	}
-	$url .= 'review.php';*/
