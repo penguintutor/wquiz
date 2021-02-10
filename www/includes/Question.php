@@ -365,7 +365,10 @@ class Question
     private function createFormText ($answer)
     {
     	$form_string = "<input type=\"hidden\" name=\"type\" value=\"text\">\n";
-    	$labels = explode (',', $this->input);
+    	// Input has labels for pre, prefilled and post answer text
+    	// If no value then set pre, prefill, post to blank strings
+    	if (empty($this->input)) {$labels=array("","","");} 
+    	else {$labels = explode (',', $this->input);}
     	// use autocomplete option instead of random string used in earlier version
     	// this is html 5 only (but works in earlier versions even though incorrect)
     	// pre-text
