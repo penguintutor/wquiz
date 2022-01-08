@@ -1,7 +1,7 @@
 <?php
 
 /** Copyright Information (GPL 3)
-Copyright Stewart Watkiss 2012
+Copyright Stewart Watkiss
 
 This file is part of wQuiz.
 
@@ -143,8 +143,7 @@ if ($action != 'display')
 		if ($question_from->validateAnswer($_POST['answer']))
 		{
 			$answer = $_POST['answer']; 
-			// remove magic quotes if applied
-			if (get_magic_quotes_gpc()) { $answer = stripslashes($answer); }
+
 		}
 		else
 		{

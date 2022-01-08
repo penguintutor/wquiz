@@ -1,6 +1,6 @@
 <?php
 /** Copyright Information (GPL 3)
-Copyright Stewart Watkiss 2012
+Copyright Stewart Watkiss
 
 This file is part of wQuiz.
 
@@ -45,7 +45,7 @@ require_once ($include_dir."Quizzes.php");
 if ($quizpath)
 {
   // quick check to validate path is validate
-  if (preg_match('#^[\w-_%/]+$#', $quizpath))
+  if (preg_match('#^[\w/-_]+$#', $quizpath))
   {
     $path = $quizpath;
   }
