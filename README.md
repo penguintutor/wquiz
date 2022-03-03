@@ -11,5 +11,7 @@ See docs folder for install and configuration instructions.
 
 The project home page is on [PenguinTutor wQuiz project page](http://www.penguintutor.com/wquiz.php)
 
+Current version is tested for PHP 7.4
+
 @Copyright Stewart Watkiss
 Licensed under GPL 3

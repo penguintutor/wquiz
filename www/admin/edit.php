@@ -26,7 +26,7 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-// must add this before we require the menu 
+// must add this before we require the menu
 $admin_menu = 'edit';
 //$debug = true;
 
@@ -35,7 +35,7 @@ $admin_menu = 'edit';
 $message = '';
 $questionid = -1;
 
-// adminsetup is within the admin directory - this will load the main setup.php as well 
+// adminsetup is within the admin directory - this will load the main setup.php as well
 require_once ("adminsetup.php");
 // Authentication class required for admin functions
 require_once($include_dir."SimpleAuth.php");
@@ -61,7 +61,7 @@ $quiz_array = $all_quizzes->getQuizNameArray();
 $auth = new SimpleAuth ($settings->getSetting('admin_login_username'), $settings->getSetting('admin_login_password'), $settings->getSetting('admin_login_expirytime'));
 // if not logged in redirect to login page
 $status = $auth->checkLogin();
-if ($status != 1) 
+if ($status != 1)
 	{
 	// no from as use default which goes back to this page
 	header("Location: ".ADMIN_LOGIN_FILE."?status=$status");
@@ -85,12 +85,12 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 	$questionid = $_POST['questionid'];
 	// if questionid is 0 then this is a create instead of an update
 	if ($debug) {print "\nSave on question $questionid\n";}
-	
+
 	if (isset($_POST['save']))
 	{
 		switch ($_POST['save'])
 		{
-		case 'Save': 
+		case 'Save':
 			$action = 'save';
 			break;
 		case 'Save and next':
@@ -100,24 +100,24 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 			$action = 'next';
 			break;
 		}
-			
+
 	}
 	else // default save
 	{
 		$action = 'save';
 	}
-	
+
 	// we validate all details before storing them into an array (we then use this to save to DB)
 	$post_details = array();
 	// store quizzes seperately as those are not saved in the question table in the DB
 	$post_quizzes = array();
-	
+
 	// Quizzes
 	// we need to check all possible quizzes
 	if ($debug) {print "Quizzes: ";}
 	for ($i =0; $i < $all_quizzes->count(); $i++)
 	{
-		if (isset ($_POST["quiz_".$i])) 
+		if (isset ($_POST["quiz_".$i]))
 		{
 			// only add if is a valid quiz - if invalid we just ignore
 			if ($all_quizzes->validateQuizname($_POST["quiz_".$i]))
@@ -128,9 +128,9 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 		}
 	}
 	if ($debug) {print "\n";}
-	
-	
-	
+
+
+
 	// If this is just a next no save
 	// this will redirect with a header - we do not continue after this point
 	if ($action == 'next')
@@ -139,34 +139,30 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 		// exit not really neccessary - makes it obvious we are not continuing
 		exit (0);
 	}
-	
+
 
 	// Intro
-	if (isset ($_POST['intro'])) 
+	if (isset ($_POST['intro']))
 	{
 		// Do not apply strict security validation as this can only be added by an administrator
 		// This means that they could inject javascript etc, the same as if you allowed them to edit
 		// a html template etc.
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['intro'] = stripslashes($_POST['intro']); }
-		else {$post_details['intro'] = $_POST['intro'];}
+		$post_details['intro'] = $_POST['intro'];
 		if ($debug) {print "Intro: ".$post_details['intro']."\n";}
 	}
-	
-	
+
+
 	// Input
-	if (isset ($_POST['input'])) 
+	if (isset ($_POST['input']))
 	{
 		// Do not apply strict security validation as this can only be added by an administrator
 		// This means that they could inject javascript etc, the same as if you allowed them to edit
 		// a html template etc.
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['input'] = stripslashes($_POST['input']); }
-		else {$post_details['input'] = $_POST['input'];}
+		$post_details['input'] = $_POST['input'];
 		if ($debug) {print "Input: ".$post_details['input']."\n";}
 	}
-	
-	
+
+
 	// Type
 	if (isset ($_POST['type']))
 	{
@@ -184,105 +180,89 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 		}
 		if ($debug) {print "Type: ".$post_details['type']."\n";}
 	}
-	
-	
+
+
 	// Answer
-	if (isset ($_POST['answer'])) 
+	if (isset ($_POST['answer']))
 	{
 		// As per Intro only minimal security checks
 		//- perhaps in future add additional checking to ensure we don't have an invalid answer for the type
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['answer'] = stripslashes($_POST['answer']); }
-		else {$post_details['answer'] = $_POST['answer'];}
+		$post_details['answer'] = $_POST['answer'];
 	}
 	else {$post_details['answer'] == '';}
 	if ($debug) {print "Answer: ".$post_details['answer']."\n";}
-	
-	
+
+
 	// Reason
-	if (isset ($_POST['reason'])) 
+	if (isset ($_POST['reason']))
 	{
 		// As per Intro only minimal security checks - this is a block of text
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['reason'] = stripslashes($_POST['reason']); }
-		else {$post_details['reason'] = $_POST['reason'];}
+		$post_details['reason'] = $_POST['reason'];
 	}
 	else {$post_details['reason'] == '';}
 	if ($debug) {print "Reason: ".$post_details['reason']."\n";}
 
-	
+
 	// Reference
-	if (isset ($_POST['reference'])) 
+	if (isset ($_POST['reference']))
 	{
 		// As per Intro only minimal security checks
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['reference'] = stripslashes($_POST['reference']); }
-		else {$post_details['reference'] = $_POST['reference'];}
-	}	
+		$post_details['reference'] = $_POST['reference'];
+	}
 	else {$post_details['reference'] == '';}
 	if ($debug) {print "Reference: ".$post_details['reference']."\n";}
-	
-	
+
+
 	// Hint
-	if (isset ($_POST['hint'])) 
+	if (isset ($_POST['hint']))
 	{
 		// As per Intro only minimal security checks
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['hint'] = stripslashes($_POST['hint']); }
-		else {$post_details['hint'] = $_POST['hint'];}
+		$post_details['hint'] = $_POST['hint'];
 	}
 	else {$post_details['hint'] == '';}
 	if ($debug) {print "Hint: ".$post_details['hint']."\n";}
-	
+
 	// Image
-	if (isset ($_POST['image'])) 
+	if (isset ($_POST['image']))
 	{
 		// As per Intro only minimal security checks
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['image'] = stripslashes($_POST['image']); }
-		else {$post_details['image'] = $_POST['image'];}
-	}	
+		$post_details['image'] = $_POST['image'];
+	}
 	else {$post_details['image'] == '';}
 	if ($debug) {print "Image: ".$post_details['image']."\n";}
-	
+
 
 	// Comment
-	if (isset ($_POST['comments'])) 
+	if (isset ($_POST['comments']))
 	{
 		// As per Intro only minimal security checks
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['comments'] = stripslashes($_POST['comments']); }
-		else {$post_details['comments'] = $_POST['comments'];}
-	}	
+		$post_details['comments'] = $_POST['comments'];
+	}
 	else {$post_details['comments'] == '';}
 	if ($debug) {print "Comment: ".$post_details['comments']."\n";}
 
 
 	// Contributer
-	if (isset ($_POST['qfrom'])) 
+	if (isset ($_POST['qfrom']))
 	{
 		// As per Intro only minimal security checks
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['qfrom'] = stripslashes($_POST['qfrom']); }
-		else {$post_details['qfrom'] = $_POST['qfrom'];}
-	}	
+		$post_details['qfrom'] = $_POST['qfrom'];
+	}
 	else {$post_details['qfrom'] == '';}
 	if ($debug) {print "Contributer: ".$post_details['qfrom']."\n";}
 
 
 	// Email
-	if (isset ($_POST['email'])) 
+	if (isset ($_POST['email']))
 	{
 		// As per Intro only minimal security checks
 		//- may want to check for valid email format in future (or perhaps do that in Javascript)
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['email'] = stripslashes($_POST['email']); }
-		else {$post_details['email'] = $_POST['email'];}
-	}	
-	else {$post_details['email'] == '';}	
+		$post_details['email'] = $_POST['email'];
+	}
+	else {$post_details['email'] == '';}
 	if ($debug) {print "Email: ".$post_details['email']."\n";}
-	
-	
+
+
 	// Created
 	// if it's a new question then created is today
 	if ($questionid == 0)
@@ -309,16 +289,16 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 	// set updated to current date
 	$post_details['reviewed'] = date('c');
 
-	
+
 	// *** read through all parameters now perform save / update
-	
-	// then set $questionid so that we go back to editing this entry 
-	if ($questionid == 0) 
+
+	// then set $questionid so that we go back to editing this entry
+	if ($questionid == 0)
 	{
 		$questionid = $qdb->addQuestion($post_details);
 		$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">New question saved</p>";
 	}
-	else 
+	else
 	{
 		// we save even if no changes - more work for sql, but less checking within PHP
 		// add questionid to array
@@ -326,24 +306,24 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 		$qdb->updateQuestion($post_details);
 		$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">Changes saved</p>";
 	}
-	
-	
-	
+
+
+
 	if ($debug) {print "\nSave completed - questionid is $questionid\n";}
-	
+
 	if ($debug) {print "\nUpdating relationship entries for question / quiz\n";}
-	
+
 	// update the associated quiz rel entries
-	// load question - this is a temp. We won't use this later, but instead reload with the updated rel entries 
+	// load question - this is a temp. We won't use this later, but instead reload with the updated rel entries
 	$question_temp = new Question($qdb->getQuestion($questionid));
 	// now check that we have loaded question correctly - check that the db read was valid
-	if ($questionid != $question_temp->getQuestionID()) 
+	if ($questionid != $question_temp->getQuestionID())
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(ERROR_INTERNAL, "Error reading back loaded file");
 		exit (0);
 	}
-	
+
 	// it's the shortname that we are using call - $this_quiz
 	foreach ($quiz_array as $this_quiz=>$long_quizname)
 	{
@@ -361,10 +341,10 @@ if (isset($_POST['questionid']) && is_numeric($_POST['questionid']))
 
 }
 // note get is deliberately different to post (question instead of questionid)
-// check it's a number - note is_int doesn't work 
+// check it's a number - note is_int doesn't work
 elseif (isset($_GET['question']) && is_numeric($_GET['question']))
 {
-	$questionid = $_GET['question']; 
+	$questionid = $_GET['question'];
 }
 
 
@@ -389,11 +369,11 @@ if ($questionid < 0)
 }
 elseif ($questionid > 0)
 {
-	// load questionid 
+	// load questionid
 	$question = new Question($qdb->getQuestion($questionid));
 
 	// now check that we have loaded question correctly - check that the db read was valid
-	if ($questionid != $question->getQuestionID()) 
+	if ($questionid != $question->getQuestionID())
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(WARNING_PARAMETER, "Question parameter missing on edit page");
@@ -419,7 +399,7 @@ print "Quizzes\n<ul>\n";
 
 
 
-// Provide basic ul with checkboxes (if we are expecting a lot of quizzes could change this for a scroll box with the list within that 
+// Provide basic ul with checkboxes (if we are expecting a lot of quizzes could change this for a scroll box with the list within that
 $quiz_count = 0;
 
 
@@ -436,7 +416,7 @@ foreach ($quiz_array as $short_quizname=>$long_quizname)
 	$quiz_count++;
 }
 print "</ul>\n\n";
-if ($quiz_count == 0) 
+if ($quiz_count == 0)
 {
 	print "<p><strong>No quizzes defined!</strong></p>\n\n";
 }
@@ -495,7 +475,7 @@ print "</textarea><br />\n";
 // Reference
 if ($questionid >0) {$value = $question->getReference();}
 else {$value = "";}
-print "Reference: "; 
+print "Reference: ";
 print "<input type=\"text\" name=\"reference\" value=\"$value\"><br />\n";
 
 // Hint
@@ -521,7 +501,7 @@ print "</textarea><br />\n";
 // Contributer
 if ($questionid >0) {$value = $question->getQfrom();}
 else {$value = "";}
-print "Contributor: "; 
+print "Contributor: ";
 print "<input type=\"text\" name=\"qfrom\" value=\"$value\"><br />\n";
 
 // Email

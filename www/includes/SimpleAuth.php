@@ -27,8 +27,8 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 class SimpleAuth
 {
 
-    
-    public function SimpleAuth ($adminuser, $adminpass, $expirytime)
+
+    public function __construct ($adminuser, $adminpass, $expirytime)
     {
     	@session_start();
     	$this->adminuser = $adminuser;
@@ -36,10 +36,10 @@ class SimpleAuth
     	$this->expirytime = $expirytime;
 
     }
-    
-    
+
+
     // check if logged in already
-    public function checkLogin() 
+    public function checkLogin()
     {
     	    // see if we have a session
     	    if (!isset($_SESSION['user'])) {return -1;}
@@ -53,9 +53,9 @@ class SimpleAuth
     	    $_SESSION['timestamp'] = time();
     	    return 1;
     }
-    
 
-    public function logout() 
+
+    public function logout()
     {
     	    // see if we have a session - if not we are not logged in
     	    if (!isset($_SESSION['user'])) {return 1;}
@@ -65,28 +65,28 @@ class SimpleAuth
     	    return 1;
     }
 
-    
+
     // get username
     public function getUser()
     {
     	return $_SESSION['user'];
     }
-    
-    
+
+
     // check for invalid characters in values - check post info
     // includes checks for username, password and location
-    // returns status code 1 for success 0 for unknown type -1 for invalid string, -2 for type not recongised (shouldn't see this) 
+    // returns status code 1 for success 0 for unknown type -1 for invalid string, -2 for type not recongised (shouldn't see this)
     //public function securityCheck ($type, $input, $array)
     public function securityCheck ()
     {
 		$args = func_get_args();
 		$type = $args[0];
 		$input = $args[1];
-		
+
 		// username only allow alphanumeric _- (ie. \w)
 		// first character must be alphanumeric (not _)
 		// 5 to 20 characters long
-		if ($type == 'username') 
+		if ($type == 'username')
 		{
 				if (preg_match("/^[a-zA-Z0-9]\w{4,20}$/", $input)) {return 1;}
 				else {return -1;}
@@ -99,10 +99,10 @@ class SimpleAuth
 				if (preg_match("/^[a-zA-Z0-9][\w%!�$%^&*#?~]{5,20}$/", $input)) {return 1;}
 				else {return -1;}
 		}
-		// location is a special one check usual \w - look for valid key in $url 
+		// location is a special one check usual \w - look for valid key in $url
 		elseif ($type == 'location')
 		{
-				// get the array 
+				// get the array
 				$array = $args[2];
 				// first check alphanumeric
 				if (preg_match("/^\w{1,20}$/", $input))
@@ -112,34 +112,34 @@ class SimpleAuth
 				}
 				else {return -1;}
 		}
-		// Reach here and it was not a valid type 
+		// Reach here and it was not a valid type
 		return -2;
     }
 
     // just check password is correct (used for verify password if required before changing settings - typically before password change)
     public function checkPassword($password)
     {
-    	if (md5($password) == $this->adminpass) 
+    	if (md5($password) == $this->adminpass)
     	{
     		return true;
     	}
     	else {return false;}
-    }    
-    
-    
+    }
+
+
     // return password hash
     // md5 converted so it can be stored in db (more safely)
     public function hashPassword($password)
     {
-    	return (md5($password)); 
+    	return (md5($password));
     }
-    
-    
-    
+
+
+
     public function loginNow($username, $password)
     {
     	// check login
-    	if (($username == $this->adminuser) && (md5($password) == $this->adminpass)) 
+    	if (($username == $this->adminuser) && (md5($password) == $this->adminpass))
     	{
     		$_SESSION['user'] = $username;
     		$_SESSION['timestamp'] = time();
@@ -158,8 +158,8 @@ class SimpleAuth
     	print "<input type=\"submit\" value=\"login\" />\n";
     	print "</form>\n";
     }
-    
-    
+
+
 } // end class
 
 
