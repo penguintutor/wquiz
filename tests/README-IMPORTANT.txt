@@ -14,7 +14,7 @@ left into a shipped package please delete the tests folder and contact the relev
 to have the package removed.
 
 To run any of these tests then the files need to be moved into a subdirectory of the
-www files - on a test system only.
+www files - on a test system only. You will also need to remove the .htaccess file which is included as a security measure.
 
 
 Note for some tests to work correctly database settings relating to file locations  
