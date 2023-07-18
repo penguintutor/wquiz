@@ -61,6 +61,11 @@ Online / Offline quizzes can now be enabled on a per quiz basis - and have diffe
 Updated to allow use of mysqli to support recent versions of PHP 
 
 
+*** Changes in version 0.6 ***
+
+Updates to support recent versions of PHP (8.0)
+with bug fixes associated with PHP version incompatibilities
+
 
 *** Known bugs ***
 

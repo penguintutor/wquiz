@@ -32,10 +32,10 @@ POST action=	(either 'new' or 'save')
 */
 
 // Enable debugging
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+//error_reporting(E_ALL);
+//ini_set('display_errors', true);
 
-// must add this before we require the menu 
+// must add this before we require the menu
 $admin_menu = 'editquiz';
 //$debug = true;
 
@@ -47,7 +47,7 @@ $message = '';
 $action = '';
 $quizname = '';
 
-// adminsetup is within the admin directory - this will load the main setup.php as well 
+// adminsetup is within the admin directory - this will load the main setup.php as well
 require_once ("adminsetup.php");
 // Authentication class required for admin functions
 require_once($include_dir."SimpleAuth.php");
@@ -73,7 +73,7 @@ $quiz_array = $all_quizzes->getQuizNameArray();
 $auth = new SimpleAuth ($settings->getSetting('admin_login_username'), $settings->getSetting('admin_login_password'), $settings->getSetting('admin_login_expirytime'));
 // if not logged in redirect to login page
 $status = $auth->checkLogin();
-if ($status != 1) 
+if ($status != 1)
 	{
 	// no from as use default which goes back to this page
 	header("Location: ".ADMIN_LOGIN_FILE."?status=$status");
@@ -94,25 +94,25 @@ if (isset($_POST['action']))
 {
 	if ($_POST['action'] == 'new') {$action = 'new';}
 	elseif ($_POST['action'] == 'save') {$action = 'edit';}
-	else 
+	else
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(ERROR_PARAMETER, "Missing action");
 		exit (0);
 	}
-	
+
 	// Quizname (short) can only be alphanumeric
 	if (isset($_POST['quizname']) &&  ctype_alnum($_POST['quizname']))
 	{
 		// If this is existing then make sure that this exists
-		if ($action=='edit' && !array_key_exists($_POST['quizname'], $quiz_array)) 
+		if ($action=='edit' && !array_key_exists($_POST['quizname'], $quiz_array))
 		{
 			$err = Errors::getInstance();
 			$err->errorEvent(ERROR_PARAMETER, "Not a valid quizname (does not exist)");
 			exit (0);
 		}
 		// if it's not existing then make sure it doesn't exist
-		elseif ($action=='new' && array_key_exists($_POST['quizname'], $quiz_array)) 
+		elseif ($action=='new' && array_key_exists($_POST['quizname'], $quiz_array))
 		{
 			$err = Errors::getInstance();
 			$err->errorEvent(ERROR_PARAMETER, "Not a valid quizname (new quizname)");
@@ -129,32 +129,31 @@ if (isset($_POST['action']))
 	$quizname = $_POST['quizname'];
 	$post_details['quizname'] = $quizname;
 	if ($debug) {print "Quizname is $quizname";}
-	
-	
+
+
 	// Title
-	if (isset ($_POST['title'])) 
+	if (isset ($_POST['title']))
 	{
 		// Do not apply strict security validation as this can only be added by an administrator
 		// This means that they could inject javascript etc, the same as if you allowed them to edit
 		// a html template etc.
-		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['title'] = stripslashes($_POST['title']); }
-		else {$post_details['title'] = $_POST['title'];}
+		//$post_details['title'] = stripslashes($_POST['title']);
+		$post_details['title'] = $_POST['title'];
 	}
 	// don't allow an empty title
-	else 
+	else
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(ERROR_PARAMETER, "Title not provided");
 		exit (0);
 	}
 	if ($debug) {print "Title: ".$post_details['title']."\n";}
-	
-	
+
+
 	// Number of questions
 	if (isset ($_POST['numquestions']) && is_numeric($_POST['numquestions']))
 	{
-		// check it's positive and a sensible number - 0 is acceptable (eg. as well as enabled - but should only be used for disabled quizzes - we only allow enable if more than 0) 
+		// check it's positive and a sensible number - 0 is acceptable (eg. as well as enabled - but should only be used for disabled quizzes - we only allow enable if more than 0)
 		if ($_POST['numquestions'] >= 0 && $_POST['numquestions'] <= $settings->getSetting('quiz_max_questions'))
 		{
 			$post_details['numquestions'] = $_POST['numquestions'];
@@ -165,7 +164,7 @@ if (isset($_POST['action']))
 			$err->errorEvent(ERROR_PARAMETER, "Invalid number of questions ".$_POST['numquestions']);
 			exit (0);
 		}
-		
+
 	}
 	else
 	{
@@ -177,7 +176,7 @@ if (isset($_POST['action']))
 	// Number of questions - offline
 	if (isset ($_POST['numquestionsoffline']) && is_numeric($_POST['numquestionsoffline']))
 	{
-		// check it's positive and a sensible number - 0 is acceptable (eg. as well as enabled - but should only be used for disabled quizzes - we only allow enable if more than 0) 
+		// check it's positive and a sensible number - 0 is acceptable (eg. as well as enabled - but should only be used for disabled quizzes - we only allow enable if more than 0)
 		if ($_POST['numquestionsoffline'] >= 0 && $_POST['numquestionsoffline'] <= $settings->getSetting('quiz_max_questions'))
 		{
 			$post_details['numquestionsoffline'] = $_POST['numquestionsoffline'];
@@ -196,24 +195,24 @@ if (isset($_POST['action']))
 		exit (0);
 	}
 
-	
-	
+
+
 	// Quizintro
-	if (isset ($_POST['quizintro'])) 
+	if (isset ($_POST['quizintro']))
 	{
 		// Only minimal security checks
 		// remove magicquotes as they will be added when we put into the database anyway
-		if (get_magic_quotes_gpc()) { $post_details['quizintro'] = stripslashes($_POST['quizintro']); }
-		else {$post_details['quizintro'] = $_POST['quizintro'];}
+		//if (get_magic_quotes_gpc()) { $post_details['quizintro'] = stripslashes($_POST['quizintro']); }
+		$post_details['quizintro'] = $_POST['quizintro'];
 	}
 	else {$post_details['quizintro'] == '';}
 	if ($debug) {print "Quiz Intro: ".$post_details['quizintro']."\n";}
-	
-	
+
+
 	//Priority
 	if (isset ($_POST['priority']) && is_numeric($_POST['priority']))
 	{
-		$post_details['priority'] = $_POST['priority']; 
+		$post_details['priority'] = $_POST['priority'];
 	}
 	else
 	{
@@ -222,19 +221,19 @@ if (isset($_POST['action']))
 		exit (0);
 	}
 
-	
+
 	//Enable online
-	if (isset ($_POST['enableonline'])) 
+	if (isset ($_POST['enableonline']))
 	{
 		$post_details['enableonline'] = true;
 	}
 	else
 	{
 		$post_details['enableonline'] = false;
-	}	
-	
+	}
+
 	//Enable offline (checkbox)
-	if (isset ($_POST['enableoffline'])) 
+	if (isset ($_POST['enableoffline']))
 	{
 		$post_details['enableoffline'] = true;
 	}
@@ -242,21 +241,21 @@ if (isset($_POST['action']))
 	{
 		$post_details['enableoffline'] = false;
 	}
-	
-	
+
+
 	// *** read through all parameters now perform save / update
-	
-	// then set $questionid so that we go back to editing this entry 
+
+	// then set $questionid so that we go back to editing this entry
 	if ($action == 'new') {$qdb->addQuiz($post_details);}
-	else 
+	else
 	{
 		// we save even if no changes - more work for sql, but less checking within PHP
 		$qdb->updateQuiz($post_details);
 	}
-	
-	
+
+
 	if ($debug) {print "\nSave completed - quiznname is $quizname\n";}
-	
+
 
 	// if it's a new one we have just created now change to edit and add this quiz
 	if ($action=='new')
@@ -268,7 +267,7 @@ if (isset($_POST['action']))
 	{
 		$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">Changes saved</p>";
 	}
-	
+
 }
 // else if it's a edit with quizname provided
 elseif (isset($_GET['quiz']) && ctype_alnum($_GET['quiz']))
@@ -318,8 +317,8 @@ else
 		$err->errorEvent(ERROR_INTERNAL, "Unable to read the quiz information");
 		exit (0);
 	}
-		
-}		
+
+}
 
 
 
@@ -348,7 +347,7 @@ else
 // Short quizname - only if new (cannot edit this field)
 if ($action == 'new')
 {
-	print "Quizname (shortname alpha numeric): "; 
+	print "Quizname (shortname alpha numeric): ";
 	print "<input type=\"text\" name=\"quizname\" value=\"\"><br />\n";
 }
 
@@ -356,7 +355,7 @@ if ($action == 'new')
 // Title
 if ($action != 'new') {$value = $this_quiz['title'];}
 else {$value = "";}
-print "Title: "; 
+print "Title: ";
 print "<input type=\"text\" name=\"title\" value=\"$value\"><br />\n";
 
 
@@ -364,14 +363,14 @@ print "<input type=\"text\" name=\"title\" value=\"$value\"><br />\n";
 // Number of questions
 if ($action != 'new') {$value = $this_quiz['numquestions'];}
 else {$value = "";}
-print "Number of questions: "; 
+print "Number of questions: ";
 print "<input type=\"text\" name=\"numquestions\" value=\"$value\"><br />\n";
 
 
 // Number of questions (offline)
 if ($action != 'new') {$value = $this_quiz['numquestionsoffline'];}
 else {$value = "";}
-print "Number of offline questions: "; 
+print "Number of offline questions: ";
 print "<input type=\"text\" name=\"numquestionsoffline\" value=\"$value\"><br />\n";
 
 
@@ -388,7 +387,7 @@ print "</textarea><br />\n";
 // Priority
 if ($action != 'new') {$value = $this_quiz['priority'];}
 else {$value = "1";}
-print "Priority (highest first): "; 
+print "Priority (highest first): ";
 print "<input type=\"text\" name=\"priority\" value=\"$value\"><br />\n";
 
 

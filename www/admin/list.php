@@ -25,7 +25,7 @@ ini_set('display_errors', true);
 
 require_once ("adminsetup.php");
 
-// must add this before we require the menu 
+// must add this before we require the menu
 $admin_menu = 'list';
 //$debug = true;
 
@@ -45,7 +45,7 @@ require_once ($include_dir."Quizzes.php");
 $auth = new SimpleAuth ($settings->getSetting('admin_login_username'), $settings->getSetting('admin_login_password'), $settings->getSetting('admin_login_expirytime'));
 // if not logged in redirect to login page
 $status = $auth->checkLogin();
-if ($status != 1) 
+if ($status != 1)
 	{
 	// no from as use default which goes back to this page
 	header("Location: ".ADMIN_LOGIN_FILE."?status=$status");
@@ -69,7 +69,7 @@ $templates->includeTemplate('header', 'admin');
 
 // questions
 // We load the questions as array and manipulate directly
-// This is not a tidy as using a question object and loading indivdually, but is much faster 
+// This is not a tidy as using a question object and loading indivdually, but is much faster
 // Improves performance by approx 7 times (on 250 questions)
 //$questions_array = $qdb->getQuestionIds();
 // load all questions
@@ -78,11 +78,11 @@ $all_questions = $qdb->getQuestionQuiz();
 $all_rel = $qdb->getRelAll();
 
 // loop over all_rel and store relationships under array with questionid as index (human readable space seperated)
-$quiz_rel = array(); 
+$quiz_rel = array();
 foreach ($all_rel as $this_rel)
 {
 	if (!isset($quiz_rel[$this_rel['questionid']])) {$quiz_rel[$this_rel['questionid']] = $this_rel['quizname'];}
-	else {$quiz_rel[$this_rel['questionid']] .= " ".$this_rel['quizname'];} 
+	else {$quiz_rel[$this_rel['questionid']] .= " ".$this_rel['quizname'];}
 }
 
 // Show menu
@@ -119,7 +119,7 @@ foreach ($all_questions as $this_question_entry)
 	// uses local getSummary function - see below
 	print "<td><a href=\"".ADMIN_EDIT_FILE."?question=".$this_question_entry['questionid']."\">".getSummary($this_question_entry['intro'])."</a></td>";
 	print "<td>".$this_question_entry['type']."</td>";
-	if (isset($quiz_rel[$this_question_entry['questionid']])) 
+	if (isset($quiz_rel[$this_question_entry['questionid']]))
 	{
 		print "<td>".$quiz_rel[$this_question_entry['questionid']]."</td>";
 	}
@@ -129,14 +129,14 @@ foreach ($all_questions as $this_question_entry)
 	}
 	print "<td>".$this_question_entry['created']."</td>";
 	print "<td>".$this_question_entry['reviewed']."</td>\n";
-	print "<td><a href=\"".ADMIN_Q_FILE."?question=".$this_question_entry['questionid']."\">Test</a></td>\n";
+	print "<td><a href=\"".ADMIN_Q_FILE."?question=".$this_question_entry['questionid']."\" target=\"_blank\">Test ".$this_question_entry['questionid']."</a></td>\n";
 	print "</tr>\n";
 }
 
 print "</table>\n";
 print "</div>\n";
 
-if (isset($debug) && $debug) 
+if (isset($debug) && $debug)
 	{
 		$end_time = time();
 		$total_time = $end_time - $start_time;
@@ -157,7 +157,7 @@ function getSummary($intro)
     {
     	global $settings;
     	$summary_length = $settings->getSetting('summary_length');
-    	if (strlen($intro) > $summary_length) 
+    	if (strlen($intro) > $summary_length)
     	{
     		$temp_string = strip_tags($intro);
     		return (substr($temp_string, 0, $summary_length-4)." ...");

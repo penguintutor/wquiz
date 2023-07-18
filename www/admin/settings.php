@@ -20,7 +20,7 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 /* Edit most settings */
-/* Does not support array settings (yet) */
+/* Does not support array settings */
 /* Does not change username / password (in useradmin code instead) */
 
 
@@ -28,14 +28,14 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 /* We get to here from one of the following
 GET (display edit)
 POST action=save	(save changes)
-POST (display edit) 
+POST (display edit)
 */
 
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-// must add this before we require the menu 
+// must add this before we require the menu
 $admin_menu = 'editsettings';
 //$debug = true;
 
@@ -47,7 +47,7 @@ $message = '';
 $action = '';
 $quizname = '';
 
-// adminsetup is within the admin directory - this will load the main setup.php as well 
+// adminsetup is within the admin directory - this will load the main setup.php as well
 require_once ("adminsetup.php");
 // Authentication class required for admin functions
 require_once($include_dir."SimpleAuth.php");
@@ -60,7 +60,7 @@ require_once($include_dir."adminSettings.php");
 $auth = new SimpleAuth ($settings->getSetting('admin_login_username'), $settings->getSetting('admin_login_password'), $settings->getSetting('admin_login_expirytime'));
 // if not logged in redirect to login page
 $status = $auth->checkLogin();
-if ($status != 1) 
+if ($status != 1)
 	{
 	// no from as use default which goes back to this page
 	header("Location: ".ADMIN_LOGIN_FILE."?status=$status");
@@ -80,10 +80,10 @@ print "<h2>Settings</h2>\n";
 // save - otherwise we just go to view/edit
 if (isset($_POST['action']) && $_POST['action'] == 'save')
 {
-	// array to hold changed / new settings 
+	// array to hold changed / new settings
 	// store as 2D array (key, value)
 	$update_settings = array();
-	// iterate through all possible option 
+	// iterate through all possible option
 	foreach ($setting_types as $this_setting)
 	{
 		// split into separate variables to make it easier to understand
@@ -104,7 +104,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save')
 				$err->errorEvent(ERROR_PARAMETER, "Invalid value for parameter $this_type");
 				exit (0);
 			}
-			$this_value = $_POST[$this_key]; 
+			$this_value = $_POST[$this_key];
 			break;
 		case 'alphanum':
 		case 'text':
@@ -137,7 +137,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save')
 			$this_value = $_POST[$this_key];
 			break;
 		case 'int':
-			if (!is_numeric($_POST[$this_key])) 
+			if (!is_numeric($_POST[$this_key]))
 			{
 				$err = Errors::getInstance();
 				$err->errorEvent(ERROR_PARAMETER, "Entry is not a number $this_key");
@@ -152,7 +152,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save')
 		}
 		// if changed add to update_settings array
 		if ($this_value != $settings->getSetting($this_key)) {$update_settings[] = array($this_key, $this_value);}
-		
+
 	}
 	// Now add any / update any entries in the database
 	// This is done now rather than above in case of error
@@ -161,14 +161,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'save')
 	{
 		if ($debug) {print "Updating $this_setting[0] with value $this_setting[1]<br />\n";}
 		// setSetting will insert or update as required - and update current loaded value
-		if (!$settings->setSetting ($this_setting[0], $this_setting[1])) 
+		if (!$settings->setSetting ($this_setting[0], $this_setting[1]))
 		{
 			// should be caught in DB save if there is a problem
 			print "Error - unable to save settings";
 			exit (0);
 		}
 	}
-	
+
 	$message .= "<p class=\"".CSS_CLASS_ADMIN_EDIT_MESSAGE."\">Changes saved</p>";
 }
 
@@ -185,7 +185,7 @@ foreach ($setting_types as $this_setting)
 	// if optional bits are not included replace with appropriate
 	if (!isset($this_setting[2])) {$this_setting[2] = $this_setting[0];}
 	if (!isset($this_setting[3])) {$this_setting[3] = $this_setting[2];}
-	
+
 	// switch based on type
 	// first check for custom option as we ignore that completely
 	if ($this_setting[1] == 'custom') {continue;}
@@ -203,10 +203,10 @@ foreach ($setting_types as $this_setting)
 	case 'alphanum':
 	case 'directory':
 	case 'regexp':
-		$fieldprint .= $this_setting[2]." <input type=\"text\" name=\"".$this_setting[0]."\" value=\"".$settings->getSetting($this_setting[0])."\" />";		
+		$fieldprint .= $this_setting[2]." <input type=\"text\" name=\"".$this_setting[0]."\" value=\"".$settings->getSetting($this_setting[0])."\" />";
 		break;
 	case 'textblock':
-		$fieldprint .= $this_setting[2]." <textarea name=\"".$this_setting[0]."\">".$settings->getSetting($this_setting[0])."</textarea>\n";		
+		$fieldprint .= $this_setting[2]." <textarea name=\"".$this_setting[0]."\">".$settings->getSetting($this_setting[0])."</textarea>\n";
 		break;
 	// As array is within this file shouldn't get this - but just in case of error in adminSettings.php file
 	default :

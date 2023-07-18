@@ -1,5 +1,5 @@
 <?php
-/*** 
+/***
 Handles the question
 including formatting / checking
 ***/
@@ -46,24 +46,24 @@ class Question
     private $reviewed = '0000-00-00';
     // This is an array of quizzes that question is included in (usuing quizname rather than id)
     private $quizzes = array();
-    
+
     // num of chars in summary
     // moved to settings - must be specified when calling summary_length
-//    private $summary_length = 45; 
+//    private $summary_length = 45;
 
-	// normally create instance with details, but set to null in case 
+	// normally create instance with details, but set to null in case
 	// creating a new one (eg. new question)
-	// defaults are set to empty strings above    
-    public function __construct ($db_results=null) 
+	// defaults are set to empty strings above
+    public function __construct ($db_results=null)
     {
     	// if provided with array use it to initialise variables
     	if (is_array ($db_results) && isset($db_results['questionid']))
     	{
-			$this->questionid = $db_results['questionid'];	
+			$this->questionid = $db_results['questionid'];
 			$this->intro = $db_results['intro'];
 			$this->input = $db_results['input'];
 			$this->type = $db_results['type'];
-			$this->answer = $db_results['answer'];		
+			$this->answer = $db_results['answer'];
 			$this->reason = $db_results['reason'];
 			$this->reference = $db_results['reference'];
 			$this->hint = $db_results['hint'];
@@ -77,11 +77,11 @@ class Question
     	}
 
     }
-    
+
     // returns an array
     // $answer is the answer provided by the customer
     // $answer = -1 means unanswered
-    public function getHtmlString ($answer) 
+    public function getHtmlString ($answer)
     {
     	print "<div id=\"".CSS_ID_QUESTION."\">\n\t<p class=\"".CSS_CLASS_QUESTION_P."\">\n\t\t";
     	// Image is placed at the start of the text (can be moved using CSS)
@@ -93,14 +93,14 @@ class Question
     	// question number is added in navigation as it's navigation position - not the sql question id
     	//print "<input type=\"hidden\" name=\"question\" value=\"".$this->questionid."\" />\n";
     	// handle appropriate format depending upon question
-    	print $this->formatQuestion($answer);  
+    	print $this->formatQuestion($answer);
     	print "\n</p>\n</div>\n";
 
     }
 
 
     // same as HTML String, but returns it in a format for offline viewing
-    public function getOfflineHtmlString () 
+    public function getOfflineHtmlString ()
     {
     	print "<div id=\"".CSS_ID_QUESTION."\">\n\t<p class=\"".CSS_CLASS_QUESTION_P."\">\n\t\t";
     	// Image is placed at the start of the text (can be moved using CSS)
@@ -112,22 +112,22 @@ class Question
     	// question number is added in navigation as it's navigation position - not the sql question id
     	//print "<input type=\"hidden\" name=\"question\" value=\"".$this->questionid."\" />\n";
     	// handle appropriate format depending upon question
-    	print $this->formatOfflineQuestion();  
+    	print $this->formatOfflineQuestion();
     	print "\n</p>\n</div>\n";
 
     }
-    
-    
-    
+
+
+
     // gives a brief summary based on the introduction text (truncated)
     // if > $summary_length chars then return trunc ...
     public function getSummary($summary_length)
     {
-    	if (strlen($this->intro) > $summary_length) 
+    	if (strlen($this->intro) > $summary_length)
     	{
     		$temp_string = strip_tags($this->intro);
     		return (substr($temp_string, 0, $summary_length-4)." ...");
-    		
+
     	}
     	else {return strip_tags($this->intro);}
     }
@@ -138,25 +138,25 @@ class Question
     {
     	return $this->questionid;
     }
-    
+
     // return type of question (eg. radio / checkbox / text)
     public function getType ()
     {
     	return $this->type;
     }
-    
-    
+
+
     public function getReason()
     {
     	return $this->reason;
     }
-    
-   
+
+
     public function getUpdated()
     {
     	return $this->updated;
     }
-    
+
     // return a string listing quizzes
     public function getQuizzes ()
     {
@@ -168,21 +168,21 @@ class Question
     	}
     	return $return_string;
     }
-    
+
     // return the quizzes as an array
     public function getQuizArray ()
     {
     	return $this->quizzes;
     }
-    
+
     // returns true if this question is part of this quiz
     public function isInQuiz ($check_quiz)
     {
     	if (in_array($check_quiz, $this->quizzes)) {return true;}
-    	else {return false;} 
+    	else {return false;}
     }
 
-    
+
     public function getAnswer()
     {
     	return $this->answer;
@@ -191,13 +191,13 @@ class Question
     public function getInput()
     {
     	return $this->input;
-    }        
-    
+    }
+
     public function getCreated()
     {
     	return $this->created;
     }
-    
+
     public function getReviewed()
     {
     	return $this->reviewed;
@@ -207,7 +207,7 @@ class Question
     {
     	return $this->reference;
     }
-    
+
     public function getIntro()
     {
     	return $this->intro;
@@ -232,25 +232,25 @@ class Question
     {
     	return $this->qfrom;
     }
-    
+
     public function getEmail()
     {
     	return $this->email;
     }
-    
-    
+
+
     // validates the type against the type in the post
     // note that the type in the post will be text even for number etc.
     public function validateType ($post_type)
     {
     	// simplist - checkbox / radio / text will all match
     	if ($post_type == $this->type) {return true;}
-    	// if type is number / TEXT 
+    	// if type is number / TEXT
     	if ($post_type == 'text' && ($this->type == 'number' || $this->type == 'TEXT')) {return true;}
     	// if not returned then invalid type
     	return false;
     }
-    
+
     // check that the answer is valid - not that it is correct!
     // ie. for a number - must be a number, radio must be a valid character
     public function validateAnswer ($answer)
@@ -260,7 +260,7 @@ class Question
     	{
     		return true;
     	}
-    	else if ($this->type == 'radio' && is_numeric($answer)) 
+    	else if ($this->type == 'radio' && is_numeric($answer))
     	{
     		$options = explode (",", $this->input);
     		if ($answer >=0 && $answer < count($options)) {return true;}
@@ -275,10 +275,10 @@ class Question
     	{
     		return false;
     	}
-    	
+
     }
-    
-    
+
+
     private function formatImageString ()
     {
     	// If image is blank then we don't return anything - if rather use a dummy image then that should be added to each question.
@@ -288,7 +288,7 @@ class Question
     		return ("<img src=\"$this->image\" class=\"".CSS_CLASS_IMAGE."\" alt=\"Question Image\"/>\n");
     	}
     }
-    
+
     // answer is the current value
     private function formatQuestion ($answer)
     {
@@ -300,10 +300,10 @@ class Question
     		case 'checkbox':$formatted = $this->createFormCheckbox ($answer);
     						break;
     		case 'number':
-    		case 'text':   	
+    		case 'text':
     		case 'TEXT':	$formatted = $this->createFormText ($answer); // TEXT is text but case sensitive - same form formatting
     						break;
-			default:	// unknown question - this is a warning level - don't break, but 
+			default:	// unknown question - this is a warning level - don't break, but
 							$err =  Errors::getInstance();
     						$err->errorEvent(WARNING_QUESTION, "Warning, unknown question type for $this->questionid");
     	}
@@ -316,7 +316,7 @@ class Question
     	$formatted = '';
     	switch ($this->type)
     	{
-    		case 'radio':  	
+    		case 'radio':
     		case 'checkbox':
     			$formatted .= "<ul>\n";
     			$options = explode (",", $this->input);
@@ -327,24 +327,24 @@ class Question
     			$formatted .= "</ul>\n";
     			break;
     		case 'number':
-    		case 'text':   	
-    		case 'TEXT':	
+    		case 'text':
+    		case 'TEXT':
     			$formatted .= "<ul><li>";
     			$options = explode (",", $this->input);
     			// if blank replace with number of spaces
     			// normally css should set it to underline or similar
     			if ($options[1] == '') {$options[1] = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";}
-				$formatted .=  $options[0]." <span class=\"".CSS_CLASS_OFFLINE_QUESTION_ANSWER."\">".$options[1]."</span> ".$options[2]."</li></ul>\n"; 			
+				$formatted .=  $options[0]." <span class=\"".CSS_CLASS_OFFLINE_QUESTION_ANSWER."\">".$options[1]."</span> ".$options[2]."</li></ul>\n";
     			break;
-			default:	// unknown question - this is a warning level - don't break, but 
+			default:	// unknown question - this is a warning level - don't break, but
 							$err =  Errors::getInstance();
     						$err->errorEvent(WARNING_QUESTION, "Warning, unknown question type for $this->questionid");
     	}
     	return $formatted;
     }
 
-    
-    
+
+
     private function createFormRadio ($answer)
     {
     	//print "Form button answer is $answer \n";
@@ -360,14 +360,14 @@ class Question
     	}
     	return $form_string;
     }
-    
+
     // note $labels must be ,, if empty
     private function createFormText ($answer)
     {
     	$form_string = "<input type=\"hidden\" name=\"type\" value=\"text\">\n";
     	// Input has labels for pre, prefilled and post answer text
     	// If no value then set pre, prefill, post to blank strings
-    	if (empty($this->input)) {$labels=array("","","");} 
+    	if (empty($this->input)) {$labels=array("","","");}
     	else {$labels = explode (',', $this->input);}
     	// use autocomplete option instead of random string used in earlier version
     	// this is html 5 only (but works in earlier versions even though incorrect)
@@ -382,7 +382,7 @@ class Question
     	$form_string .= $labels[2];
     	return ($form_string);
     }
-    
+
     private function createFormCheckbox ($answer)
     {
     	//print "Answer is $answer<br />\n";
@@ -405,17 +405,20 @@ class Question
     	return $form_string;
     }
 
-    
+
     // checks to see if an answer is correct or incorrect
     // returns true (correct) or false
     function markAnswer ($answer)
     {
 	global $debug;
-    	//if ($debug) { print "This answer $answer \n";}
-    	// radio / checkbox - answer must be same as 
+    	//print "This answer $answer \n";
+        //print "Expected $this->answer \n";
+    	// radio / checkbox - answer must be same as
     	if ($this->type == 'radio' || $this->type == 'checkbox')
     	{
-    		if ($answer == $this->answer) {return true;}
+    		//if ($answer == $this->answer) {return true;}
+            # Perform as string compare as php comparison ignores first 0
+            if (strcmp($answer, $this->answer) == 0) {return true;}
     		else {return false;}
     	}
     	elseif ($this->type == 'number')
@@ -427,10 +430,8 @@ class Question
     	}
     	elseif ($this->type == 'text')
     	{
-    		// note that � is used instead of / / in the search - otherwise problems with paths in the question (eg. linux quiz)
-    		//$answer_test = stripslashes($this->answer); 
-    		//$answer_test = addslashes($this->answer);
-    		$answer_test = $this->answer;
+            // Convert any / in the answer to \/
+    		$answer_test = str_replace ("/", "\/", $this->answer);
     		if (isset($debug) && $debug == true) {print "Test: ".'/^'.$answer_test.'$/i'."<br />\n"; print "Answer $answer<br />\n";}
     		if (preg_match('/^'.$answer_test.'$/i', $answer)) {return true;}
     		else {return false;}
@@ -438,20 +439,22 @@ class Question
     	// as text, but without ignore case
     	elseif ($this->type == 'TEXT')
     	{
-    		if (preg_match('/^'.$this->answer.'$/', $answer)) {return true;}
+            // Convert any / in the answer to \/
+    		$answer_test = str_replace ("/", "\/", $this->answer);
+    		if (preg_match('/^'.$answer_test.'$/', $answer)) {return true;}
     		else {return false;}
     	}
     	// invalid type
-    	else 
+    	else
     	{
     		// error in question configuration
     		$err =  Errors::getInstance();
     		$err->errorEvent(WARNING_QUESTION, "Warning, unknown question type for $this->questionid");
     		return false;
-    	} 
-    	
+    	}
+
     }
-    
-    
+
+
 }
 ?>

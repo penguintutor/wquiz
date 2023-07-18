@@ -1,4 +1,4 @@
-<?
+<?php
 /** Copyright Information (GPL 3)
 Copyright Stewart Watkiss 2012
 
@@ -19,14 +19,14 @@ along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
 // List of settings and types
-// [0] = settings_key 
-// [1] = type 
+// [0] = settings_key
+// [1] = type
 // [2] = Title (optional)
 // [3] = hint (optional)
 
 //Type can be boolean, alphanum, text, textblock, directory, directory_ (no trailing /), int, custom
-//Type custom is ignored by normal template edit and so needs to be handled seperately (not currently supported) 
-$setting_types = array 
+//Type custom is ignored by normal template edit and so needs to be handled seperately (not currently supported)
+$setting_types = array
 (
 	array
 	(
@@ -49,7 +49,7 @@ $setting_types = array
 		'Admin theme',
 		'Theme to use for admin functions'
 	),
-	
+
 	array
 	(
 		'theme_quiz',
@@ -58,12 +58,12 @@ $setting_types = array
 		'Theme to use for quiz functions'
 	),
 
-	array 
+	array
 	(
 		'buttons_navigation_enabled',
 		'custom'
 	),
-	array 
+	array
 	(
 		'buttons_navigation_labels',
 		'custom'
@@ -82,7 +82,7 @@ $setting_types = array
 		'Start text file',
 		'File to include (PHP or html)'
 	),
-	array 
+	array
 	(
 		'buttons_show_answer_button',
 		'boolean',
@@ -96,7 +96,7 @@ $setting_types = array
 		'Review text',
 		'HTML text'
 	),
-	array 
+	array
 	(
 		'review_show_unanswered',
 		'boolean',
@@ -123,19 +123,19 @@ $setting_types = array
 		'boolean',
 		'Answer summary enable'
 	),
-	array 
+	array
 	(
 		'template_allow_include',
 		'boolean',
 		'Allow PHP includes within the theme template files?'
 	),
 	// admin username & password not edited through settings
-	array 
+	array
 	(
 		'admin_login_username',
 		'custom'
 	),
-	array 
+	array
 	(
 		'admin_login_password',
 		'custom'
@@ -161,6 +161,6 @@ $setting_types = array
 		'Summary length',
 		'Num chars to display in summary view of question (admin view)'
 	)
-	
+
 );
 ?>

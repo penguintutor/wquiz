@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with wQuiz.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-/* Tests a question - used within admin, but placed in the normal directory level 
+/* Tests a question - used within admin, but placed in the normal directory level
 so that it validates against the same templates as normal quiz pages */
 
 
@@ -35,7 +35,7 @@ ini_set('display_errors', true);
 //eg. if we get here from an expired session
 $message = '';
 
-// adminsetup is within the admin directory - this will load the main setup.php as well 
+// adminsetup is within the admin directory - this will load the main setup.php as well
 require_once ("admin/adminsetup.php");
 // Authentication class required for admin functions
 require_once($include_dir."SimpleAuth.php");;
@@ -48,7 +48,7 @@ require_once($include_dir."QuestionNavigation.php");	// used later for navigatio
 $auth = new SimpleAuth ($settings->getSetting('admin_login_username'), $settings->getSetting('admin_login_password'), $settings->getSetting('admin_login_expirytime'));
 // if not logged in redirect to login page
 $status = $auth->checkLogin();
-if ($status != 1) 
+if ($status != 1)
 	{
 	// no from as use default which goes back to this page
 	header("Location: ".ADMIN_LOGIN_FILE."?status=$status");
@@ -75,35 +75,35 @@ if (isset($_POST['question']) && is_numeric($_POST['question']) && $qdb->checkQu
 		$action = 'test';
 	}
 // if get (only allowed on test - not real)
-elseif (isset($_GET['question']) && is_numeric($_GET['question']) && $qdb->checkQuestion($_GET['question'])) 
+elseif (isset($_GET['question']) && is_numeric($_GET['question']) && $qdb->checkQuestion($_GET['question']))
 	{
 		$questionid = $_GET['question'];
 		// set action to default as we didn't have a valid question number
 		$action = 'display';
 		$answer = -1;
 	}
-else 
+else
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(ERROR_PARAMETER, "no valid questionid provided - test");
 	}
 
-	
+
 //submit buttons
 // Determine what action required based on submit
 if (isset($_POST['nav']))
 {
 	// see if this is a valid action - gets action back
 	$action = $navigation->getAction ($_POST['nav']);
-	if ($action == 'invalid') 
+	if ($action == 'invalid')
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(WARNING_PARAMETER, "Action invalid - defaulting to display");
 		$action = 'display';
 	}
 }
-	
-	
+
+
 // question_from is the same (we don't honour the different navigation buttons)
 $question = new Question($qdb->getQuestion($questionid));
 $question_from = new Question($qdb->getQuestion($questionid));
@@ -117,7 +117,7 @@ $answer = '';
 if ($action != 'display')
 {
 	// no type - we didn't come from a question display
-	if (!isset ($_POST['type']) || !$question_from->validateType($_POST['type'])) 
+	if (!isset ($_POST['type']) || !$question_from->validateType($_POST['type']))
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(WARNING_PARAMETER, "Parameter type does not match question type");
@@ -128,21 +128,21 @@ if ($action != 'display')
 	{
 	for ($i=0; $i<10; $i++)
 		{
-			if (isset ($_POST['answer-'.$i])) {$answer .= $i;}
+			if (isset ($_POST['answer-'.$i])) {$answer .= (string)$i;}
 		}
 		// if none selected set back to default (-1)
 		if ($answer == '') {$answer = -1;}
 	}
 	//  handle default where answer is not set at all (eg. radio with nothing ticked)
-	else if (!isset ($_POST['answer']) || $_POST['answer'] == '') 
+	else if (!isset ($_POST['answer']) || $_POST['answer'] == '')
 	{
 		$answer = -1;
 	}
-	else // All others we just have one value from post which is $answers 
+	else // All others we just have one value from post which is $answers
 	{
 		if ($question_from->validateAnswer($_POST['answer']))
 		{
-			$answer = $_POST['answer']; 
+			$answer = $_POST['answer'];
 
 		}
 		else
@@ -161,7 +161,7 @@ if ($action != 'display')
 
 
 if ($debug) {print "Action is $action";}
-// don't change page we just show this one 
+// don't change page we just show this one
 
 // Pull in templates
 $templates->includeTemplate('header', 'test');
@@ -204,7 +204,7 @@ if ($action != 'display')
 	if ($answer == -1) {print "Not answered\n";}
 	elseif ($question->markAnswer($answer)) {print "Correct\n";}
 	else {print "Incorrect\n";}
-	
+
 }
 
 

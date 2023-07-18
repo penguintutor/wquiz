@@ -1,4 +1,4 @@
-<?php 
+<?php
 /** Copyright Information (GPL 3)
 Copyright Stewart Watkiss 2012
 
@@ -73,7 +73,7 @@ include ($include_dir."Errors.php");		// Error handling
 if (!isset($cfgfile) || $cfgfile == '')
 {
 	// check master file has settings - just check one of them
-	if (!isset($dbsettings)) 
+	if (!isset($dbsettings))
 	{
 		$err = Errors::getInstance();
 		$err->errorEvent(ERROR_CFG, "Error loading master config file ($default_cfg_file), or file is corrupt / incomplete");
@@ -89,7 +89,11 @@ else
 	}
 	@include ($cfgfile);
 	// make sure required dbsettings is loaded
-	if (!isset($dbsettings)) {$err->errorEvent(ERROR_CFG, "Error loading local config file ($cfgfile), or file is corrupt / incomplete");}
+	if (!isset($dbsettings))
+    {
+        $err = Errors::getInstance();
+        $err->errorEvent(ERROR_CFG, "Error loading local config file ($cfgfile), or file is corrupt / incomplete");
+    }
 }
 
 if ($debug) {print "config files loaded\n";}
